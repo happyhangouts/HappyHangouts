@@ -1,0 +1,6 @@
+{
+  "name": "Happy Hangouts",
+  "description": "An interactive hangout planner, spot finder, and AI-powered activity generator for friends and social communities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

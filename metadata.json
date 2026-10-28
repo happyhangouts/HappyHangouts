@@ -1,0 +1,6 @@
+{
+  "name": "Happy Hangouts",
+  "description": "Verified hangout companion marketplace in Delhi NCR. Hire or host shared passions for coffee, sports, tech, and photowalks with escrow protection.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

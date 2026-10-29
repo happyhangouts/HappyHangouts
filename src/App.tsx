@@ -1,1319 +1,1444 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
-  Users, 
-  UserCheck, 
-  Briefcase, 
+  Volume2, 
+  VolumeX, 
   ShieldCheck, 
   MapPin, 
-  Calendar, 
-  Clock, 
-  CreditCard, 
-  CheckCircle2, 
+  Star, 
   Sparkles, 
   ArrowRight, 
-  Coffee, 
-  Dumbbell, 
-  Lightbulb, 
-  Camera, 
-  Music, 
-  X, 
-  Star, 
   Check, 
+  Clock, 
   Phone, 
-  Lock, 
-  ChevronRight,
-  HelpCircle,
-  AlertCircle,
-  Volume2,
-  VolumeX
+  X, 
+  CheckCircle2, 
+  Calendar,
+  Send,
+  MessageCircle,
+  AlertCircle
 } from "lucide-react";
-import confetti from "canvas-confetti";
-import HappyHangoutsLogo from "./components/HappyHangoutsLogo";
-import LeadCollectionForm from "./components/LeadCollectionForm";
-import FaqSection from "./components/FaqSection";
-import PrivacyPolicyModal from "./components/PrivacyPolicyModal";
-import LiveHangoutsTrustMap from "./components/LiveHangoutsTrustMap";
-import SpatialCard3D from "./components/SpatialCard3D";
 import { audio, setupGlobalAudioListeners } from "./utils/audio";
+import { submitToGoogleSheets, generateWhatsAppLeadUrl } from "./lib/googleSheets";
 
-// Direct static image asset imports guaranteed to load on mobile and desktop
-import heroDelhiImg from "./assets/images/hero_delhi_hangout_1792650857994.jpg";
-import hubSportsImg from "./assets/images/hub_sports_rally_1792650858523.jpg";
-import hubCafeImg from "./assets/images/hub_cafe_coffee_1792650858578.jpg";
-
-// Companion Profile Interface
-export interface Companion {
+// Verified Companion Model for Gurgaon & Delhi
+export interface CompanionProfile {
   id: string;
   name: string;
-  age: number;
-  city: string;
-  hub: string;
-  vibe: string;
-  category: "coffee" | "sports" | "tech" | "photo" | "chess" | "music";
-  bio: string;
-  hourlyRate: number;
-  rating: number;
-  hangoutsCompleted: number;
-  skills: string[];
   emoji: string;
-  color: string;
+  act: string;
+  categoryLabel: string;
+  rate: number;
+  rating: number;
+  times: ("morning" | "evening" | "weekend")[];
+  city: "Gurugram" | "Delhi";
+  location: string;
+  vibeText: string;
+  bgColor: string;
+  badge?: string;
 }
 
-const COMPANIONS: Companion[] = [
+const COMPANIONS: CompanionProfile[] = [
   {
-    id: "comp-1",
+    id: "p-1",
     name: "Aarav Mehta",
-    age: 26,
-    city: "Gurgaon",
-    hub: "DLF CyberHub & 32nd Avenue",
-    vibe: "Startup Pitching & Tech Co-working",
-    category: "tech",
-    bio: "Ex-fintech builder. Love whiteboarding product ideas, discussing AI agents, or doing focused co-working sessions over pour-overs.",
-    hourlyRate: 500,
-    rating: 4.98,
-    hangoutsCompleted: 34,
-    skills: ["Startup Brainstorming", "AI & Tech", "Espresso Tasting", "Pitch Decks"],
-    emoji: "💡",
-    color: "bg-blue-600"
-  },
-  {
-    id: "comp-2",
-    name: "Meera Reddy",
-    age: 24,
-    city: "South Delhi",
-    hub: "Siri Fort Sports Complex",
-    vibe: "Badminton Tactical Rally & Fitness",
-    category: "sports",
-    bio: "State-level badminton player. Looking for rally partners, morning outdoor runs, or post-match smoothies in leafy Delhi parks.",
-    hourlyRate: 600,
-    rating: 5.0,
-    hangoutsCompleted: 48,
-    skills: ["Badminton Rallies", "Footwork Drills", "Morning Fitness", "Park Trails"],
     emoji: "🏸",
-    color: "bg-emerald-600"
+    act: "badminton",
+    categoryLabel: "Badminton",
+    rate: 350,
+    rating: 4.9,
+    times: ["evening", "weekend"],
+    city: "Gurugram",
+    location: "Sector 29, Gurugram",
+    vibeText: "Smash rallies, doubles matches, all skill levels welcome.",
+    bgColor: "#7cc4ff",
+    badge: "Fast Responder"
   },
   {
-    id: "comp-3",
-    name: "Kabir Sen",
-    age: 27,
-    city: "Central Delhi",
-    hub: "Khan Market (Blue Tokai)",
-    vibe: "Specialty Coffee & Vintage Vinyls",
-    category: "coffee",
-    bio: "Vinyl collector and literature buff. Passionate about indie cinema, Murakami novels, and discovering quiet cafe reading nooks.",
-    hourlyRate: 400,
-    rating: 4.92,
-    hangoutsCompleted: 29,
-    skills: ["Specialty Coffee", "Book Discussions", "Vinyl Hunting", "Art Cafe Crawls"],
+    id: "p-2",
+    name: "Meera Reddy",
     emoji: "☕",
-    color: "bg-amber-600"
+    act: "cafe",
+    categoryLabel: "Café chat",
+    rate: 400,
+    rating: 4.8,
+    times: ["evening", "weekend"],
+    city: "Gurugram",
+    location: "DLF CyberHub, Gurugram",
+    vibeText: "Pour-over coffees, indie books, and honest real talks.",
+    bgColor: "#ffc933",
+    badge: "Top Rated"
   },
   {
-    id: "comp-4",
-    name: "Ananya Kapoor",
-    age: 23,
-    city: "South Delhi",
-    hub: "Lodhi Art District & Sunder Nursery",
-    vibe: "Street Photowalks & Heritage Trails",
-    category: "photo",
-    bio: "Documentary photographer & heritage enthusiast. Let's explore Delhi's vibrant street murals, capture candid film portraits, and sip chai.",
-    hourlyRate: 500,
-    rating: 4.96,
-    hangoutsCompleted: 41,
-    skills: ["Camera Framing", "Street Murals", "Historical Walks", "Candid Portraits"],
-    emoji: "📷",
-    color: "bg-rose-600"
+    id: "p-3",
+    name: "Kabir Sen",
+    emoji: "🥾",
+    act: "trek",
+    categoryLabel: "Trekking",
+    rate: 600,
+    rating: 4.9,
+    times: ["morning", "weekend"],
+    city: "Gurugram",
+    location: "Aravalli Biodiversity, Gurugram",
+    vibeText: "Sunrise wilderness trails, hidden scenic spots & birdwatching.",
+    bgColor: "#ff6b4a",
+    badge: "Trail Expert"
   },
   {
-    id: "comp-5",
+    id: "p-4",
+    name: "Sana Farooqui",
+    emoji: "🗣️",
+    act: "language",
+    categoryLabel: "Language",
+    rate: 450,
+    rating: 4.7,
+    times: ["morning", "evening"],
+    city: "Gurugram",
+    location: "DLF Phase 2, Gurugram",
+    vibeText: "French conversation drills & English public speaking confidence.",
+    bgColor: "#a8f0c6"
+  },
+  {
+    id: "p-5",
     name: "Rohan Verma",
-    age: 28,
-    city: "Central Delhi",
-    hub: "Connaught Place (CP Oxford Cafe)",
-    vibe: "Chess Strategy & Deep Chats",
-    category: "chess",
-    bio: "FIDE rated 1850. Happy to play blitz, rapid, or teach chess openings, alongside engaging conversations on psychology and history.",
-    hourlyRate: 450,
-    rating: 4.95,
-    hangoutsCompleted: 22,
-    skills: ["Blitz Chess", "Opening Strategy", "Board Games", "Philosophy"],
-    emoji: "♟️",
-    color: "bg-indigo-600"
+    emoji: "🎲",
+    act: "games",
+    categoryLabel: "Board games",
+    rate: 300,
+    rating: 4.6,
+    times: ["evening", "weekend"],
+    city: "Gurugram",
+    location: "Golf Course Rd, Gurugram",
+    vibeText: "Catan tournaments, blitz chess, and strategy board games.",
+    bgColor: "#7cc4ff"
   },
   {
-    id: "comp-6",
-    name: "Priya Sharma",
-    age: 25,
-    city: "Gurgaon",
-    hub: "32nd Avenue & CyberHub",
-    vibe: "Acoustic Guitar Jam & Indie Vocals",
-    category: "music",
-    bio: "Singer-songwriter playing acoustic melodies. Let's do a duet jam, explore live indie gigs, or grab iced matcha and talk music production.",
-    hourlyRate: 500,
-    rating: 5.0,
-    hangoutsCompleted: 38,
-    skills: ["Acoustic Guitar", "Vocal Harmonies", "Indie Music Gigs", "Songwriting"],
+    id: "p-6",
+    name: "Ishita Roy",
     emoji: "🎸",
-    color: "bg-purple-600"
+    act: "music",
+    categoryLabel: "Jam session",
+    rate: 550,
+    rating: 4.8,
+    times: ["evening"],
+    city: "Gurugram",
+    location: "Sector 56 & 32nd Ave, Gurugram",
+    vibeText: "Acoustic guitar jamming, songwriting & indie open mics.",
+    bgColor: "#ffc933",
+    badge: "Musician"
+  },
+  {
+    id: "p-7",
+    name: "Dev Malhotra",
+    emoji: "🏃",
+    act: "run",
+    categoryLabel: "Running",
+    rate: 250,
+    rating: 4.5,
+    times: ["morning"],
+    city: "Gurugram",
+    location: "Sector 52 & Tau Devi Lal, Gurugram",
+    vibeText: "5K & 10K pacing, morning endurance loops, sprint drills.",
+    bgColor: "#a8f0c6"
+  },
+  {
+    id: "p-8",
+    name: "Tara Khanna",
+    emoji: "☕",
+    act: "cafe",
+    categoryLabel: "Café chat",
+    rate: 500,
+    rating: 4.9,
+    times: ["morning", "weekend"],
+    city: "Delhi",
+    location: "Connaught Place (CP), Delhi",
+    vibeText: "Weekend brunch companion & central Delhi heritage lover.",
+    bgColor: "#ff6b4a",
+    badge: "Top Rated"
+  },
+  {
+    id: "p-9",
+    name: "Neil Bakshi",
+    emoji: "🏸",
+    act: "badminton",
+    categoryLabel: "Badminton",
+    rate: 500,
+    rating: 4.7,
+    times: ["morning", "evening"],
+    city: "Delhi",
+    location: "Siri Fort Complex, Delhi",
+    vibeText: "Coach-level tactical doubles player & fitness enthusiast.",
+    bgColor: "#7cc4ff"
+  },
+  {
+    id: "p-10",
+    name: "Zoya Haque",
+    emoji: "🥾",
+    act: "trek",
+    categoryLabel: "Trekking",
+    rate: 550,
+    rating: 5.0,
+    times: ["morning", "weekend"],
+    city: "Delhi",
+    location: "Sunder Nursery & Lodhi, Delhi",
+    vibeText: "UNESCO park sunrise walks, photography trails & chai stops.",
+    bgColor: "#a8f0c6",
+    badge: "Super Host"
+  },
+  {
+    id: "p-11",
+    name: "Ananya Kapoor",
+    emoji: "🗣️",
+    act: "language",
+    categoryLabel: "Language",
+    rate: 450,
+    rating: 4.8,
+    times: ["evening", "weekend"],
+    city: "Delhi",
+    location: "Khan Market, Delhi",
+    vibeText: "Literature coffee debates, Italian phrases & creative writing.",
+    bgColor: "#ffc933"
+  },
+  {
+    id: "p-12",
+    name: "Vikram Singhania",
+    emoji: "🎲",
+    act: "games",
+    categoryLabel: "Board games",
+    rate: 350,
+    rating: 4.9,
+    times: ["evening", "weekend"],
+    city: "Delhi",
+    location: "Hauz Khas Village, Delhi",
+    vibeText: "FIDE rated 1800 blitz chess player & strategic game host.",
+    bgColor: "#ff6b4a"
   }
 ];
 
-const CERTIFIED_HUBS = [
-  {
-    name: "Siri Fort Sports Complex",
-    city: "South Delhi",
-    type: "Badminton, Tennis & Jogging",
-    highlight: "Olympic-grade indoor wooden courts, public cafe & green trails.",
-    metro: "Green Park / Hauz Khas Metro",
-    img: hubSportsImg
-  },
-  {
-    name: "Khan Market",
-    city: "Central Delhi",
-    type: "Blue Tokai, Colocal & Book Cafes",
-    highlight: "Safe, shaded, upscale public market with reserved seating.",
-    metro: "Khan Market Metro (Violet Line)",
-    img: hubCafeImg
-  },
-  {
-    name: "DLF CyberHub & 32nd Avenue",
-    city: "Gurgaon",
-    type: "Tech Co-working & Open-Air Dining",
-    highlight: "High-security corporate boulevard with vibrant pedestrian promenade.",
-    metro: "Cyber City Rapid Metro",
-    img: heroDelhiImg
-  }
+const ROTATING_WORDS = ["trek", "play badminton", "sip chai", "speak French", "jam", "run", "play chess"];
+
+const MARQUEE_ITEMS = [
+  "🏸 Badminton buddies",
+  "🥾 Sunrise treks",
+  "☕ Café chats",
+  "🗣️ Language practice",
+  "🎲 Board games",
+  "🎸 Jam sessions",
+  "🏃 Morning runs",
+  "🎬 Movie plus-ones"
+];
+
+const CATEGORIES = [
+  { id: "all", label: "✨ All" },
+  { id: "badminton", label: "🏸 Badminton" },
+  { id: "trek", label: "🥾 Trekking" },
+  { id: "cafe", label: "☕ Café chat" },
+  { id: "language", label: "🗣️ Language" },
+  { id: "games", label: "🎲 Board games" },
+  { id: "music", label: "🎸 Jam session" },
+  { id: "run", label: "🏃 Running" }
+];
+
+// Gurgaon & Delhi Hotspots for Live Radar with Blue Lights
+const LIVE_RADAR_SPOTS = [
+  { name: "DLF CyberHub", city: "Gurugram", active: 24, coords: { x: 38, y: 48 }, icon: "💡" },
+  { name: "Sector 29 Entertainment Hub", city: "Gurugram", active: 18, coords: { x: 28, y: 62 }, icon: "🏸" },
+  { name: "Golf Course Road (Horizon)", city: "Gurugram", active: 16, coords: { x: 44, y: 72 }, icon: "☕" },
+  { name: "Connaught Place (CP)", city: "Delhi", active: 31, coords: { x: 62, y: 26 }, icon: "♟️" },
+  { name: "Khan Market", city: "Delhi", active: 19, coords: { x: 70, y: 40 }, icon: "☕" },
+  { name: "Sunder Nursery & Lodhi", city: "Delhi", active: 22, coords: { x: 74, y: 55 }, icon: "🥾" },
+  { name: "Siri Fort Sports Complex", city: "Delhi", active: 15, coords: { x: 65, y: 70 }, icon: "🏸" }
 ];
 
 export default function App() {
-  // Navigation & Role states
-  const [activeRole, setActiveRole] = useState<"seeker" | "host">("seeker");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [heroViewMode, setHeroViewMode] = useState<"map" | "photo">("map");
+  // Sound system state
+  const [isMuted, setIsMuted] = useState(false);
 
-  // Booking Modal states
-  const [bookingCompanion, setBookingCompanion] = useState<Companion | null>(null);
-  const [bookingHours, setBookingHours] = useState<number>(2);
-  const [bookingDate, setBookingDate] = useState<string>("This Saturday");
-  const [bookingTime, setBookingTime] = useState<string>("11:00 AM - 1:00 PM");
-  const [bookingConfirmed, setBookingConfirmed] = useState<boolean>(false);
+  // Rotating hero verb
+  const [wordIndex, setWordIndex] = useState(0);
 
-  // Host Calculator State
-  const [calculatorRate, setCalculatorRate] = useState<number>(500);
-  const [calculatorHours, setCalculatorHours] = useState<number>(6);
+  // Hero sticker parallax offset
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
 
-  // Lead Collection Modal
-  const [isLeadModalOpen, setIsLeadModalOpen] = useState<boolean>(false);
-  const [leadModalType, setLeadModalType] = useState<"partner" | "waitlist">("waitlist");
-  const [leadModalInterests, setLeadModalInterests] = useState<string>("");
+  // Filters for "What's your vibe?" directory
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCity, setSelectedCity] = useState<"all" | "Gurugram" | "Delhi">("all");
+  const [budgetLimit, setBudgetLimit] = useState(600);
+  const [timeFilter, setTimeFilter] = useState<"any" | "morning" | "evening" | "weekend">("any");
+  const [minRating, setMinRating] = useState(0);
 
-  // Privacy Policy Modal
-  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState<boolean>(false);
+  // Earnings Calculator State
+  const [calcHours, setCalcHours] = useState(8);
+  const [calcRate, setCalcRate] = useState(400);
 
-  // Audio Experience State
-  const [isMuted, setIsMuted] = useState<boolean>(() => audio.getIsMuted());
+  // Waitlist form state
+  const [waitlistRole, setWaitlistRole] = useState<"seeker" | "partner">("seeker");
+  const [waitlistName, setWaitlistName] = useState("");
+  const [waitlistContact, setWaitlistContact] = useState("");
+  const [waitlistCity, setWaitlistCity] = useState("Gurugram");
+  const [waitlistLocation, setWaitlistLocation] = useState("CyberHub / DLF");
+  const [waitlistTime, setWaitlistTime] = useState("Weekday Evenings (6:00 PM – 9:30 PM)");
+  const [waitlistStatus, setWaitlistStatus] = useState<string | null>(null);
 
-  // Attach global keyboard typing and click audio feedback
+  // Booking Modal State
+  const [bookingCompanion, setBookingCompanion] = useState<CompanionProfile | null>(null);
+  const [bookingDate, setBookingDate] = useState("Tomorrow");
+  const [bookingTime, setBookingTime] = useState("Evening (6:00 PM)");
+  const [bookingLocation, setBookingLocation] = useState("");
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+
+  // Global Audio listener initialization
   useEffect(() => {
     const cleanup = setupGlobalAudioListeners();
-    return () => cleanup();
+    setIsMuted(audio.getIsMuted());
+    return cleanup;
   }, []);
 
-  const filteredCompanions = selectedCategory === "all"
-    ? COMPANIONS
-    : COMPANIONS.filter(c => c.category === selectedCategory);
+  // Verb rotator interval (1.8s)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setWordIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
+    }, 1800);
+    return () => clearInterval(timer);
+  }, []);
 
-  const handleConfirmBooking = () => {
-    audio.playUnlock();
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.6 }
+  // Parallax on mouse move inside Hero
+  const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const x = e.clientX / window.innerWidth - 0.5;
+    const y = e.clientY / window.innerHeight - 0.5;
+    setParallax({ x, y });
+  };
+
+  // Falling celebratory emojis shower ("boom()")
+  const triggerBoom = (message?: string) => {
+    audio.playSuccess();
+    const emojis = ["🎉", "🙌", "⭐", "🎈", "🥳", "☕", "🏸"];
+    emojis.forEach((emoji) => {
+      for (let k = 0; k < 3; k++) {
+        const span = document.createElement("span");
+        span.className = "fall";
+        span.textContent = emoji;
+        span.style.left = `${Math.random() * 92}vw`;
+        span.style.animationDelay = `${Math.random() * 0.6}s`;
+        document.body.appendChild(span);
+        setTimeout(() => span.remove(), 2800);
+      }
     });
-    setBookingConfirmed(true);
+    if (message) {
+      setWaitlistStatus(message);
+    }
+  };
+
+  // Sound toggle button handler
+  const handleToggleSound = () => {
+    const newMuted = audio.toggleMute();
+    setIsMuted(newMuted);
+  };
+
+  // Waitlist submission handler
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!waitlistName.trim() || !waitlistContact.trim()) return;
+
+    audio.playClick();
+    triggerBoom(`You're on the list, ${waitlistName}! We'll reach out on WhatsApp soon. 🎉`);
+
+    try {
+      const waitlistRecord = {
+        role: waitlistRole,
+        name: waitlistName,
+        contact: waitlistContact,
+        city: waitlistCity,
+        location: waitlistLocation,
+        preferredTime: waitlistTime,
+        submittedAt: new Date().toISOString()
+      };
+      
+      const existing = JSON.parse(localStorage.getItem("hh_waitlist") || "[]");
+      existing.push(waitlistRecord);
+      localStorage.setItem("hh_waitlist", JSON.stringify(existing));
+
+      // Also send to Google Sheets bridge
+      await submitToGoogleSheets({
+        name: waitlistName,
+        email: waitlistContact.includes("@") ? waitlistContact : `${waitlistName.toLowerCase().replace(/\s+/g, '')}@lead.happyhangouts.life`,
+        phone: !waitlistContact.includes("@") ? waitlistContact : "",
+        city: waitlistCity,
+        location_area: waitlistLocation,
+        free_time: waitlistTime,
+        interests: "General Activities",
+        join_as: waitlistRole,
+        form_type: waitlistRole === "partner" ? "Become a Hangout Partner" : "Become a Hangout Seeker",
+        timestamp: new Date().toISOString()
+      });
+    } catch (err) {
+      // safe fallback
+    }
+
+    setWaitlistName("");
+    setWaitlistContact("");
+  };
+
+  // Open booking modal
+  const handleOpenBooking = (companion: CompanionProfile) => {
+    audio.playClick();
+    setBookingCompanion(companion);
+    setBookingLocation(companion.location);
+    setBookingSuccess(false);
+  };
+
+  // Confirm booking
+  const handleConfirmBooking = () => {
+    if (!bookingCompanion) return;
+    audio.playSuccess();
+    setBookingSuccess(true);
+    triggerBoom(`Booking request sent for ${bookingCompanion.name}! 🎉`);
+
+    // WhatsApp URL to fast-track directly with platform team
+    const message = `Hi Happy Hangouts! I'd like to book a hangout with ${bookingCompanion.name} (${bookingCompanion.emoji} ${bookingCompanion.categoryLabel}) at ${bookingLocation} for ${bookingDate} (${bookingTime}). Rate: ₹${bookingCompanion.rate}/hr.`;
+    const waUrl = `https://wa.me/918800843189?text=${encodeURIComponent(message)}`;
+
     setTimeout(() => {
-      setBookingConfirmed(false);
-      setBookingCompanion(null);
-      setLeadModalType("waitlist");
-      setLeadModalInterests(`Booked session with ${bookingCompanion?.name} (${bookingHours} hrs at ₹${bookingCompanion ? bookingCompanion.hourlyRate * bookingHours : 0}) at ${bookingCompanion?.hub}`);
-      setIsLeadModalOpen(true);
+      window.open(waUrl, "_blank", "noopener,noreferrer");
     }, 1200);
   };
 
+  // Filter companions
+  const filteredCompanions = COMPANIONS.filter((p) => {
+    const matchesCategory = selectedCategory === "all" || p.act === selectedCategory;
+    const matchesCity = selectedCity === "all" || p.city === selectedCity;
+    const matchesBudget = p.rate <= budgetLimit;
+    const matchesRating = p.rating >= minRating;
+    const matchesTime = timeFilter === "any" || p.times.includes(timeFilter);
+    return matchesCategory && matchesCity && matchesBudget && matchesRating && matchesTime;
+  });
+
+  // Calculate earnings (after 20% platform fee)
+  const monthlyTakeHome = Math.round(calcHours * 4.3 * calcRate * 0.8);
+
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-blue-600 selection:text-white pb-24 lg:pb-0">
+    <div className="min-h-screen flex flex-col font-body selection:bg-blue-600/20 selection:text-blue-900 pb-16 md:pb-0">
       
-      {/* ============================================================ */}
-      {/* 1. CLEAN TOP NAVIGATION BAR (High Contrast Dark Text)        */}
-      {/* ============================================================ */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
+      {/* 1. TOP NAVBAR */}
+      <nav className="sticky top-0 z-50 bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c] transition-colors">
+        <div className="wrap flex items-center justify-between h-16">
           
-          {/* Logo Zone */}
-          <a href="#" className="flex items-center gap-3 shrink-0">
-            <HappyHangoutsLogo variant="header" theme="light" />
+          {/* Logo with official image emblem & bold brand name */}
+          <a 
+            href="#top" 
+            onClick={() => audio.playClick()}
+            className="flex items-center gap-3 no-underline group"
+          >
+            <div className="w-10 h-10 rounded-xl overflow-hidden border-[2.5px] border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] shrink-0 bg-blue-700">
+              <img 
+                src="/assets/aistudio/Happy_Hangouts_Logo_1d102f6e.jpg" 
+                alt="Happy Hangouts Logo" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="font-display font-extrabold text-[20px] sm:text-[22px] tracking-tight text-[#0b1f5c] flex items-center gap-1.5 leading-none">
+                <i className="not-italic bg-[#1f4ee0] text-white rounded-lg px-1.5 py-0.5 text-sm border-[1.5px] border-[#0b1f5c] -rotate-6 shadow-[1px_1px_0_#0b1f5c]">
+                  🙌
+                </i>
+                Happy Hangouts
+              </span>
+              <span className="text-[11px] font-bold text-[#4a5a8a] mt-0.5 tracking-tight flex items-center gap-1">
+                <span>Akele Kyu....?</span>
+                <span className="text-[#1f4ee0] font-black">Hangouts Hai na</span>
+              </span>
+            </div>
           </a>
 
-          {/* Clean Navigation Links with Dark Legible Text */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-bold text-slate-800">
-            <a href="#live-map" className="hover:text-blue-600 transition-colors flex items-center gap-1.5 text-blue-700 font-extrabold">
-              <span className="w-2 h-2 rounded-full bg-blue-600 inline-block shadow-[0_0_6px_#2563eb]" />
+          {/* Nav links and actions */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <a 
+              href="#match" 
+              onClick={() => audio.playClick()}
+              className="hidden md:inline-block font-bold text-[#0b1f5c] hover:text-[#1f4ee0] transition-colors"
+            >
+              Find a partner
+            </a>
+            <a 
+              href="#radar" 
+              onClick={() => audio.playClick()}
+              className="hidden md:inline-block font-bold text-[#0b1f5c] hover:text-[#1f4ee0] transition-colors"
+            >
               Live Radar
             </a>
-            <a href="#how-it-works" className="hover:text-blue-600 transition-colors">
-              How It Works
-            </a>
-            <a href="#companions" className="hover:text-blue-600 transition-colors">
-              Find Companions
-            </a>
-            <a href="#hubs" className="hover:text-blue-600 transition-colors">
-              Verified Hubs
-            </a>
-            <a href="#safety" className="hover:text-blue-600 transition-colors">
-              Safety &amp; Escrow
-            </a>
-            <a href="#calculator" className="hover:text-blue-600 transition-colors">
-              Host &amp; Earn
-            </a>
-            <a href="#faq" className="hover:text-blue-600 transition-colors">
-              FAQ
-            </a>
-          </nav>
-
-          {/* Action CTAs & Sound Experience Control */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Interactive Sound Toggle (Minimalist, accessible) */}
-            <button
-              onClick={() => {
-                const newMuted = audio.toggleMute();
-                setIsMuted(newMuted);
-              }}
-              title={isMuted ? "Sound muted (click to enable typing & click sounds)" : "Interactive sound active (click to mute)"}
-              className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-bold cursor-pointer shrink-0 ${
-                !isMuted 
-                  ? "border-blue-300 bg-blue-50 text-blue-900 shadow-2xs hover:bg-blue-100" 
-                  : "border-slate-200 bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
-              }`}
-              aria-label="Toggle interactive sound effects"
-            >
-              {!isMuted ? (
-                <>
-                  <Volume2 className="w-4 h-4 text-blue-600 animate-pulse shrink-0" />
-                  <span className="font-mono text-[11px] font-semibold text-blue-800">
-                    Sound
-                  </span>
-                </>
-              ) : (
-                <>
-                  <VolumeX className="w-4 h-4 text-slate-500 shrink-0" />
-                  <span className="font-mono text-[11px] font-semibold text-slate-600">
-                    Muted
-                  </span>
-                </>
-              )}
-            </button>
-
-            {/* CTAs on tablet & desktop only: on mobile, sticky bottom dock provides primary actions with zero top header congestion */}
-            <button
-              onClick={() => {
-                audio.playClick();
-                setLeadModalType("partner");
-                setLeadModalInterests("Applying as Founding Host Partner");
-                setIsLeadModalOpen(true);
-              }}
-              className="hidden sm:inline-flex px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border-2 border-slate-900 bg-slate-950 hover:bg-slate-850 text-white font-extrabold text-[11px] sm:text-xs uppercase tracking-wider transition-all cursor-pointer shadow-xs active:scale-95 items-center gap-1 shrink-0"
-            >
-              <span>🤝</span>
-              <span>Become Host</span>
-            </button>
-            <a
-              href="#companions"
+            <a 
+              href="#earn" 
               onClick={() => audio.playClick()}
-              className="hidden sm:inline-flex px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-md shadow-blue-600/20 active:scale-95 transition-all cursor-pointer items-center gap-1 shrink-0"
+              className="hidden md:inline-block font-bold text-[#0b1f5c] hover:text-[#1f4ee0] transition-colors"
             >
-              <span>⚡</span>
-              <span>Book Hangout</span>
+              Earn
+            </a>
+            <a 
+              href="#safe" 
+              onClick={() => audio.playClick()}
+              className="hidden lg:inline-block font-bold text-[#0b1f5c] hover:text-[#1f4ee0] transition-colors"
+            >
+              Safety
+            </a>
+
+            {/* Audio Toggle Button with tactile feedback */}
+            <button
+              type="button"
+              onClick={handleToggleSound}
+              aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+              className={`p-2 rounded-full border-[2px] border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] transition-transform active:translate-y-0.5 ${
+                isMuted ? "bg-white text-slate-500" : "bg-[#ffc933] text-[#0b1f5c]"
+              }`}
+              title={isMuted ? "Click to enable sound" : "Sound enabled"}
+            >
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+
+            {/* Join Waitlist CTA */}
+            <a 
+              href="#join" 
+              onClick={() => audio.playClick()}
+              className="btn text-sm py-2 px-4 shadow-[3px_3px_0_#0b1f5c]"
+            >
+              Join waitlist
+            </a>
+          </div>
+
+        </div>
+      </nav>
+
+      {/* 2. HERO SECTION */}
+      <header 
+        id="top" 
+        onMouseMove={handleHeroMouseMove}
+        className="relative py-14 sm:py-20 lg:py-24 overflow-hidden border-b-[2.5px] border-[#0b1f5c] bg-[#f3f8ff]"
+      >
+        <div className="wrap relative">
+          
+          {/* Floating Sticker Badges with Responsive Tilts & Parallax */}
+          <span 
+            className="stk y"
+            style={{ 
+              right: "6%", 
+              top: "4%", 
+              transform: `rotate(6deg) translate(${parallax.x * 24}px, ${parallax.y * 24}px)` 
+            }}
+          >
+            ⭐ 4.9 · 218 reviews
+          </span>
+
+          <span 
+            className="stk s"
+            style={{ 
+              right: "22%", 
+              top: "36%", 
+              transform: `rotate(-7deg) translate(${parallax.x * -20}px, ${parallax.y * -20}px)` 
+            }}
+          >
+            🏸 Today, 6 PM
+          </span>
+
+          <span 
+            className="stk p"
+            style={{ 
+              right: "5%", 
+              top: "60%", 
+              transform: `rotate(4deg) translate(${parallax.x * 30}px, ${parallax.y * 30}px)` 
+            }}
+          >
+            ☕ ₹400/hr
+          </span>
+
+          <span 
+            className="stk"
+            style={{ 
+              right: "26%", 
+              top: "84%", 
+              transform: `rotate(-3deg) translate(${parallax.x * -26}px, ${parallax.y * -26}px)` 
+            }}
+          >
+            📍 Gurugram & Delhi
+          </span>
+
+          {/* Tagline Badge */}
+          <div>
+            <span className="tag">
+              Akele kyu? Hangouts hai na
+            </span>
+          </div>
+
+          {/* Dynamic Animated Heading with rotating verb */}
+          <h1 className="mt-5 text-[42px] sm:text-[68px] md:text-[84px] lg:text-[104px] font-extrabold tracking-[-0.03em] text-[#0b1f5c] max-w-4xl">
+            Find someone <br className="hidden sm:inline" />
+            to{" "}
+            <em className="not-italic text-white bg-[#1f4ee0] px-2 py-0.5 rounded-[0.2em] inline-block -rotate-2 border-[3px] border-[#0b1f5c] shadow-[4px_4px_0_#0b1f5c] transition-all duration-300">
+              {ROTATING_WORDS[wordIndex]}
+            </em>{" "}
+            <br className="hidden sm:inline" />
+            with. Tonight.
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-[18px] sm:text-[22px] max-w-[640px] mt-6 mb-8 text-[#4a5a8a] font-normal leading-relaxed">
+            Hire real, verified people for an hour or an afternoon in Gurugram & Delhi. Pick by interest, hobby or goal, then filter by time, budget and reviews. No more cancelled plans, no more doing it alone.
+          </p>
+
+          {/* Action CTAs */}
+          <div className="flex items-center gap-4 flex-wrap">
+            <a 
+              href="#match" 
+              onClick={() => audio.playClick()}
+              className="btn b text-[18px] py-3.5 px-7"
+            >
+              Find my hangout →
+            </a>
+            <a 
+              href="#earn" 
+              onClick={() => audio.playClick()}
+              className="btn text-[18px] py-3.5 px-7"
+            >
+              Earn as a partner
             </a>
           </div>
 
         </div>
       </header>
 
-      {/* ============================================================ */}
-      {/* 2. MINIMALIST HERO SECTION (High-Contrast, Clear Copy)       */}
-      {/* ============================================================ */}
-      <section className="pt-6 sm:pt-16 pb-12 sm:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-          
-          {/* Left Column: Headline and Immediate Actions */}
-          <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
-            
-            {/* Clean Location Tag (Solid Dark Text on Light Pill) */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-300 text-slate-900 font-bold text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-600" />
-              <span>Delhi NCR · Verified In-Person Hangouts</span>
-            </div>
-
-            {/* Main Headline in Deep Ink Black */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight leading-[1.12]">
-              Find real friends for <br />
-              <span className="text-blue-600">real activities</span> in Delhi NCR.
-            </h1>
-
-            {/* Subtitle in High-Contrast Dark Slate */}
-            <p className="text-sm sm:text-base lg:text-lg text-slate-700 font-normal leading-relaxed max-w-xl">
-              Skip awkward small talk and lonely weekends. Hire verified local companions by the hour for badminton rallies, pour-over coffee, startup brainstorming, and heritage walks. Safe public cafes only.
-            </p>
-
-            {/* Primary Brand Action Buttons (Specially Highlighted on Mobile & Desktop) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
-              
-              {/* Brand Action 1: Book a Hangout */}
-              <a
-                href="#companions"
-                onClick={() => audio.playClick()}
-                className="group relative p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 text-white shadow-xl shadow-blue-500/25 border-2 border-blue-400/40 hover:shadow-2xl hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer flex flex-col justify-between text-left overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-28 h-28 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-[10px] font-mono font-bold tracking-wider uppercase text-cyan-200">
-                    Seeker · From ₹400/hr
-                  </span>
-                  <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
-                </div>
-                <div className="mt-3">
-                  <div className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center gap-2">
-                    <span>⚡ Book a Hangout</span>
-                  </div>
-                  <p className="text-xs text-blue-100 font-medium mt-1 leading-snug">
-                    Hire verified badminton, coffee, chess &amp; startup companions in Delhi NCR
-                  </p>
-                </div>
-              </a>
-
-              {/* Brand Action 2: Become a Host */}
-              <button
-                onClick={() => {
-                  audio.playClick();
-                  setLeadModalType("partner");
-                  setLeadModalInterests("Applying as Founding Host Partner (Delhi NCR)");
-                  setIsLeadModalOpen(true);
-                }}
-                className="group relative p-4 sm:p-5 rounded-2xl bg-slate-950 text-white hover:bg-slate-900 shadow-xl border-2 border-slate-800 hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer flex flex-col justify-between text-left overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[10px] font-mono font-bold tracking-wider uppercase text-emerald-300">
-                    Host Partner · 0% Fee
-                  </span>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all" />
-                </div>
-                <div className="mt-3">
-                  <div className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center gap-2">
-                    <span>🤝 Become a Host</span>
-                  </div>
-                  <p className="text-xs text-slate-300 font-medium mt-1 leading-snug">
-                    Get paid ₹400–₹1,500/hr for your hobbies &amp; friendly company
-                  </p>
-                </div>
-              </button>
-
-            </div>
-
-            {/* High-Contrast Trust Signals Strip */}
-            <div className="pt-6 border-t border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-bold text-slate-800">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>100% ID Verified</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Public Spots Only</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Escrow Protected</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Delhi &amp; Gurgaon Focused</span>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Right Column: Creative Live Hangouts Map with Glowing Blue Lights */}
-          <div id="live-map" className="lg:col-span-6 space-y-3 scroll-mt-24">
-            {/* View Mode Switcher Header */}
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block shadow-[0_0_8px_#2563eb]" />
-                <span className="text-xs font-black text-slate-950 uppercase tracking-wider">
-                  {heroViewMode === "map" ? "Live Hangouts Radar (Blue Lights)" : "Verified Meetup Photo"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1 p-1 bg-white border-2 border-slate-300 rounded-xl shadow-xs">
-                <button
-                  onClick={() => {
-                    audio.playClick();
-                    setHeroViewMode("map");
-                  }}
-                  className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    heroViewMode === "map"
-                      ? "bg-slate-950 text-white shadow-xs"
-                      : "text-slate-700 hover:text-slate-950 hover:bg-slate-100"
-                  }`}
-                >
-                  🗺️ Live Map
-                </button>
-                <button
-                  onClick={() => {
-                    audio.playClick();
-                    setHeroViewMode("photo");
-                  }}
-                  className={`px-3 py-1 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    heroViewMode === "photo"
-                      ? "bg-slate-950 text-white shadow-xs"
-                      : "text-slate-700 hover:text-slate-950 hover:bg-slate-100"
-                  }`}
-                >
-                  📸 Real Meetup
-                </button>
-              </div>
-            </div>
-
-            {/* Creative Live Map with Glowing Blue Lights */}
-            {heroViewMode === "map" ? (
-              <LiveHangoutsTrustMap
-                onSelectSpot={(spot) => {
-                  setSelectedCategory(spot.category);
-                  const el = document.getElementById("companions");
-                  if (el) {
-                    el.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-              />
-            ) : (
-              <div className="relative rounded-3xl overflow-hidden border-2 border-slate-300 shadow-xl bg-slate-100">
-                <img
-                  src={heroDelhiImg}
-                  alt="Two people having a real-world coffee hangout in Delhi NCR"
-                  className="w-full h-[320px] xs:h-[350px] sm:h-[390px] lg:h-[430px] object-cover"
-                  loading="eager"
-                />
-                <div className="p-4 bg-white border-t border-slate-200 text-left">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-extrabold text-sm text-slate-950">Weekend Coffee &amp; Tech Chat</h4>
-                      <p className="text-xs text-slate-700 mt-0.5 font-medium">Khan Market &amp; CyberHub Partner Cafes</p>
-                    </div>
-                    <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-950 font-extrabold text-xs border border-emerald-300">
-                      Safe &amp; Verified
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-slate-700 font-bold px-1">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-blue-600 shadow-[0_0_6px_#2563eb] shrink-0" />
-                Live active hangouts across Delhi NCR
-              </span>
-              <span className="text-blue-700 font-extrabold hidden sm:inline">Akele Kyu....? Happy Hangouts Hai na</span>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* 3. HOW IT WORKS (Simple, High-Contrast 4-Step Breakdown)     */}
-      {/* ============================================================ */}
-      <section id="how-it-works" className="py-20 bg-slate-50 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-mono font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-3 py-1 rounded-md">
-              SIMPLE &amp; TRANSPARENT
+      {/* 3. CONTINUOUS RUNNING MARQUEE BANNER */}
+      <div className="mq" aria-hidden="true">
+        <div className="mq-track">
+          {MARQUEE_ITEMS.concat(MARQUEE_ITEMS).map((item, idx) => (
+            <span key={idx} className="mq-item">
+              {item}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-              How Happy Hangouts Works
-            </h2>
-            <p className="text-slate-700 text-sm sm:text-base">
-              Whether you want to book a companion for an activity or earn money by hosting, our process is safe, simple, and transparent.
-            </p>
-
-            {/* High-Contrast Mode Switcher */}
-            <div className="pt-4 flex justify-center">
-              <div className="p-1 bg-white border-2 border-slate-300 rounded-2xl flex items-center shadow-xs">
-                <button
-                  onClick={() => { audio.playClick(); setActiveRole("seeker"); }}
-                  className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer ${
-                    activeRole === "seeker"
-                      ? "bg-slate-950 text-white shadow-sm"
-                      : "text-slate-700 hover:text-slate-950"
-                  }`}
-                >
-                  I Want to Book a Companion
-                </button>
-                <button
-                  onClick={() => { audio.playClick(); setActiveRole("host"); }}
-                  className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer ${
-                    activeRole === "host"
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-700 hover:text-slate-950"
-                  }`}
-                >
-                  I Want to Host &amp; Earn
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 4 Steps Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-left">
-            {activeRole === "seeker" ? (
-              <>
-                {/* Step 1 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-blue-100 text-blue-950 font-mono font-black text-lg flex items-center justify-center border border-blue-300 shadow-xs"
-                    >
-                      01
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Choose a Companion</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Filter verified profiles by badminton, coffee, startup discussions, or music. See photos, bios, reviews, and hourly rates upfront.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-
-                {/* Step 2 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-blue-100 text-blue-950 font-mono font-black text-lg flex items-center justify-center border border-blue-300 shadow-xs"
-                    >
-                      02
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Pick a Public Hub</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Choose a convenient certified public venue like Khan Market, Siri Fort Sports Complex, or CyberHub Gurgaon. No private spaces allowed.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-
-                {/* Step 3 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-blue-100 text-blue-950 font-mono font-black text-lg flex items-center justify-center border border-blue-300 shadow-xs"
-                    >
-                      03
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Secure Escrow Booking</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Your booking fee is held safely in 100% protected escrow. The money is not transferred to the host until you actually meet and finish.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-
-                {/* Step 4 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-blue-100 text-blue-950 font-mono font-black text-lg flex items-center justify-center border border-blue-300 shadow-xs"
-                    >
-                      04
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Meet &amp; Have Fun</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Meet at the cafe or sports arena, check in with a simple code, enjoy your activity, and leave a review.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-              </>
-            ) : (
-              <>
-                {/* Host Step 1 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-950 font-mono font-black text-lg flex items-center justify-center border border-emerald-300 shadow-xs"
-                    >
-                      01
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Fast ID Verification</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Complete a quick 1-minute government ID verification to keep our entire community safe, trustworthy, and scam-free.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-
-                {/* Host Step 2 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-950 font-mono font-black text-lg flex items-center justify-center border border-emerald-300 shadow-xs"
-                    >
-                      02
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Set Your Hourly Rate</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Set your custom rate from ₹400 to ₹1,500 per hour based on your activity, skills, or hobbies.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-
-                {/* Host Step 3 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-950 font-mono font-black text-lg flex items-center justify-center border border-emerald-300 shadow-xs"
-                    >
-                      03
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Accept Requests</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Receive booking requests on WhatsApp and choose when you are free. You have 100% control over your schedule.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-
-                {/* Host Step 4 */}
-                <SpatialCard3D maxTilt={6} scale={1.02} className="h-full">
-                  <div className="h-full p-6 bg-white rounded-3xl border-2 border-slate-300 shadow-xs hover:shadow-xl transition-all space-y-3">
-                    <div 
-                      style={{ transform: "translateZ(24px)" }}
-                      className="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-950 font-mono font-black text-lg flex items-center justify-center border border-emerald-300 shadow-xs"
-                    >
-                      04
-                    </div>
-                    <h3 className="font-extrabold text-base text-slate-950">Direct UPI Payout</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                      Right after your session wraps up, your money is sent directly to your UPI bank account with 0% platform commission for the first 50 hosts.
-                    </p>
-                  </div>
-                </SpatialCard3D>
-              </>
-            )}
-          </div>
-
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* ============================================================ */}
-      {/* 4. COMPANION DIRECTORY (Clean, Filterable, Easy to Book)     */}
-      {/* ============================================================ */}
-      <section id="companions" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
-        
-        {/* Header & Filter Bar */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 text-left">
-          <div className="space-y-2">
-            <span className="text-xs font-mono font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-3 py-1 rounded-md">
-              BIOMETRICALLY VERIFIED LOCALS
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-              Hire a Companion in Delhi NCR
+      {/* 4. "WHAT'S YOUR VIBE?" INTERACTIVE DIRECTORY */}
+      <section id="match" className="py-16 sm:py-20 bg-[#f3f8ff]">
+        <div className="wrap">
+          
+          <div className="flex flex-col items-start">
+            <span className="tag">Try it live</span>
+            <h2 className="text-[34px] sm:text-[52px] font-extrabold tracking-tight mt-3 mb-2 text-[#0b1f5c]">
+              What’s your vibe?
             </h2>
-            <p className="text-slate-700 text-sm max-w-xl">
-              Every person below has passed government identity checks. Select any companion to book an in-person hangout session.
+            <p className="text-[#4a5a8a] text-[17px] sm:text-[19px] max-w-2xl mb-8">
+              Tap an interest, choose your city, and set your budget. Filter verified partners ready for hangouts in Gurugram and Delhi.
             </p>
           </div>
 
-          {/* High-Contrast Category Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {[
-              { id: "all", label: "All Vibes" },
-              { id: "sports", label: "🏸 Badminton" },
-              { id: "coffee", label: "☕ Coffee" },
-              { id: "tech", label: "💡 Tech & Startups" },
-              { id: "photo", label: "📷 Photowalks" },
-              { id: "chess", label: "♟️ Chess" },
-              { id: "music", label: "🎸 Music" }
-            ].map((cat) => (
+          {/* Category Chips */}
+          <div className="flex gap-2.5 flex-wrap mb-4">
+            {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => { audio.playClick(); setSelectedCategory(cat.id); }}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                  selectedCategory === cat.id
-                    ? "bg-slate-950 text-white border-slate-950 shadow-sm"
-                    : "bg-white text-slate-800 border-slate-300 hover:bg-slate-100"
-                }`}
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  setSelectedCategory(cat.id);
+                }}
+                className={`chip ${selectedCategory === cat.id ? "active" : ""}`}
+                aria-pressed={selectedCategory === cat.id}
               >
                 {cat.label}
               </button>
             ))}
           </div>
-        </div>
 
-        {/* Companions Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-          {filteredCompanions.map((comp) => (
-            <SpatialCard3D key={comp.id} maxTilt={7} scale={1.02} className="h-full">
-              <div className="h-full bg-white rounded-3xl border-2 border-slate-300 p-6 shadow-sm hover:shadow-xl hover:border-slate-500 transition-all flex flex-col justify-between space-y-5">
-                <div className="space-y-4">
-                  
-                  {/* Card Top: Avatar, Name, Rating with 3D Popout */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div 
-                        style={{ transform: "translateZ(28px)" }}
-                        className={`w-14 h-14 rounded-2xl ${comp.color} text-white flex items-center justify-center text-2xl shadow-md shrink-0`}
-                      >
-                        {comp.emoji}
-                      </div>
-                      <div style={{ transform: "translateZ(18px)" }}>
-                        <div className="flex items-center gap-1.5">
-                          <h3 className="font-extrabold text-lg text-slate-950">{comp.name}</h3>
-                          <span className="text-xs text-slate-700 font-bold">({comp.age})</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-xs text-slate-800 mt-0.5">
-                          <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                          <span className="truncate max-w-[180px] font-semibold">{comp.hub}</span>
-                        </div>
-                      </div>
-                    </div>
+          {/* City Selection Chips (Strictly Gurugram & Delhi) */}
+          <div className="flex items-center gap-2 mb-6">
+            <span className="text-xs font-bold text-[#4a5a8a] uppercase tracking-wider mr-1">
+              Location:
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                setSelectedCity("all");
+              }}
+              className={`chip text-sm py-1.5 px-3.5 ${selectedCity === "all" ? "active" : ""}`}
+            >
+              📍 Both Cities
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                setSelectedCity("Gurugram");
+              }}
+              className={`chip text-sm py-1.5 px-3.5 ${selectedCity === "Gurugram" ? "active" : ""}`}
+            >
+              📍 Gurugram
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                setSelectedCity("Delhi");
+              }}
+              className={`chip text-sm py-1.5 px-3.5 ${selectedCity === "Delhi" ? "active" : ""}`}
+            >
+              📍 Delhi
+            </button>
+          </div>
 
-                    <span 
-                      style={{ transform: "translateZ(20px)" }}
-                      className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-400 font-extrabold text-[11px] shrink-0 shadow-xs"
+          {/* Filter Controls Panel */}
+          <div className="ctl">
+            {/* Budget Range */}
+            <label className="flex items-center gap-3">
+              <span>Budget up to</span>
+              <input 
+                type="range" 
+                min={200} 
+                max={1000} 
+                step={50} 
+                value={budgetLimit}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setBudgetLimit(val);
+                  audio.playSlider((val - 200) / 800);
+                }}
+              />
+              <output>₹{budgetLimit}</output>
+            </label>
+
+            {/* When / Time Filter */}
+            <label className="flex items-center gap-3">
+              <span>When</span>
+              <select 
+                value={timeFilter}
+                onChange={(e) => {
+                  audio.playClick();
+                  setTimeFilter(e.target.value as any);
+                }}
+              >
+                <option value="any">Anytime</option>
+                <option value="morning">Morning</option>
+                <option value="evening">Evening</option>
+                <option value="weekend">Weekend</option>
+              </select>
+            </label>
+
+            {/* Rating Filter */}
+            <label className="flex items-center gap-3">
+              <span>Min rating</span>
+              <select 
+                value={minRating}
+                onChange={(e) => {
+                  audio.playClick();
+                  setMinRating(Number(e.target.value));
+                }}
+              >
+                <option value={0}>Any Rating</option>
+                <option value={4.5}>⭐ 4.5+</option>
+                <option value={4.8}>⭐ 4.8+</option>
+              </select>
+            </label>
+          </div>
+
+          {/* Companion Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredCompanions.length > 0 ? (
+              filteredCompanions.map((comp) => (
+                <div key={comp.id} className="pc">
+                  {/* Avatar & Badges */}
+                  <div className="flex items-start justify-between">
+                    <div 
+                      className="av"
+                      style={{ backgroundColor: comp.bgColor }}
                     >
-                      ID Verified ✓
+                      {comp.emoji}
+                    </div>
+                    {comp.badge && (
+                      <span className="text-xs font-bold bg-[#ffc933] text-[#0b1f5c] px-2.5 py-1 rounded-full border-[1.5px] border-[#0b1f5c]">
+                        {comp.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Name & Location */}
+                  <div>
+                    <h3 className="text-[#0b1f5c]">{comp.name}</h3>
+                    <small className="block mt-0.5">
+                      📍 {comp.location} · {comp.times.join(", ")}
+                    </small>
+                  </div>
+
+                  {/* Vibe Description */}
+                  <p className="text-sm text-[#0b1f5c] font-medium leading-snug line-clamp-2">
+                    {comp.vibeText}
+                  </p>
+
+                  {/* Price & Rating */}
+                  <div className="row pt-2 border-t border-slate-200">
+                    <b className="text-[#0b1f5c]">
+                      ₹{comp.rate}
+                      <small className="text-xs text-[#4a5a8a] font-bold">/hr</small>
+                    </b>
+                    <span className="font-bold text-sm text-[#0b1f5c] flex items-center gap-1">
+                      ⭐ {comp.rating}
                     </span>
                   </div>
 
-                  {/* Vibe Tagline */}
-                  <div 
-                    style={{ transform: "translateZ(14px)" }}
-                    className="text-xs font-bold text-blue-950 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200"
+                  {/* Book / Hangout CTA */}
+                  <button 
+                    type="button"
+                    onClick={() => handleOpenBooking(comp)}
+                    className="btn w-full py-2.5 text-sm font-extrabold mt-1"
                   >
-                    {comp.vibe}
-                  </div>
-
-                  {/* Bio in Dark Legible Text */}
-                  <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
-                    {comp.bio}
-                  </p>
-
-                  {/* Skills tags */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {comp.skills.map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-900 text-[11px] font-semibold border border-slate-300"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-
-                </div>
-
-                {/* Card Bottom: Rate and Book Button with 3D Depth */}
-                <div 
-                  style={{ transform: "translateZ(22px)" }}
-                  className="pt-4 border-t border-slate-200 flex items-center justify-between gap-3"
-                >
-                  <div>
-                    <div className="text-base sm:text-lg font-black text-slate-950">
-                      ₹{comp.hourlyRate} <span className="text-xs font-normal text-slate-700">/ hour</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-[11px] text-amber-800 font-bold">
-                      <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                      <span>{comp.rating} ({comp.hangoutsCompleted} hangouts)</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      audio.playClick();
-                      setBookingCompanion(comp);
-                      setBookingHours(2);
-                    }}
-                    className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm hover:shadow-md active:scale-95"
-                  >
-                    Book Hangout
+                    Hangout! 🙌
                   </button>
                 </div>
-
+              ))
+            ) : (
+              <div className="col-span-full text-center p-10 border-[2.5px] border-dashed border-[#0b1f5c] rounded-[22px] bg-white">
+                <p className="font-bold text-lg text-[#0b1f5c]">
+                  No match found for this budget or filter in Gurugram/Delhi.
+                </p>
+                <p className="text-[#4a5a8a] text-sm mt-1">
+                  Try adjusting the budget slider up to ₹1,000 or selecting "Anytime" — new verified partners join every week!
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    audio.playClick();
+                    setSelectedCategory("all");
+                    setSelectedCity("all");
+                    setBudgetLimit(1000);
+                    setTimeFilter("any");
+                    setMinRating(0);
+                  }}
+                  className="btn b text-sm mt-4 py-2 px-5"
+                >
+                  Reset all filters
+                </button>
               </div>
-            </SpatialCard3D>
-          ))}
-        </div>
-
-      </section>
-
-      {/* ============================================================ */}
-      {/* 5. CERTIFIED PUBLIC HUBS (Real Photos, High Contrast)        */}
-      {/* ============================================================ */}
-      <section id="hubs" className="py-20 bg-slate-50 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 text-left">
-          
-          <div className="space-y-2 max-w-2xl">
-            <span className="text-xs font-mono font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-3 py-1 rounded-md">
-              SAFE PUBLIC LOCATIONS
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-              Where Meets Happen in Delhi NCR
-            </h2>
-            <p className="text-slate-700 text-sm">
-              We never permit meetings at private apartments. Hangouts occur strictly at certified partner cafes, sports complexes, and heritage gardens.
-            </p>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {CERTIFIED_HUBS.map((hub, idx) => (
-              <SpatialCard3D key={idx} maxTilt={6} scale={1.02} className="h-full">
-                <div className="h-full bg-white rounded-3xl border-2 border-slate-300 overflow-hidden shadow-xs hover:shadow-xl transition-all space-y-4">
-                  <img
-                    src={hub.img}
-                    alt={hub.name}
-                    className="w-full h-48 object-cover border-b border-slate-200"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="p-5 pt-1 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-blue-700 font-mono uppercase">{hub.city}</span>
-                      <span className="text-[11px] font-extrabold text-emerald-950 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                        CCTV Monitored ✓
-                      </span>
-                    </div>
-                    <h3 className="font-extrabold text-lg text-slate-950">{hub.name}</h3>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">{hub.highlight}</p>
-                    <div className="pt-3 border-t border-slate-200 flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
-                      <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                      <span>{hub.metro}</span>
+        </div>
+      </section>
+
+      {/* 5. "HANGOUT IN 3 TAPS" (HOW IT WORKS) */}
+      <section className="py-16 sm:py-20 bg-white border-y-[2.5px] border-[#0b1f5c]">
+        <div className="wrap">
+          <span className="tag">3 steps</span>
+          <h2 className="text-[34px] sm:text-[52px] font-extrabold tracking-tight mt-3 mb-8 text-[#0b1f5c]">
+            Hangout in 3 taps
+          </h2>
+
+          <div className="steps grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="st">
+              <div className="n">1</div>
+              <h3 className="text-[#0b1f5c]">Pick your plan</h3>
+              <p className="text-[#4a5a8a] font-medium">
+                Hobby, badminton match, trek or just chill company for chai. Add your preferred time slot and budget.
+              </p>
+            </div>
+            
+            <div className="st">
+              <div className="n">2</div>
+              <h3 className="text-[#0b1f5c]">Choose a partner</h3>
+              <p className="text-[#4a5a8a] font-medium">
+                Compare verified reviews and hourly rates in Gurugram & Delhi. Coordinate safely in the app before you meet.
+              </p>
+            </div>
+
+            <div className="st">
+              <div className="n">3</div>
+              <h3 className="text-[#0b1f5c]">Go hang out</h3>
+              <p className="text-[#4a5a8a] font-medium">
+                Meet strictly in a verified public place, pay securely by the hour, and rate each other right after the session.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. LIVE HANGOUTS RADAR (BLUE LIGHTS MAP) */}
+      <section id="radar" className="py-16 sm:py-20 bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c]">
+        <div className="wrap">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="tag">Real-Time Trust</span>
+              <h2 className="text-[32px] sm:text-[48px] font-extrabold tracking-tight mt-2 text-[#0b1f5c]">
+                Live Hangouts Radar
+              </h2>
+              <p className="text-[#4a5a8a] font-medium text-base sm:text-lg">
+                Blue light radar showing active sessions right now across Gurugram and Delhi.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border-[2px] border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] shrink-0 self-start sm:self-auto">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-[#1f4ee0]"></span>
+              </span>
+              <span className="text-xs font-extrabold text-[#0b1f5c]">
+                138 Active Hangouts Now
+              </span>
+            </div>
+          </div>
+
+          {/* Interactive Radar Box with Blue Light Nodes */}
+          <div className="bg-white border-[2.5px] border-[#0b1f5c] rounded-[24px] p-6 sm:p-8 shadow-[6px_6px_0_#0b1f5c] relative overflow-hidden">
+            
+            {/* Grid graphic lines */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+              {LIVE_RADAR_SPOTS.slice(0, 4).map((spot, idx) => (
+                <div 
+                  key={idx}
+                  className="bg-[#f3f8ff] border-[2px] border-[#0b1f5c] rounded-xl p-3 flex items-center justify-between shadow-[2px_2px_0_#0b1f5c]"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{spot.icon}</span>
+                    <div className="leading-tight">
+                      <p className="text-xs font-bold text-[#0b1f5c] truncate max-w-[110px]">
+                        {spot.name}
+                      </p>
+                      <p className="text-[10px] text-[#4a5a8a] font-semibold">
+                        {spot.city}
+                      </p>
                     </div>
                   </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#1f4ee0] shadow-[0_0_8px_#1f4ee0] animate-pulse"></div>
+                    <span className="text-xs font-black text-[#1f4ee0]">{spot.active}</span>
+                  </div>
                 </div>
-              </SpatialCard3D>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* 6. TRUST, SAFETY & ESCROW PILLARS                            */}
-      {/* ============================================================ */}
-      <section id="safety" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 text-left">
-        
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-xs font-mono font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-3 py-1 rounded-md">
-            SAFETY FIRST
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-            How We Protect You
-          </h2>
-          <p className="text-slate-700 text-sm sm:text-base">
-            Your safety and financial peace of mind are built into every single step.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <div className="p-8 bg-white rounded-3xl border-2 border-slate-200 shadow-xs space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black text-slate-950">100% ID Verified</h3>
-            <p className="text-sm text-slate-700 leading-relaxed font-normal">
-              Every companion and user undergoes government ID checks and selfie liveness verification. Zero fake accounts, zero catfishes.
-            </p>
-          </div>
-
-          <div className="p-8 bg-white rounded-3xl border-2 border-slate-200 shadow-xs space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-              <MapPin className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black text-slate-950">Vetted Public Spots Only</h3>
-            <p className="text-sm text-slate-700 leading-relaxed font-normal">
-              All meetings happen exclusively at established public cafes, sports facilities, or heritage gardens with security. Never in private homes.
-            </p>
-          </div>
-
-          <div className="p-8 bg-white rounded-3xl border-2 border-slate-200 shadow-xs space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
-              <Lock className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black text-slate-950">100% Escrow Protection</h3>
-            <p className="text-sm text-slate-700 leading-relaxed font-normal">
-              Your payment is safely held by Happy Hangouts and only transferred to the host after you meet, verify with your check-in code, and confirm completion.
-            </p>
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ============================================================ */}
-      {/* 7. HOST EARNINGS CALCULATOR                                  */}
-      {/* ============================================================ */}
-      <section id="calculator" className="py-20 bg-slate-50 border-y border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 text-left">
-          
-          <div className="text-center space-y-3">
-            <span className="text-xs font-mono font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-1 rounded-md">
-              EARNINGS CALCULATOR
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-              See How Much You Can Earn as a Host
-            </h2>
-            <p className="text-slate-700 text-sm">
-              First 50 founding partners in Delhi NCR pay 0% platform commission. Keep 100% of what you earn!
-            </p>
-          </div>
-
-          <div className="p-8 sm:p-10 bg-white rounded-3xl border-2 border-slate-300 shadow-md space-y-8">
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Slider 1: Rate */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-900 uppercase">Your Hourly Rate</label>
-                  <span className="text-lg font-black text-blue-700">₹{calculatorRate} / hr</span>
-                </div>
-                <input
-                  type="range"
-                  min="300"
-                  max="1500"
-                  step="50"
-                  value={calculatorRate}
-                  onChange={(e) => setCalculatorRate(Number(e.target.value))}
-                  className="w-full accent-blue-600 cursor-pointer"
-                />
-                <span className="text-xs text-slate-600">Standard range: ₹400–₹800/hr</span>
-              </div>
-
-              {/* Slider 2: Hours */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-900 uppercase">Hours Per Week</label>
-                  <span className="text-lg font-black text-blue-700">{calculatorHours} hours / wk</span>
-                </div>
-                <input
-                  type="range"
-                  min="2"
-                  max="20"
-                  step="1"
-                  value={calculatorHours}
-                  onChange={(e) => setCalculatorHours(Number(e.target.value))}
-                  className="w-full accent-blue-600 cursor-pointer"
-                />
-                <span className="text-xs text-slate-600">e.g. 2 coffee chats or 3 badminton games</span>
-              </div>
+              ))}
             </div>
 
-            {/* Projected Earnings Output */}
-            <div className="p-6 bg-slate-100 rounded-2xl border border-slate-300 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div>
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
-                  Projected Monthly Earnings
-                </span>
-                <div className="text-3xl sm:text-4xl font-black text-emerald-700 mt-1">
-                  ₹{(calculatorHours * 4 * calculatorRate).toLocaleString("en-IN")}{" "}
-                  <span className="text-xs font-normal text-slate-600">/ month</span>
-                </div>
-                <p className="text-xs text-slate-700 mt-1 font-medium">
-                  Direct UPI bank transfer · 0% commission deducted for founding hosts.
-                </p>
-              </div>
+            {/* Radar schematic visual showing Delhi & Gurgaon hubs */}
+            <div className="relative w-full h-56 sm:h-72 bg-[#0b1f5c] rounded-2xl overflow-hidden border-[2px] border-[#0b1f5c] flex items-center justify-center p-4">
+              
+              {/* Concentric radar rings */}
+              <div className="absolute w-44 h-44 sm:w-64 sm:h-64 rounded-full border border-blue-400/20"></div>
+              <div className="absolute w-72 h-72 sm:w-96 sm:h-96 rounded-full border border-blue-400/15"></div>
+              <div className="absolute w-full h-[1px] bg-blue-400/20"></div>
+              <div className="absolute h-full w-[1px] bg-blue-400/20"></div>
 
-              <button
-                onClick={() => {
-                  audio.playClick();
-                  setLeadModalType("partner");
-                  setLeadModalInterests(`Host application: Rate ₹${calculatorRate}/hr, ${calculatorHours} hrs/wk (Est ₹${calculatorHours * 4 * calculatorRate}/mo)`);
-                  setIsLeadModalOpen(true);
+              {/* Glowing Blue Radar sweep line */}
+              <div 
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: "conic-gradient(from 0deg at 50% 50%, rgba(31, 78, 224, 0.4) 0deg, transparent 60deg, transparent 360deg)",
+                  animation: "spin 6s linear infinite"
                 }}
-                className="w-full sm:w-auto px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm shrink-0"
-              >
-                Apply as a Host Now
-              </button>
+              ></div>
+
+              {/* Pulsing Blue Light Hotspots */}
+              {LIVE_RADAR_SPOTS.map((spot, i) => (
+                <div
+                  key={i}
+                  className="absolute group cursor-pointer transition-transform hover:scale-125 z-20"
+                  style={{
+                    left: `${spot.coords.x}%`,
+                    top: `${spot.coords.y}%`,
+                    transform: "translate(-50%, -50%)"
+                  }}
+                  onClick={() => {
+                    audio.playClick();
+                    triggerBoom(`Active hangout node: ${spot.name} (${spot.active} companions online)`);
+                  }}
+                >
+                  <div className="relative flex items-center justify-center">
+                    <span className="animate-ping absolute h-6 w-6 rounded-full bg-cyan-400 opacity-80"></span>
+                    <span className="relative flex h-3.5 w-3.5 rounded-full bg-cyan-300 border-2 border-white shadow-[0_0_12px_#38bdf8]"></span>
+                  </div>
+                  
+                  {/* Tooltip on badge */}
+                  <div className="hidden group-hover:block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white text-[#0b1f5c] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border-[1.5px] border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] z-30">
+                    {spot.name}: {spot.active} active
+                  </div>
+                </div>
+              ))}
+
+              <div className="absolute bottom-3 left-4 text-xs font-bold text-blue-200 z-10 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_#38bdf8]"></span>
+                <span>Live GPS Escrow Radar: Strictly Gurugram & Delhi NCR</span>
+              </div>
             </div>
 
           </div>
-
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 8. APPLICATION & BOOKING FORM SECTION                        */}
-      {/* ============================================================ */}
-      <section id="apply" className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-        <LeadCollectionForm inlineLayout={true} initialType="waitlist" />
+      {/* 7. "FUN IS ONLY FUN WHEN IT'S SAFE" (SAFETY SECTION) */}
+      <section id="safe" className="safe py-16 sm:py-20">
+        <div className="wrap">
+          <span className="tag" style={{ background: "#ffc933", color: "#0b1f5c" }}>
+            Safety first
+          </span>
+          <h2 className="text-[34px] sm:text-[52px] font-extrabold tracking-tight mt-3 mb-2 text-white">
+            Fun is only fun when it’s safe
+          </h2>
+          <p className="sub text-lg max-w-2xl mb-8">
+            Everything here is about friendly activity partners meeting in public places. Our 4-pillar safety framework:
+          </p>
+
+          <div className="sg">
+            <div>
+              <b>ID</b>
+              <p className="font-semibold text-sm sm:text-base leading-snug">
+                Every partner verified with Government ID (Aadhaar/PAN) and biometric selfie before attending or hosting.
+              </p>
+            </div>
+            <div>
+              <b>📍</b>
+              <p className="font-semibold text-sm sm:text-base leading-snug">
+                Public meeting places only — verified cafes (CyberHub, CP, Khan Market) and sports arenas (Siri Fort).
+              </p>
+            </div>
+            <div>
+              <b>SOS</b>
+              <p className="font-semibold text-sm sm:text-base leading-snug">
+                Real-time session timer, live location sharing with emergency contacts, and instant one-tap help alert.
+              </p>
+            </div>
+            <div>
+              <b>★</b>
+              <p className="font-semibold text-sm sm:text-base leading-snug">
+                Mandatory two-way post-hangout reviews. Zero tolerance policy: bad actors and inappropriate behavior permanently banned.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 9. FAQ ACCORDION SECTION                                     */}
-      {/* ============================================================ */}
-      <FaqSection 
-        onJoinWaitlist={(topic) => {
-          setLeadModalType("waitlist");
-          setLeadModalInterests(topic);
-          setIsLeadModalOpen(true);
-        }}
-      />
+      {/* 8. "GET PAID FOR YOUR HOBBIES" (PARTNER EARNINGS CALCULATOR) */}
+      <section id="earn" className="py-16 sm:py-20 bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c]">
+        <div className="wrap earn-container">
+          
+          <div>
+            <span className="tag">For partners</span>
+            <h2 className="text-[34px] sm:text-[52px] font-extrabold tracking-tight mt-3 mb-2 text-[#0b1f5c]">
+              Get paid for your hobbies
+            </h2>
+            <p className="text-[#4a5a8a] text-lg mb-6">
+              Love badminton, morning treks, acoustic music or learning languages? Be a Hangout Partner on your own schedule. Drag the sliders to calculate your monthly earnings.
+            </p>
 
-      {/* ============================================================ */}
-      {/* 10. MINIMALIST HIGH-CONTRAST FOOTER                          */}
-      {/* ============================================================ */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-100 border-t border-slate-300 text-slate-800 text-xs">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <HappyHangoutsLogo variant="header" />
+            <div className="flex flex-col gap-5 bg-white p-6 rounded-2xl border-[2.5px] border-[#0b1f5c] shadow-[4px_4px_0_#0b1f5c]">
+              {/* Hours slider */}
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-bold text-[#0b1f5c]">Hours per week:</span>
+                  <b className="font-display text-xl text-[#1f4ee0] font-extrabold">{calcHours} hrs</b>
+                </div>
+                <input 
+                  type="range" 
+                  min={2} 
+                  max={30} 
+                  value={calcHours}
+                  className="w-full"
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setCalcHours(val);
+                    audio.playSlider((val - 2) / 28);
+                  }}
+                />
+              </div>
+
+              {/* Rate slider */}
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-bold text-[#0b1f5c]">Your rate per hour:</span>
+                  <b className="font-display text-xl text-[#1f4ee0] font-extrabold">₹{calcRate}</b>
+                </div>
+                <input 
+                  type="range" 
+                  min={200} 
+                  max={1000} 
+                  step={50}
+                  value={calcRate}
+                  className="w-full"
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setCalcRate(val);
+                    audio.playSlider((val - 200) / 800);
+                  }}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6 font-semibold">
-            <a href="#how-it-works" className="hover:text-blue-600 transition-colors">How It Works</a>
-            <a href="#companions" className="hover:text-blue-600 transition-colors">Companions</a>
-            <a href="#hubs" className="hover:text-blue-600 transition-colors">Meeting Hubs</a>
-            <a href="#safety" className="hover:text-blue-600 transition-colors">Safety</a>
-            <button
+          {/* Big Earnings Result Card */}
+          <div className="big-card">
+            <small className="text-base sm:text-lg font-bold tracking-tight text-[#0b1f5c]">
+              You could take home about
+            </small>
+            <b className="text-[#0b1f5c]">
+              ₹{monthlyTakeHome.toLocaleString("en-IN")}
+            </b>
+            <small className="text-xs sm:text-sm font-semibold text-[#0b1f5c] block mt-2">
+              per month, after a 20% platform fee (illustrative based on {calcHours} hrs/wk at ₹{calcRate}/hr)
+            </small>
+            <a 
+              href="#join"
               onClick={() => {
                 audio.playClick();
-                setIsPrivacyModalOpen(true);
+                setWaitlistRole("partner");
               }}
-              className="hover:text-blue-600 transition-colors cursor-pointer underline"
+              className="btn b mt-6 text-base py-3 px-6 shadow-[4px_4px_0_#0b1f5c]"
             >
-              Privacy &amp; Security Policy
-            </button>
+              Apply to earn as partner →
+            </a>
           </div>
 
-          <div className="text-slate-600">
-            &copy; {new Date().getFullYear()} Happy Hangouts. All rights reserved.
-          </div>
         </div>
-      </footer>
+      </section>
 
-      {/* ============================================================ */}
-      {/* BOOKING MODAL (High-Contrast, Clean & Simple)                */}
-      {/* ============================================================ */}
-      <AnimatePresence>
-        {bookingCompanion && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs overflow-y-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-lg w-full p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-300 shadow-2xl relative text-left text-slate-900"
-            >
+      {/* 9. "BE FIRST IN LINE" (WAITLIST & APPLICATION FORM) */}
+      <section id="join" className="join py-16 sm:py-20">
+        <div className="wrap">
+          <span className="tag" style={{ background: "#ffffff", color: "#0b1f5c" }}>
+            Gurugram & Delhi first
+          </span>
+          <h2 className="text-[34px] sm:text-[52px] font-extrabold tracking-tight mt-3 mb-2 text-[#0b1f5c]">
+            Be first in line
+          </h2>
+          <p className="text-[#173a8a] text-lg font-medium mb-8">
+            Join the waitlist to receive priority access, founding host badges, and launch perks.
+          </p>
+
+          <form onSubmit={handleWaitlistSubmit} className="form-box">
+            
+            {/* Role switch chips */}
+            <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={() => setBookingCompanion(null)}
-                className="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors cursor-pointer"
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  setWaitlistRole("seeker");
+                }}
+                className={`chip text-center justify-center font-bold ${
+                  waitlistRole === "seeker" ? "active" : ""
+                }`}
+                aria-pressed={waitlistRole === "seeker"}
               >
-                <X className="w-5 h-5" />
+                🙋 I want to hire
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  setWaitlistRole("partner");
+                }}
+                className={`chip text-center justify-center font-bold ${
+                  waitlistRole === "partner" ? "active" : ""
+                }`}
+                aria-pressed={waitlistRole === "partner"}
+              >
+                💪 I want to earn
+              </button>
+            </div>
 
-              {!bookingConfirmed ? (
-                <div className="space-y-6">
-                  {/* Companion Info */}
-                  <div className="flex items-center gap-4 pb-4 border-b border-slate-200">
-                    <div className={`w-14 h-14 rounded-2xl ${bookingCompanion.color} text-white flex items-center justify-center text-3xl shadow-sm`}>
-                      {bookingCompanion.emoji}
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-blue-700 font-bold block">
-                        BOOKING COMPANION HANGOUT
-                      </span>
-                      <h3 className="text-xl font-black text-slate-950">{bookingCompanion.name}</h3>
-                      <div className="text-xs font-semibold text-slate-700">
-                        {bookingCompanion.vibe} · <span className="text-emerald-700 font-black">₹{bookingCompanion.hourlyRate}/hr</span>
-                      </div>
-                    </div>
-                  </div>
+            {/* Name Input */}
+            <div>
+              <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                Your Full Name
+              </label>
+              <input 
+                type="text" 
+                value={waitlistName}
+                onChange={(e) => setWaitlistName(e.target.value)}
+                placeholder="e.g. Rahul Sharma" 
+                required 
+                className="w-full"
+              />
+            </div>
 
-                  {/* Options */}
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
-                        Select Preferred Day
-                      </label>
-                      <select
-                        value={bookingDate}
-                        onChange={(e) => setBookingDate(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-semibold text-xs outline-none focus:border-blue-600"
-                      >
-                        <option value="This Saturday">This Saturday</option>
-                        <option value="This Sunday">This Sunday</option>
-                        <option value="Tomorrow Evening">Tomorrow Evening</option>
-                        <option value="Next Weekend">Next Weekend</option>
-                      </select>
-                    </div>
+            {/* Contact Input */}
+            <div>
+              <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                WhatsApp Phone Number or Email
+              </label>
+              <input 
+                type="text" 
+                value={waitlistContact}
+                onChange={(e) => setWaitlistContact(e.target.value)}
+                placeholder="+91 98765 43210 or yourname@gmail.com" 
+                required 
+                className="w-full"
+              />
+            </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
-                        Select Time Slot
-                      </label>
-                      <select
-                        value={bookingTime}
-                        onChange={(e) => setBookingTime(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-semibold text-xs outline-none focus:border-blue-600"
-                      >
-                        <option value="11:00 AM - 1:00 PM">11:00 AM - 1:00 PM (Morning Coffee)</option>
-                        <option value="4:00 PM - 6:00 PM">4:00 PM - 6:00 PM (Afternoon Tea / Sports)</option>
-                        <option value="6:00 PM - 8:00 PM">6:00 PM - 8:00 PM (Evening Chat)</option>
-                      </select>
-                    </div>
+            {/* City & Specific Location Area (Strictly Gurgaon & Delhi as requested) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                  City Focus
+                </label>
+                <select 
+                  value={waitlistCity}
+                  onChange={(e) => {
+                    audio.playClick();
+                    setWaitlistCity(e.target.value);
+                  }}
+                  className="w-full"
+                >
+                  <option value="Gurugram">Gurugram (CyberHub / Golf Course)</option>
+                  <option value="Delhi">Delhi (Central / South Delhi)</option>
+                </select>
+              </div>
 
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <label className="text-xs font-bold text-slate-800 uppercase">
-                          Duration (Hours)
-                        </label>
-                        <span className="text-xs font-black text-blue-700">{bookingHours} Hours</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="1"
-                        max="4"
-                        step="1"
-                        value={bookingHours}
-                        onChange={(e) => setBookingHours(Number(e.target.value))}
-                        className="w-full accent-blue-600 cursor-pointer"
-                      />
-                    </div>
+              <div>
+                <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                  Your Exact Location Area
+                </label>
+                <input 
+                  type="text"
+                  value={waitlistLocation}
+                  onChange={(e) => setWaitlistLocation(e.target.value)}
+                  placeholder="e.g. Sector 29, CP, or Hauz Khas"
+                  className="w-full"
+                />
+              </div>
+            </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
-                        Vetted Public Hub
-                      </label>
-                      <div className="p-3 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
-                        <span>{bookingCompanion.hub}</span>
-                      </div>
-                    </div>
-                  </div>
+            {/* What time are you free actually? (As explicitly requested) */}
+            <div>
+              <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                What time are you actually free?
+              </label>
+              <select 
+                value={waitlistTime}
+                onChange={(e) => {
+                  audio.playClick();
+                  setWaitlistTime(e.target.value);
+                }}
+                className="w-full"
+              >
+                <option value="Weekday Evenings (6:00 PM – 9:30 PM)">Weekday Evenings (6:00 PM – 9:30 PM)</option>
+                <option value="Weekend Mornings (8:30 AM – 1:00 PM)">Weekend Mornings (8:30 AM – 1:00 PM)</option>
+                <option value="Weekend Afternoons (1:30 PM – 5:30 PM)">Weekend Afternoons (1:30 PM – 5:30 PM)</option>
+                <option value="Weekend Nights (6:00 PM – 10:30 PM)">Weekend Nights (6:00 PM – 10:30 PM)</option>
+                <option value="Flexible / Anytime on coordination">Flexible / Anytime on coordination</option>
+              </select>
+            </div>
 
-                  {/* Escrow Calculation */}
-                  <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-xs space-y-1.5 text-slate-800">
-                    <div className="flex justify-between">
-                      <span>{bookingHours} Hours with {bookingCompanion.name}:</span>
-                      <span className="font-bold">₹{bookingCompanion.hourlyRate * bookingHours}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Launch Escrow Fee:</span>
-                      <span className="font-bold text-emerald-700">₹0 (Free)</span>
-                    </div>
-                    <div className="pt-2 border-t border-blue-200 flex justify-between font-black text-sm text-slate-950">
-                      <span>Total Escrow Held:</span>
-                      <span className="text-blue-700">₹{bookingCompanion.hourlyRate * bookingHours}</span>
-                    </div>
-                    <p className="text-[11px] text-slate-600 pt-1">
-                      🔒 Your payment stays in escrow until you meet in person and finish the session.
-                    </p>
-                  </div>
+            {/* Submit Button */}
+            <button className="btn b py-3.5 text-base w-full mt-2" type="submit">
+              Count me in 🎉
+            </button>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-3 pt-2">
-                    <button
-                      onClick={() => setBookingCompanion(null)}
-                      className="w-1/3 py-3 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleConfirmBooking}
-                      className="w-2/3 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <span>Confirm &amp; Hold Escrow</span>
-                    </button>
+            {/* Success message display */}
+            {waitlistStatus && (
+              <div className="bg-emerald-50 border-[2px] border-emerald-600 text-emerald-900 rounded-xl p-3 font-semibold text-sm flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <span>{waitlistStatus}</span>
+              </div>
+            )}
+          </form>
+
+          {/* City launch indicator badges */}
+          <div className="flex gap-2.5 flex-wrap mt-8">
+            <span className="bg-[#ff6b4a] text-white border-[2.5px] border-[#0b1f5c] rounded-full px-3.5 py-1.5 font-bold text-sm shadow-[2px_2px_0_#0b1f5c]">
+              📍 Gurugram: Launching First
+            </span>
+            <span className="bg-white text-[#0b1f5c] border-[2.5px] border-[#0b1f5c] rounded-full px-3.5 py-1.5 font-bold text-sm shadow-[2px_2px_0_#0b1f5c]">
+              📍 Delhi: Launching in Parallel
+            </span>
+          </div>
+
+          {/* WhatsApp Direct Connect */}
+          <p className="mt-7 text-base text-[#0b1f5c] font-medium flex items-center gap-2">
+            <span>Or fast-track via WhatsApp:</span>
+            <a 
+              href="https://wa.me/918800843189?text=Hi%20Happy%20Hangouts!%20I'd%20like%20early%20access%20in%20Gurgaon%2FDelhi." 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={() => audio.playClick()}
+              className="font-extrabold text-[#1f4ee0] underline decoration-2 hover:text-[#0b1f5c] flex items-center gap-1"
+            >
+              <MessageCircle className="w-4 h-4" />
+              WhatsApp +91 8800843189
+            </a>
+          </p>
+
+        </div>
+      </section>
+
+      {/* 10. BOOKING INQUIRY MODAL */}
+      {bookingCompanion && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border-[3px] border-[#0b1f5c] rounded-[26px] p-6 sm:p-8 max-w-lg w-full shadow-[10px_10px_0_#0b1f5c] relative animate-in fade-in zoom-in-95 duration-150">
+            
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                setBookingCompanion(null);
+              }}
+              className="absolute top-4 right-4 p-2 rounded-full border-[2px] border-[#0b1f5c] hover:bg-slate-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-[#0b1f5c]" />
+            </button>
+
+            {/* Companion Header in Modal */}
+            <div className="flex items-center gap-4 mb-5">
+              <div 
+                className="w-14 h-14 rounded-full border-[2.5px] border-[#0b1f5c] flex items-center justify-center text-3xl shrink-0"
+                style={{ backgroundColor: bookingCompanion.bgColor }}
+              >
+                {bookingCompanion.emoji}
+              </div>
+              <div>
+                <span className="text-xs font-bold text-[#1f4ee0] uppercase tracking-wider">
+                  Verified Hangout Partner
+                </span>
+                <h3 className="text-2xl font-extrabold text-[#0b1f5c]">
+                  {bookingCompanion.name}
+                </h3>
+                <p className="text-xs font-bold text-[#4a5a8a]">
+                  📍 {bookingCompanion.location} · ⭐ {bookingCompanion.rating}
+                </p>
+              </div>
+            </div>
+
+            {bookingSuccess ? (
+              <div className="text-center py-6">
+                <div className="w-16 h-16 bg-emerald-100 border-[2.5px] border-[#0b1f5c] text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                  🎉
+                </div>
+                <h4 className="text-xl font-extrabold text-[#0b1f5c] mb-2">
+                  Booking Request Received!
+                </h4>
+                <p className="text-sm text-[#4a5a8a] mb-5">
+                  Opening WhatsApp to connect with {bookingCompanion.name}'s coordinator at +91 8800843189.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setBookingCompanion(null)}
+                  className="btn b w-full py-3"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                    Activity & Plan
+                  </label>
+                  <div className="bg-[#f3f8ff] border-[2px] border-[#0b1f5c] rounded-xl p-3 font-semibold text-sm text-[#0b1f5c]">
+                    {bookingCompanion.vibeText}
                   </div>
                 </div>
-              ) : (
-                <div className="py-8 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl mx-auto">
-                    ✓
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                      Day
+                    </label>
+                    <select 
+                      value={bookingDate}
+                      onChange={(e) => setBookingDate(e.target.value)}
+                      className="w-full text-sm"
+                    >
+                      <option>Today</option>
+                      <option>Tomorrow</option>
+                      <option>This Saturday</option>
+                      <option>This Sunday</option>
+                    </select>
                   </div>
-                  <h4 className="text-2xl font-black text-slate-950">Hangout Requested!</h4>
-                  <p className="text-xs sm:text-sm text-slate-700 max-w-sm mx-auto leading-relaxed">
-                    {bookingCompanion.name} has been notified. You will receive your confirmation code shortly!
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                      Time Slot
+                    </label>
+                    <select 
+                      value={bookingTime}
+                      onChange={(e) => setBookingTime(e.target.value)}
+                      className="w-full text-sm"
+                    >
+                      <option>Morning (8:30 AM)</option>
+                      <option>Afternoon (2:00 PM)</option>
+                      <option>Evening (6:00 PM)</option>
+                      <option>Night (8:00 PM)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#0b1f5c] mb-1">
+                    Public Meeting Spot
+                  </label>
+                  <input 
+                    type="text" 
+                    value={bookingLocation}
+                    onChange={(e) => setBookingLocation(e.target.value)}
+                    placeholder="e.g. Blue Tokai CyberHub or Khan Market"
+                    className="w-full text-sm"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-amber-50 border-[2px] border-[#0b1f5c] rounded-xl text-xs font-bold text-[#0b1f5c]">
+                  <span>Hourly Rate:</span>
+                  <span className="text-base text-[#1f4ee0] font-black">₹{bookingCompanion.rate}/hr</span>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={handleConfirmBooking}
+                    className="btn b w-full py-3.5 text-base shadow-[4px_4px_0_#0b1f5c]"
+                  >
+                    Confirm & Chat on WhatsApp 🙌
+                  </button>
+                  <p className="text-[11px] text-center text-[#4a5a8a] mt-2 font-medium">
+                    Strictly public places. Escrow guarantee. Free cancellation up to 2 hours prior.
                   </p>
                 </div>
-              )}
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </div>
+            )}
 
-      {/* ============================================================ */}
-      {/* LEAD / WAITLIST OVERLAY MODAL                                */}
-      {/* ============================================================ */}
-      {isLeadModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-slate-300 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setIsLeadModalOpen(false)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors cursor-pointer"
-            >
-              &times;
-            </button>
-            <LeadCollectionForm
-              initialType={leadModalType}
-              defaultInterests={leadModalInterests}
-              defaultJoinAs={leadModalType === "partner" ? "partner" : "seeker"}
-              onSuccess={() => {
-                setTimeout(() => setIsLeadModalOpen(false), 2000);
-              }}
-            />
           </div>
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* PRIVACY POLICY MODAL                                         */}
-      {/* ============================================================ */}
-      <PrivacyPolicyModal
-        isOpen={isPrivacyModalOpen}
-        onClose={() => setIsPrivacyModalOpen(false)}
-      />
+      {/* 11. FOOTER */}
+      <footer className="py-10 text-center text-[#4a5a8a] border-t-[2.5px] border-[#0b1f5c] bg-white">
+        <div className="wrap">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="font-display font-extrabold text-xl text-[#0b1f5c]">
+              Happy Hangouts
+            </span>
+            <span className="text-xs bg-[#ffc933] text-[#0b1f5c] font-black px-2 py-0.5 rounded-full border border-[#0b1f5c]">
+              NCR Edition
+            </span>
+          </div>
+          <p className="text-sm font-semibold mb-2">
+            Happy Hangouts · <a href="https://www.happyhangouts.life" target="_blank" rel="noopener noreferrer" className="underline font-bold text-[#0b1f5c]">www.happyhangouts.life</a> · Akele kyu? Happy Hangouts hai na 🙌
+          </p>
+          <p className="text-xs text-[#4a5a8a]">
+            Verified Activity Companions & Escrow Protection in Gurugram & Delhi.
+          </p>
+        </div>
+      </footer>
 
-      {/* ============================================================ */}
-      {/* STICKY MOBILE BOTTOM BRAND ACTION DOCK (Always Highlighted) */}
-      {/* ============================================================ */}
-      <aside 
-        aria-label="Mobile quick actions"
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-300 px-3 py-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-10px_30px_rgba(0,0,0,0.15)] flex items-center gap-2.5 text-left"
-      >
-        {/* Mobile Action 1: Become a Host */}
-        <button
+      {/* 12. MOBILE BOTTOM FLOATING ACTION BAR (Streamlined & Non-Congested) */}
+      <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t-[2.5px] border-[#0b1f5c] py-2.5 px-4 z-40 md:hidden flex items-center justify-between gap-3 shadow-[0_-4px_12px_rgba(11,31,92,0.1)]">
+        <a 
+          href="#earn" 
           onClick={() => {
             audio.playClick();
-            setLeadModalType("partner");
-            setLeadModalInterests("Applying as Founding Host Partner (Mobile Quick Action)");
-            setIsLeadModalOpen(true);
+            setWaitlistRole("partner");
           }}
-          className="flex-1 py-3 px-2 rounded-xl bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 border-2 border-slate-800 shadow-xs active:scale-95 transition-all cursor-pointer"
+          className="flex-1 text-center py-2.5 px-3 rounded-full border-[2px] border-[#0b1f5c] bg-[#ffc933] text-[#0b1f5c] font-display font-extrabold text-xs shadow-[2px_2px_0_#0b1f5c]"
         >
-          <span>🤝 Become a Host</span>
-          <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold">
-            ₹/hr
-          </span>
-        </button>
-
-        {/* Mobile Action 2: Book a Hangout */}
-        <a
-          href="#companions"
-          onClick={() => audio.playClick()}
-          className="flex-1 py-3 px-2 rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg shadow-blue-600/30 active:scale-95 transition-all cursor-pointer"
-        >
-          <span className="w-2 h-2 rounded-full bg-cyan-300 animate-ping shrink-0" />
-          <span>⚡ Book a Hangout</span>
+          💪 Become a Host
         </a>
-      </aside>
+        <a 
+          href="#match" 
+          onClick={() => audio.playClick()}
+          className="flex-1 text-center py-2.5 px-3 rounded-full border-[2px] border-[#0b1f5c] bg-[#1f4ee0] text-white font-display font-extrabold text-xs shadow-[2px_2px_0_#0b1f5c]"
+        >
+          ⚡ Book a Hangout
+        </a>
+      </div>
 
     </div>
   );

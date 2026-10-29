@@ -67,8 +67,8 @@ export default function HappyHangoutsLogo({
             </span>
           </div>
           <div className="text-[10px] sm:text-xs font-semibold tracking-tight text-slate-700 flex items-center gap-1 mt-0.5 whitespace-nowrap">
-            <span className="text-slate-800">Akele Kyu....?</span>
-            <span className="text-blue-600 font-extrabold hidden xs:inline">Happy Hangouts Hai na</span>
+            <span className="text-slate-800">Akele kyu?</span>
+            <span className="text-blue-600 font-extrabold hidden xs:inline">Happy Hangouts Hai na!!</span>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ export default function HappyHangoutsLogo({
     >
       <img
         src={LOGO_IMAGE_PATH}
-        alt="Happy Hangouts — Akele Kyu....? Happy Hangouts Hai na"
+        alt="Happy Hangouts — Akele kyu? Happy Hangouts Hai na!!"
         className="w-full h-auto object-contain block"
         referrerPolicy="no-referrer"
       />

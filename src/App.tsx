@@ -436,15 +436,12 @@ export default function App() {
               />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-display font-extrabold text-[20px] sm:text-[22px] tracking-tight text-[#0b1f5c] flex items-center gap-1.5 leading-none">
-                <i className="not-italic bg-[#1f4ee0] text-white rounded-lg px-1.5 py-0.5 text-sm border-[1.5px] border-[#0b1f5c] -rotate-6 shadow-[1px_1px_0_#0b1f5c]">
-                  🙌
-                </i>
+              <span className="font-display font-extrabold text-[20px] sm:text-[22px] tracking-tight text-[#0b1f5c] leading-none">
                 Happy Hangouts
               </span>
               <span className="text-[11px] font-bold text-[#4a5a8a] mt-0.5 tracking-tight flex items-center gap-1">
-                <span>Akele Kyu....?</span>
-                <span className="text-[#1f4ee0] font-black">Hangouts Hai na</span>
+                <span>Akele kyu?</span>
+                <span className="text-[#1f4ee0] font-black">Happy Hangouts Hai na!!</span>
               </span>
             </div>
           </a>
@@ -562,7 +559,7 @@ export default function App() {
           {/* Tagline Badge */}
           <div>
             <span className="tag">
-              Akele kyu? Hangouts hai na
+              Akele kyu? Happy Hangouts Hai na!!
             </span>
           </div>
 
@@ -1411,7 +1408,7 @@ export default function App() {
             </span>
           </div>
           <p className="text-sm font-semibold mb-2">
-            Happy Hangouts · <a href="https://www.happyhangouts.life" target="_blank" rel="noopener noreferrer" className="underline font-bold text-[#0b1f5c]">www.happyhangouts.life</a> · Akele kyu? Happy Hangouts hai na 🙌
+            Happy Hangouts · <a href="https://www.happyhangouts.life" target="_blank" rel="noopener noreferrer" className="underline font-bold text-[#0b1f5c]">www.happyhangouts.life</a> · Akele kyu? Happy Hangouts Hai na!! 🙌
           </p>
           <p className="text-xs text-[#4a5a8a]">
             Verified Activity Companions & Escrow Protection in Gurugram & Delhi.

@@ -177,6 +177,9 @@ If the user's preference or location is unclear, ask them questions like "Which 
     }
   });
 
+  // Explicitly serve public static assets (videos, images, audio)
+  app.use(express.static(path.join(process.cwd(), "public")));
+
   // Serve static assets or use Vite dev middleware
   if (process.env.NODE_ENV !== "production") {
     console.log("Starting server in DEVELOPMENT mode with Vite Middleware...");

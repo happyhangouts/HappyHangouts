@@ -519,6 +519,75 @@ class AudioEngine {
     }
   }
 
+  // Animated character vocal chirp / blip (Animal Crossing / dialogue style)
+  public playBlip(freq = 520) {
+    if (this.isMuted) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.exponentialRampToValueAtTime(freq * 1.25, now + 0.04);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } catch (e) {}
+  }
+
+  // Coin collection chime for host earnings
+  public playCoin() {
+    if (this.isMuted) return;
+    this.unlock();
+    try {
+      this.init();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
+      const now = this.ctx.currentTime;
+      const osc1 = this.ctx.createOscillator();
+      const gain1 = this.ctx.createGain();
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(987.77, now); // B5
+      osc1.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+      gain1.gain.setValueAtTime(0.1, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc1.connect(gain1);
+      gain1.connect(this.ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.36);
+    } catch (e) {}
+  }
+
+  // Badminton racket / active motion swoosh
+  public playSwoosh() {
+    if (this.isMuted) return;
+    this.unlock();
+    try {
+      this.init();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(660, now + 0.06);
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.14);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.16);
+    } catch (e) {}
+  }
+
   // Synthesize soft ambient background chords
   public toggleAmbient(play: boolean, volume = 0.3) {
     if (this.isMuted) return false;

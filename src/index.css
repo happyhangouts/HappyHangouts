@@ -243,7 +243,7 @@ input[type="range"] {
   cursor: pointer;
 }
 
-select, input[type="text"], input[type="email"], input[type="tel"] {
+select:not(.clean-input), input[type="text"]:not(.clean-input), input[type="email"]:not(.clean-input), input[type="tel"]:not(.clean-input) {
   font: 600 15px var(--b);
   background: var(--bg);
   color: var(--ink);
@@ -254,9 +254,23 @@ select, input[type="text"], input[type="email"], input[type="tel"] {
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-select:focus, input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
+select:not(.clean-input):focus, input[type="text"]:not(.clean-input):focus, input[type="email"]:not(.clean-input):focus, input[type="tel"]:not(.clean-input):focus {
   border-color: var(--royal);
   box-shadow: 3px 3px 0 var(--royal);
+}
+
+.clean-input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.clean-input:focus {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .ctl select {

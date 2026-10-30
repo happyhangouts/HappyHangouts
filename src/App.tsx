@@ -34,6 +34,7 @@ import {
 } from "motion/react";
 import { audio, setupGlobalAudioListeners } from "./utils/audio";
 import { submitToGoogleSheets, generateWhatsAppLeadUrl } from "./lib/googleSheets";
+import AnimatedCharacterStorySection from "./components/AnimatedCharacterStorySection";
 
 // Verified Companion Model for Gurgaon & Delhi
 export interface CompanionProfile {
@@ -369,10 +370,11 @@ const SECTIONS = [
   { id: "top", label: "01", name: "Welcome" },
   { id: "match", label: "02", name: "Partners" },
   { id: "how", label: "03", name: "3 Steps" },
-  { id: "radar", label: "04", name: "Live Radar" },
-  { id: "safe", label: "05", name: "Escrow Safe" },
-  { id: "earn", label: "06", name: "Calculator" },
-  { id: "join", label: "07", name: "Hangout Pass" }
+  { id: "videos", label: "04", name: "Story Studio" },
+  { id: "radar", label: "05", name: "Live Radar" },
+  { id: "safe", label: "06", name: "Escrow Safe" },
+  { id: "earn", label: "07", name: "Calculator" },
+  { id: "join", label: "08", name: "Hangout Pass" }
 ];
 
 // Animated Number Counter on Scroll
@@ -774,6 +776,13 @@ export default function App() {
               className="hidden md:inline-block font-bold text-[#0b1f5c] hover:text-[#1f4ee0] transition-colors"
             >
               Find a partner
+            </a>
+            <a 
+              href="#videos" 
+              onClick={() => audio.playClick()}
+              className="hidden md:inline-block font-bold text-[#0b1f5c] hover:text-[#1f4ee0] transition-colors"
+            >
+              Story Studio
             </a>
             <a 
               href="#radar" 
@@ -1301,6 +1310,20 @@ export default function App() {
         </div>
       </section>
 
+      {/* 5.5 ANIMATED CHARACTER STORY THEATRE */}
+      <AnimatedCharacterStorySection 
+        onOpenBookingClick={() => {
+          scrollToSection("match");
+        }}
+        onApplyHostClick={() => {
+          setWaitlistRole("partner");
+          scrollToSection("join");
+        }}
+        onExploreSafetyClick={() => {
+          scrollToSection("safe");
+        }}
+      />
+
       {/* 6. LIVE HANGOUTS RADAR (SCROLL-TRIGGERED RADAR & BLUE LIGHTS MAP) */}
       <section id="radar" className="py-16 sm:py-24 bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c]">
         <div className="wrap">
@@ -1724,17 +1747,23 @@ export default function App() {
                     </span>
                     <span className="text-[10px] text-rose-600 font-extrabold uppercase tracking-wider">* Required</span>
                   </label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-3 text-xs font-extrabold text-[#0b1f5c] pointer-events-none select-none">
-                      🇮🇳 +91
-                    </span>
+                  
+                  {/* Clean Country-Code Input Group (No Overlapping/Messed Up Text) */}
+                  <div className="flex items-center rounded-xl overflow-hidden border-[2.5px] border-[#0b1f5c] bg-white shadow-xs focus-within:border-[#1f4ee0] focus-within:shadow-[3px_3px_0_#1f4ee0] transition-all">
+                    <div className="bg-[#f3f8ff] border-r-[2px] border-[#0b1f5c] px-3.5 py-2.5 flex items-center gap-1.5 shrink-0 select-none">
+                      <span className="text-base leading-none">🇮🇳</span>
+                      <span className="text-xs font-black text-[#0b1f5c] tracking-tight">+91</span>
+                    </div>
                     <input 
                       type="tel" 
                       value={waitlistWhatsapp}
-                      onChange={(e) => setWaitlistWhatsapp(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^\d\s-]/g, '').slice(0, 13);
+                        setWaitlistWhatsapp(val);
+                      }}
                       placeholder="98765 43210" 
                       required 
-                      className="w-full pl-16 bg-white font-medium"
+                      className="clean-input w-full bg-white font-semibold text-sm text-[#0b1f5c] px-3.5 py-2.5 focus:outline-none !border-0 !shadow-none !rounded-none placeholder:text-slate-400"
                     />
                   </div>
                   <p className="text-[10px] text-[#4a5a8a] mt-1 font-semibold">

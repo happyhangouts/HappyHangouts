@@ -159,15 +159,15 @@ export const STORY_EPISODES: StoryEpisode[] = [
         stageTitle: "Finding the Perfect Badminton Partner",
         locationBadge: "Sector 29 Sports Complex",
         characterMood: "excited",
-        dialogue: "I filter by 'Badminton' in Sector 29 and boom — there's Ujjwal Poonia! 4.9 rating, Aadhaar verified, and available this evening for ₹400/hr. Transparent rates, zero subscriptions!",
+        dialogue: "I filter by 'Badminton' in Sector 29 and boom — there's Ujjwal Poonia! 4.9 rating, Aadhaar verified. And best of all: your first 3 hangouts are 100% FREE to build mutual trust and reviews on both sides! Zero financial risk!",
         speechSubtext: "Every profile shows real photos, hourly rates, and verified trust badges.",
         stageBackdrop: "badminton_court",
         interactiveAction: {
-          label: "⚡ Lock in Session with Ujjwal",
-          actionOutcome: "Booking request confirmed with public venue meeting coordinates!"
+          label: "⚡ Lock in Free Session with Ujjwal",
+          actionOutcome: "Booking request confirmed: ₹0 Free Hangout (1 of 3 credits applied)!"
         },
         keyTakeaways: [
-          "Transparent hourly pricing (₹300 to ₹700/hr)",
+          "First 3 hangouts are 100% FREE to build mutual trust & reviews",
           "100% ID and biometric selfie verified companions",
           "Meet strictly in vibrant, public sports arenas or cafes"
         ]
@@ -687,6 +687,7 @@ export default function AnimatedCharacterStorySection({
 
     const quotes = [
       "Akele kyu? Happy Hangouts Hai na!! 🙌",
+      "Special launch perk: your first 3 hangouts are 100% FREE to build trust and trade reviews! 🎁",
       "Ready for some fun in CyberHub or CP? Let's go!",
       "100% ID verified, strictly public places, zero drama!",
       "Badminton, artisan chai, or sunrise trails — you pick!",
@@ -723,8 +724,11 @@ export default function AnimatedCharacterStorySection({
           className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4"
         >
           <div>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="tag">Interactive Character Theatre</span>
+              <span className="bg-[#ffc933] text-[#0b1f5c] text-xs font-black px-2.5 py-1 rounded-full border border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c]">
+                🎁 First 3 Hangouts Free
+              </span>
               <span className="text-xs font-black text-[#1f4ee0] uppercase tracking-wider flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5" /> Living Animated Guide
               </span>

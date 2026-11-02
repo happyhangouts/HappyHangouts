@@ -35,6 +35,7 @@ import {
 import { audio, setupGlobalAudioListeners } from "./utils/audio";
 import { submitToGoogleSheets, generateWhatsAppLeadUrl } from "./lib/googleSheets";
 import AnimatedCharacterStorySection from "./components/AnimatedCharacterStorySection";
+import LiveHangoutsRadar from "./components/LiveHangoutsRadar";
 
 // Verified Companion Model for Gurgaon & Delhi
 export interface CompanionProfile {
@@ -293,14 +294,16 @@ const COMPANIONS: CompanionProfile[] = [
 const ROTATING_WORDS = ["trek", "play badminton", "sip chai", "speak French", "jam", "run", "play chess"];
 
 const MARQUEE_ITEMS = [
-  "🏸 Badminton buddies",
-  "🥾 Sunrise treks",
-  "☕ Café chats",
-  "🗣️ Language practice",
-  "🎲 Board games",
-  "🎸 Jam sessions",
-  "🏃 Morning runs",
-  "🎬 Movie plus-ones"
+  "🎁 First 3 Hangouts 100% FREE",
+  "⭐ Build Trust & Reviews for Both Sides",
+  "🏸 Sector 29 Badminton Rallies",
+  "🥾 Sunder Nursery Sunrise Treks",
+  "☕ DLF CyberHub Pour-Over Chats",
+  "🔒 100% Escrow UPI Protected",
+  "🗣️ Language Practice & Co-working",
+  "🎲 Board Games in CP",
+  "🎸 Khan Market Acoustic Jam Sessions",
+  "Akele kyu? Happy Hangouts Hai na!!"
 ];
 
 const CATEGORIES = [
@@ -352,17 +355,6 @@ export const TIME_SLOT_OPTIONS = [
   { id: "weekend_aft", label: "Weekend Afternoons (1:30 PM – 5:30 PM)", time: "1:30 PM – 5:30 PM", icon: "🏸", tag: "Badminton & Board Games" },
   { id: "weekend_night", label: "Weekend Nights (6:00 PM – 10:30 PM)", time: "6:00 PM – 10:30 PM", icon: "✨", tag: "Music Jams & Dining" },
   { id: "flexible", label: "Flexible / Spontaneous on coordination", time: "On-demand", icon: "⚡", tag: "Anytime" }
-];
-
-// Gurgaon & Delhi Hotspots for Live Radar with Blue Lights
-const LIVE_RADAR_SPOTS = [
-  { name: "DLF CyberHub", city: "Gurugram", active: 24, coords: { x: 38, y: 48 }, icon: "💡" },
-  { name: "Sector 29 Entertainment Hub", city: "Gurugram", active: 18, coords: { x: 28, y: 62 }, icon: "🏸" },
-  { name: "Golf Course Road (Horizon)", city: "Gurugram", active: 16, coords: { x: 44, y: 72 }, icon: "☕" },
-  { name: "Connaught Place (CP)", city: "Delhi", active: 31, coords: { x: 62, y: 26 }, icon: "♟️" },
-  { name: "Khan Market", city: "Delhi", active: 19, coords: { x: 70, y: 40 }, icon: "☕" },
-  { name: "Sunder Nursery & Lodhi", city: "Delhi", active: 22, coords: { x: 74, y: 55 }, icon: "🥾" },
-  { name: "Siri Fort Sports Complex", city: "Delhi", active: 15, coords: { x: 65, y: 70 }, icon: "🏸" }
 ];
 
 // Floating Scroll Spy Sections
@@ -649,7 +641,7 @@ export default function App() {
     setBookingSuccess(true);
     triggerBoom(`Booking request sent for ${bookingCompanion.name}! 🎉`);
 
-    const message = `Hi Happy Hangouts! I'd like to book a hangout with ${bookingCompanion.name} (${bookingCompanion.emoji} ${bookingCompanion.categoryLabel}) at ${bookingLocation} for ${bookingDate} (${bookingTime}). Rate: ₹${bookingCompanion.rate}/hr.`;
+    const message = `Hi Happy Hangouts! I'd like to book my FREE Hangout (Launch Offer: First 3 Hangouts Free to build trust & reviews) with ${bookingCompanion.name} (${bookingCompanion.emoji} ${bookingCompanion.categoryLabel}) at ${bookingLocation} for ${bookingDate} (${bookingTime}). Regular rate ₹${bookingCompanion.rate}/hr waived!`;
     const waUrl = `https://wa.me/918800843189?text=${encodeURIComponent(message)}`;
 
     setTimeout(() => {
@@ -739,6 +731,21 @@ export default function App() {
           </motion.button>
         )}
       </AnimatePresence>
+
+      {/* 0.3 LAUNCH PRIVILEGE ANNOUNCEMENT BANNER */}
+      <div className="bg-[#ffc933] border-b-[2px] border-[#0b1f5c] px-3 sm:px-4 py-2 text-center text-xs sm:text-sm font-extrabold text-[#0b1f5c] flex items-center justify-center gap-2 relative z-40">
+        <span className="text-base">🎁</span>
+        <span>
+          <span className="font-black">Special Trust Initiative:</span> Your first 3 hangouts are <span className="bg-white px-1.5 py-0.5 rounded border border-[#0b1f5c] font-black text-[#1f4ee0]">100% FREE</span> to build mutual trust & reviews for both sides!
+        </span>
+        <a 
+          href="#match" 
+          onClick={() => audio.playClick()} 
+          className="hidden sm:inline-flex items-center gap-1 underline font-black text-[#0b1f5c] hover:text-[#1f4ee0] ml-1"
+        >
+          Claim Free Hangout →
+        </a>
+      </div>
 
       {/* 1. TOP NAVBAR */}
       <nav className="sticky top-0 z-40 bg-[#f3f8ff]/95 backdrop-blur-md border-b-[2.5px] border-[#0b1f5c] transition-colors">
@@ -880,7 +887,7 @@ export default function App() {
             }}
             whileHover={{ scale: 1.1, rotate: 8 }}
           >
-            ☕ ₹400/hr
+            ☕ ₹0 (1st 3 Free!)
           </motion.span>
 
           <motion.span 
@@ -896,14 +903,19 @@ export default function App() {
             📍 Gurugram & Delhi
           </motion.span>
 
-          {/* Tagline Badge */}
+          {/* Tagline & Launch Offer Badges */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
+            className="flex items-center gap-2.5 flex-wrap"
           >
             <span className="tag">
               Akele kyu? Happy Hangouts Hai na!!
+            </span>
+            <span className="bg-[#ffc933] text-[#0b1f5c] border-[2px] border-[#0b1f5c] px-3.5 py-1 rounded-full text-xs font-black shadow-[2px_2px_0_#0b1f5c] flex items-center gap-1.5 animate-bounce">
+              <span>🎁</span>
+              <span>First 3 Hangouts 100% FREE (Build Trust & Reviews)</span>
             </span>
           </motion.div>
 
@@ -928,9 +940,9 @@ export default function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.2 }}
-            className="text-[17px] sm:text-[21px] max-w-[640px] mt-6 mb-8 text-[#4a5a8a] font-normal leading-relaxed"
+            className="text-[17px] sm:text-[21px] max-w-[660px] mt-6 mb-8 text-[#4a5a8a] font-normal leading-relaxed"
           >
-            Hire real, verified people for an hour or an afternoon in Gurugram & Delhi. Pick by interest, hobby or goal, then filter by time, budget and reviews. No more cancelled plans, no more doing it alone.
+            Hire real, verified people for an hour or an afternoon in Gurugram & Delhi. <b className="text-[#0b1f5c] font-black underline decoration-[#ffc933] decoration-4">Your first 3 hangouts are 100% FREE</b> to build mutual trust and 5-star reviews on both sides! Pick by interest, hobby or goal. No more doing it alone.
           </motion.p>
 
           {/* Action CTAs */}
@@ -1192,24 +1204,32 @@ export default function App() {
                     {comp.vibeText}
                   </p>
 
-                  {/* Price & Rating */}
-                  <div className="row pt-2 border-t border-slate-200 flex items-center justify-between">
-                    <b className="text-[#0b1f5c]">
-                      ₹{comp.rate}
-                      <small className="text-xs text-[#4a5a8a] font-bold">/hr</small>
-                    </b>
-                    <span className="font-bold text-sm text-[#0b1f5c] flex items-center gap-1">
-                      ⭐ {comp.rating}
-                    </span>
+                  {/* Price & Rating (Highlighting 1st 3 Hangouts Free) */}
+                  <div className="pt-2 border-t border-slate-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold line-through text-slate-400">₹{comp.rate}/hr</span>
+                        <span className="text-xs font-black bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-400">
+                          ₹0 FREE
+                        </span>
+                      </div>
+                      <span className="font-bold text-xs text-[#0b1f5c] flex items-center gap-1">
+                        ⭐ {comp.rating}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-emerald-700 font-extrabold mb-1">
+                      <span>🎁 1st 3 Hangouts Free</span>
+                      <span className="text-slate-500 font-semibold">(Build trust & reviews)</span>
+                    </div>
                   </div>
 
                   {/* Book / Hangout CTA */}
                   <button 
                     type="button"
                     onClick={() => handleOpenBooking(comp)}
-                    className="btn w-full py-2.5 text-sm font-extrabold mt-1 cursor-pointer"
+                    className="btn w-full py-2.5 text-xs sm:text-sm font-extrabold mt-1 cursor-pointer"
                   >
-                    Hangout! 🙌
+                    Book Free Hangout 🙌
                   </button>
                 </motion.div>
               ))
@@ -1301,9 +1321,12 @@ export default function App() {
               className="st relative"
             >
               <div className="n bg-[#ff6b4a] text-white">3</div>
-              <h3 className="text-[#0b1f5c] text-xl font-extrabold mt-3 mb-1.5">Go hang out</h3>
+              <h3 className="text-[#0b1f5c] text-xl font-extrabold mt-3 mb-1.5 flex items-center gap-1.5 flex-wrap">
+                <span>Go hang out</span>
+                <span className="text-xs bg-[#ffc933] text-[#0b1f5c] px-2 py-0.5 rounded-full border border-[#0b1f5c]">1st 3 FREE!</span>
+              </h3>
               <p className="text-[#4a5a8a] font-medium leading-relaxed">
-                Meet strictly in a verified public place, pay securely by the hour, and rate each other right after the session.
+                Meet strictly in a verified public place. Your first 3 hangouts are 100% FREE to build mutual trust, get comfortable, and trade honest 5-star reviews on both sides!
               </p>
             </motion.div>
           </div>
@@ -1324,131 +1347,28 @@ export default function App() {
         }}
       />
 
-      {/* 6. LIVE HANGOUTS RADAR (SCROLL-TRIGGERED RADAR & BLUE LIGHTS MAP) */}
+      {/* 6. LIVE HANGOUTS RADAR (DYNAMIC REAL-TIME ACTIVITY & BLUE LIGHTS ENGINE) */}
       <section id="radar" className="py-16 sm:py-24 bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c]">
         <div className="wrap">
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4"
-          >
-            <div>
-              <span className="tag">Real-Time Trust</span>
-              <h2 className="text-[32px] sm:text-[48px] font-extrabold tracking-tight mt-2 text-[#0b1f5c]">
-                Live Hangouts Radar
-              </h2>
-              <p className="text-[#4a5a8a] font-medium text-base sm:text-lg">
-                Blue light radar showing active sessions right now across Gurugram and Delhi.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border-[2px] border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] shrink-0 self-start sm:self-auto">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-[#1f4ee0]"></span>
-              </span>
-              <span className="text-xs font-extrabold text-[#0b1f5c]">
-                138 Active Hangouts Now
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Interactive Radar Box with Blue Light Nodes */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.97, y: 30 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6 }}
-            className="bg-white border-[2.5px] border-[#0b1f5c] rounded-[28px] p-6 sm:p-8 shadow-[8px_8px_0_#0b1f5c] relative overflow-hidden"
-          >
-            
-            {/* Grid Hotspots */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-              {LIVE_RADAR_SPOTS.slice(0, 4).map((spot, idx) => (
-                <motion.div 
-                  key={idx}
-                  whileHover={{ scale: 1.03 }}
-                  className="bg-[#f3f8ff] border-[2px] border-[#0b1f5c] rounded-xl p-3 flex items-center justify-between shadow-[2px_2px_0_#0b1f5c]"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{spot.icon}</span>
-                    <div className="leading-tight">
-                      <p className="text-xs font-bold text-[#0b1f5c] truncate max-w-[110px]">
-                        {spot.name}
-                      </p>
-                      <p className="text-[10px] text-[#4a5a8a] font-semibold">
-                        {spot.city}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#1f4ee0] shadow-[0_0_8px_#1f4ee0] animate-pulse"></div>
-                    <span className="text-xs font-black text-[#1f4ee0]">{spot.active}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Radar schematic visual showing Delhi & Gurgaon hubs */}
-            <div className="relative w-full h-64 sm:h-80 bg-[#0b1f5c] rounded-2xl overflow-hidden border-[2.5px] border-[#0b1f5c] flex items-center justify-center p-4">
-              
-              {/* Concentric radar rings */}
-              <div className="absolute w-44 h-44 sm:w-64 sm:h-64 rounded-full border border-blue-400/20"></div>
-              <div className="absolute w-72 h-72 sm:w-96 sm:h-96 rounded-full border border-blue-400/15"></div>
-              <div className="absolute w-full h-[1px] bg-blue-400/20"></div>
-              <div className="absolute h-full w-[1px] bg-blue-400/20"></div>
-
-              {/* Glowing Blue Radar sweep line */}
-              <motion.div 
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: "conic-gradient(from 0deg at 50% 50%, rgba(31, 78, 224, 0.45) 0deg, transparent 60deg, transparent 360deg)"
-                }}
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
-              />
-
-              {/* Pulsing Blue Light Hotspots with Scroll Animation */}
-              {LIVE_RADAR_SPOTS.map((spot, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ scale: 0, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.2 + i * 0.08 }}
-                  className="absolute group cursor-pointer z-20"
-                  style={{
-                    left: `${spot.coords.x}%`,
-                    top: `${spot.coords.y}%`,
-                    transform: "translate(-50%, -50%)"
-                  }}
-                  whileHover={{ scale: 1.35 }}
-                  onClick={() => {
-                    audio.playClick();
-                    triggerBoom(`Active hangout node: ${spot.name} (${spot.active} companions online)`);
-                  }}
-                >
-                  <div className="relative flex items-center justify-center">
-                    <span className="animate-ping absolute h-7 w-7 rounded-full bg-cyan-400 opacity-80"></span>
-                    <span className="relative flex h-3.5 w-3.5 rounded-full bg-cyan-300 border-2 border-white shadow-[0_0_14px_#38bdf8]"></span>
-                  </div>
-                  
-                  {/* Tooltip on badge */}
-                  <div className="hidden group-hover:block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white text-[#0b1f5c] text-[11px] font-extrabold px-2.5 py-1 rounded-lg border-[1.5px] border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] z-30">
-                    {spot.name}: {spot.active} active
-                  </div>
-                </motion.div>
-              ))}
-
-              <div className="absolute bottom-3 left-4 text-xs font-bold text-blue-200 z-10 flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_#38bdf8]"></span>
-                <span>Live GPS Escrow Radar: Strictly Gurugram & Delhi NCR</span>
-              </div>
-            </div>
-
-          </motion.div>
+          <LiveHangoutsRadar 
+            onOpenBookingClick={(companionName, location) => {
+              if (companionName) {
+                const found = COMPANIONS.find(c => 
+                  c.name.toLowerCase().includes(companionName.toLowerCase()) || 
+                  companionName.toLowerCase().includes(c.name.toLowerCase())
+                );
+                if (found) {
+                  handleOpenBooking(found);
+                  return;
+                }
+              }
+              if (location) {
+                setBookingLocation(location);
+              }
+              scrollToSection("match");
+            }}
+            triggerBoom={triggerBoom}
+          />
         </div>
       </section>
 
@@ -1612,13 +1532,22 @@ export default function App() {
             <small className="text-xs sm:text-sm font-semibold text-[#0b1f5c] block mt-2">
               per month, after a 20% platform fee (illustrative based on {calcHours} hrs/wk at ₹{calcRate}/hr)
             </small>
+
+            {/* Host Trust Period Notice */}
+            <div className="mt-4 p-3 bg-white/90 rounded-xl border-[2px] border-[#0b1f5c] text-xs font-semibold text-[#0b1f5c] flex items-start gap-2 shadow-xs text-left">
+              <span className="text-base shrink-0">🎁</span>
+              <p className="leading-snug">
+                <b>Founding Host Trust Period:</b> Your first 3 hangouts are conducted at ₹0 to build mutual trust, get comfortable, and earn your initial 5★ reviews. Standard paid hourly earnings unlock automatically from session 4 onwards!
+              </p>
+            </div>
+
             <a 
               href="#join"
               onClick={() => {
                 audio.playClick();
                 setWaitlistRole("partner");
               }}
-              className="btn b mt-6 text-base py-3 px-6 shadow-[4px_4px_0_#0b1f5c]"
+              className="btn b mt-5 text-base py-3 px-6 shadow-[4px_4px_0_#0b1f5c]"
             >
               Apply to earn as partner →
             </a>
@@ -2051,6 +1980,21 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* 3 Free Hangouts Credit on Pass */}
+                  <div className="p-3 bg-emerald-50 rounded-xl border-[2px] border-emerald-600 flex items-center justify-between">
+                    <div>
+                      <div className="text-[10px] font-black uppercase tracking-wider text-emerald-800">
+                        Launch Trust Privilege
+                      </div>
+                      <div className="text-xs font-black text-emerald-900 mt-0.5 flex items-center gap-1">
+                        <span>🎁 3 Free Hangouts Included</span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black bg-emerald-600 text-white px-2.5 py-1 rounded-full shadow-xs">
+                      ₹0 (First 3 Free)
+                    </span>
+                  </div>
+
                   {/* Selected Interests on Pass */}
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-wider text-[#4a5a8a] mb-1.5">
@@ -2253,9 +2197,27 @@ export default function App() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-amber-50 border-[2px] border-[#0b1f5c] rounded-xl text-xs font-bold text-[#0b1f5c]">
-                    <span>Hourly Rate:</span>
-                    <span className="text-base text-[#1f4ee0] font-black">₹{bookingCompanion.rate}/hr</span>
+                  {/* First 3 Hangouts Free Trust Callout */}
+                  <div className="p-3.5 bg-emerald-50 border-[2px] border-emerald-600 rounded-2xl shadow-xs">
+                    <div className="flex items-center justify-between text-xs font-bold text-emerald-950 mb-1">
+                      <span className="flex items-center gap-1.5 font-black">
+                        <span>🎁 Launch Trust Privilege:</span>
+                      </span>
+                      <span className="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
+                        ₹0 (1st of 3 Free)
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-emerald-900 font-semibold pt-1 border-t border-emerald-200">
+                      <span>Regular Companion Rate:</span>
+                      <span className="line-through text-slate-500 font-bold">₹{bookingCompanion.rate}/hr</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm font-black text-emerald-950 mt-1">
+                      <span>Your Cost Today:</span>
+                      <span className="text-base text-emerald-700 font-black">₹0 100% FREE</span>
+                    </div>
+                    <p className="text-[10px] text-emerald-800 font-medium mt-1">
+                      First 3 hangouts are free to build mutual trust and 5-star reviews for both sides!
+                    </p>
                   </div>
 
                   <div className="pt-2">
@@ -2264,7 +2226,7 @@ export default function App() {
                       onClick={handleConfirmBooking}
                       className="btn b w-full py-3.5 text-base shadow-[4px_4px_0_#0b1f5c] cursor-pointer"
                     >
-                      Confirm & Chat on WhatsApp 🙌
+                      Confirm Free Hangout on WhatsApp 🙌
                     </button>
                     <p className="text-[11px] text-center text-[#4a5a8a] mt-2 font-medium">
                       Strictly public places. Escrow guarantee. Free cancellation up to 2 hours prior.

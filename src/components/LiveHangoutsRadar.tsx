@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { audio } from "../utils/audio";
+import { analytics } from "../utils/analytics";
+import GoogleHangoutsMap from "./GoogleHangoutsMap";
 
 export interface RadarHotspot {
   id: string;
@@ -27,6 +29,9 @@ export interface RadarHotspot {
   baseActive: number;
   currentActive: number;
   coords: { x: number; y: number }; // percentage on radar grid
+  lat: number;
+  lng: number;
+  address: string;
   icon: string;
   category: "sports" | "cafe" | "culture" | "games";
   topActivities: string[];
@@ -60,6 +65,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Gurugram",
     baseActive: 28,
     coords: { x: 34, y: 46 },
+    lat: 28.4950,
+    lng: 77.0895,
+    address: "DLF Cyber City, DLF Phase 2, Sector 24, Gurugram, Haryana 122002",
     icon: "☕",
     category: "cafe",
     topActivities: ["Specialty Coffee", "Startup Brainstorming", "Post-Work Drinks"],
@@ -75,6 +83,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Gurugram",
     baseActive: 22,
     coords: { x: 26, y: 64 },
+    lat: 28.4682,
+    lng: 77.0620,
+    address: "Sector 29 Arena & Leisure Valley, Gurugram, Haryana 122001",
     icon: "🏸",
     category: "sports",
     topActivities: ["Badminton Rallies", "Evening Fitness", "Craft Brewery Talks"],
@@ -89,6 +100,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Gurugram",
     baseActive: 19,
     coords: { x: 42, y: 74 },
+    lat: 28.4744,
+    lng: 77.0984,
+    address: "One Horizon Center, Golf Course Road, Sector 43, Gurugram, Haryana 122002",
     icon: "🏙️",
     category: "cafe",
     topActivities: ["Artisan Cafes", "Corporate Networking", "Running"],
@@ -103,6 +117,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Delhi",
     baseActive: 36,
     coords: { x: 64, y: 28 },
+    lat: 28.6315,
+    lng: 77.2167,
+    address: "Connaught Place Inner Circle & Rajiv Chowk, New Delhi, Delhi 110001",
     icon: "♟️",
     category: "culture",
     topActivities: ["Heritage Walk", "Board Games & Chess", "Historic Cafes"],
@@ -117,6 +134,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Delhi",
     baseActive: 24,
     coords: { x: 72, y: 44 },
+    lat: 28.6003,
+    lng: 77.2270,
+    address: "Khan Market & Lodhi Colony, New Delhi, Delhi 110003",
     icon: "🎸",
     category: "culture",
     topActivities: ["Acoustic Jamming", "Boutique Bookstores", "Third-Wave Chai"],
@@ -131,6 +151,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Delhi",
     baseActive: 29,
     coords: { x: 76, y: 60 },
+    lat: 28.5933,
+    lng: 77.2433,
+    address: "Sunder Nursery Heritage Park, Nizamuddin, New Delhi, Delhi 110013",
     icon: "🥾",
     category: "sports",
     topActivities: ["Sunrise Photowalk", "Lakefront Chai", "Botanical Trails"],
@@ -145,6 +168,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Delhi",
     baseActive: 18,
     coords: { x: 62, y: 72 },
+    lat: 28.5529,
+    lng: 77.2185,
+    address: "Siri Fort Sports Complex, August Kranti Marg, New Delhi, Delhi 110049",
     icon: "🏸",
     category: "sports",
     topActivities: ["Badminton Matches", "Tennis Drills", "Swimming"],
@@ -159,6 +185,9 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     city: "Noida",
     baseActive: 16,
     coords: { x: 86, y: 52 },
+    lat: 28.5029,
+    lng: 77.4093,
+    address: "Advant Navis Business Park, Sector 142 / Sector 18, Noida, Uttar Pradesh 201305",
     icon: "⚡",
     category: "cafe",
     topActivities: ["Evening Board Games", "Boba Tea", "Badminton Arena"],
@@ -269,6 +298,7 @@ export default function LiveHangoutsRadar({
   const [hotspots, setHotspots] = useState<RadarHotspot[]>(generateInitialHotspots);
   const [selectedCity, setSelectedCity] = useState<"all" | "Gurugram" | "Delhi" | "Noida">("all");
   const [selectedHotspot, setSelectedHotspot] = useState<RadarHotspot | null>(null);
+  const [viewMode, setViewMode] = useState<"map" | "radar">("map");
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [scanTimestamp, setScanTimestamp] = useState<string>("Just now");
   const [lastSyncSecondsAgo, setLastSyncSecondsAgo] = useState<number>(3);
@@ -611,103 +641,157 @@ export default function LiveHangoutsRadar({
           ))}
         </div>
 
-        {/* 4. THE LIVE BLUE LIGHT RADAR DISPLAY & MAP */}
-        <div className="relative w-full h-72 sm:h-96 bg-[#071330] rounded-[24px] overflow-hidden border-[3px] border-[#0b1f5c] flex items-center justify-center p-4 shadow-inner">
-          
-          {/* Stylized Delhi NCR Map Vector Grid / Trails */}
-          <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="radar-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#38bdf8" strokeWidth="0.8" opacity="0.4" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#radar-grid)" />
-            {/* Expressways lines (NH48, Ring Road, Mehrauli-Gurgaon Rd) */}
-            <path d="M 50 250 Q 200 180 400 140 T 800 100" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="6,6" opacity="0.6" />
-            <path d="M 200 400 Q 300 250 500 150 T 700 80" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="4,4" opacity="0.6" />
-          </svg>
-
-          {/* Concentric distance radar rings (10km, 25km, 40km range rings) */}
-          <div className="absolute w-44 h-44 sm:w-64 sm:h-64 rounded-full border border-cyan-400/25"></div>
-          <div className="absolute w-72 h-72 sm:w-[420px] sm:h-[420px] rounded-full border border-cyan-400/15"></div>
-          <div className="absolute w-[500px] h-[500px] sm:w-[620px] sm:h-[620px] rounded-full border border-cyan-400/10"></div>
-          
-          {/* Center Crosshairs */}
-          <div className="absolute w-full h-[1px] bg-cyan-400/20"></div>
-          <div className="absolute h-full w-[1px] bg-cyan-400/20"></div>
-          <div className="absolute w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#38bdf8]"></div>
-
-          {/* Range Labels */}
-          <span className="absolute top-1/2 left-[58%] -translate-y-1/2 text-[9px] font-mono text-cyan-400/50">10km</span>
-          <span className="absolute top-1/2 left-[78%] -translate-y-1/2 text-[9px] font-mono text-cyan-400/40">25km</span>
-
-          {/* Rotating Conic Radar Sweep Beam */}
-          <motion.div 
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: "conic-gradient(from 0deg at 50% 50%, rgba(56, 189, 248, 0.42) 0deg, rgba(31, 78, 224, 0.15) 30deg, transparent 70deg, transparent 360deg)"
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: isScanning ? 2.5 : 6.5, ease: "linear" }}
-          />
-
-          {/* Pulsing Blue Light Hotspots with Real-Time Dynamic Coordinates */}
-          {filteredHotspots.map((spot) => (
-            <motion.div
-              key={spot.id}
-              className="absolute group cursor-pointer z-20"
-              style={{
-                left: `${spot.coords.x}%`,
-                top: `${spot.coords.y}%`,
-                transform: "translate(-50%, -50%)"
-              }}
-              whileHover={{ scale: 1.35 }}
+        {/* 4. VIEW MODE TOGGLE & LIVE MAP / RADAR DISPLAY */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
               onClick={() => {
                 audio.playClick();
-                setSelectedHotspot(spot);
+                setViewMode("map");
+                analytics.trackViewModeSwitch("map");
               }}
+              className={`px-3.5 py-1.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 border-[2px] transition-all cursor-pointer ${
+                viewMode === "map"
+                  ? "bg-[#1f4ee0] text-white border-[#0b1f5c] shadow-[2.5px_2.5px_0_#0b1f5c]"
+                  : "bg-white text-[#0b1f5c] border-[#0b1f5c]/30 hover:border-[#0b1f5c]"
+              }`}
             >
-              {/* Outer Pulsing Aura */}
-              <div className="relative flex items-center justify-center">
-                <span className={`animate-ping absolute rounded-full bg-cyan-400 opacity-75 ${
-                  spot.isRecentlyUpdated ? "h-10 w-10 bg-amber-400" : "h-7 w-7"
-                }`}></span>
-                
-                {/* Center Core Blue Light */}
-                <span className={`relative flex rounded-full border-2 border-white shadow-[0_0_16px_#38bdf8] ${
-                  spot.isRecentlyUpdated ? "h-4 w-4 bg-amber-300" : "h-3.5 w-3.5 bg-cyan-300"
-                }`}></span>
-              </div>
-              
-              {/* Permanent Spot Label on Map */}
-              <div className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-bold text-white bg-black/70 backdrop-blur-xs px-2 py-0.5 rounded border border-white/20 shadow-md flex items-center gap-1 group-hover:bg-[#1f4ee0] transition-colors">
-                <span>{spot.icon}</span>
-                <span className="hidden sm:inline">{spot.name}</span>
-                <span className="font-mono text-cyan-300 font-extrabold">({spot.currentActive})</span>
-              </div>
+              <MapPin className="w-3.5 h-3.5 text-[#ffc933]" />
+              <span>🗺️ Google Maps View</span>
+              <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-mono">Interactive</span>
+            </button>
 
-              {/* Tooltip on Hover */}
-              <div className="hidden group-hover:block absolute bottom-full mb-3 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white text-[#0b1f5c] text-xs font-black px-3 py-1.5 rounded-xl border-[2px] border-[#0b1f5c] shadow-[3px_3px_0_#0b1f5c] z-30 pointer-events-none">
-                <div className="flex items-center gap-1.5">
-                  <span>{spot.name}:</span>
-                  <span className="text-[#1f4ee0] font-black">{spot.currentActive} online</span>
-                </div>
-                <p className="text-[10px] text-[#4a5a8a] font-medium">{spot.topActivities[0]}</p>
-              </div>
-            </motion.div>
-          ))}
-
-          {/* Radar Telemetry Footer Overlays */}
-          <div className="absolute bottom-3 left-4 text-[11px] font-bold text-cyan-200 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-cyan-500/30">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8] animate-pulse"></span>
-            <span>Live GPS Escrow Radar: Gurugram, Delhi & Noida</span>
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                setViewMode("radar");
+                analytics.trackViewModeSwitch("radar");
+              }}
+              className={`px-3.5 py-1.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 border-[2px] transition-all cursor-pointer ${
+                viewMode === "radar"
+                  ? "bg-[#0b1f5c] text-white border-[#0b1f5c] shadow-[2.5px_2.5px_0_#0b1f5c]"
+                  : "bg-white text-[#0b1f5c] border-[#0b1f5c]/30 hover:border-[#0b1f5c]"
+              }`}
+            >
+              <Radio className="w-3.5 h-3.5 text-cyan-400" />
+              <span>🛰️ Sonar Radar View</span>
+            </button>
           </div>
 
-          <div className="absolute bottom-3 right-4 text-[11px] font-mono text-cyan-300 z-10 hidden sm:flex items-center gap-2 bg-black/60 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-cyan-500/30">
-            <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-            <span>PING 24ms · 100% ID SECURE</span>
+          <div className="flex items-center gap-2 text-[11px] font-bold text-[#4a5a8a]">
+            <Sparkles className="w-3.5 h-3.5 text-[#1f4ee0]" />
+            <span>Interactive Google Maps with live companion pins & directions</span>
           </div>
         </div>
+
+        {viewMode === "map" ? (
+          <GoogleHangoutsMap
+            hotspots={filteredHotspots}
+            selectedHotspot={selectedHotspot}
+            onSelectHotspot={(spot) => setSelectedHotspot(spot)}
+            onBookCompanion={(compName, loc) => onOpenBookingClick(compName, loc)}
+            triggerBoom={triggerBoom}
+            selectedCity={selectedCity}
+          />
+        ) : (
+          <div className="relative w-full h-72 sm:h-96 bg-[#071330] rounded-[24px] overflow-hidden border-[3px] border-[#0b1f5c] flex items-center justify-center p-4 shadow-inner">
+            {/* Stylized Delhi NCR Map Vector Grid / Trails */}
+            <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="radar-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#38bdf8" strokeWidth="0.8" opacity="0.4" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#radar-grid)" />
+              {/* Expressways lines (NH48, Ring Road, Mehrauli-Gurgaon Rd) */}
+              <path d="M 50 250 Q 200 180 400 140 T 800 100" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="6,6" opacity="0.6" />
+              <path d="M 200 400 Q 300 250 500 150 T 700 80" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="4,4" opacity="0.6" />
+            </svg>
+
+            {/* Concentric distance radar rings (10km, 25km, 40km range rings) */}
+            <div className="absolute w-44 h-44 sm:w-64 sm:h-64 rounded-full border border-cyan-400/25"></div>
+            <div className="absolute w-72 h-72 sm:w-[420px] sm:h-[420px] rounded-full border border-cyan-400/15"></div>
+            <div className="absolute w-[500px] h-[500px] sm:w-[620px] sm:h-[620px] rounded-full border border-cyan-400/10"></div>
+            
+            {/* Center Crosshairs */}
+            <div className="absolute w-full h-[1px] bg-cyan-400/20"></div>
+            <div className="absolute h-full w-[1px] bg-cyan-400/20"></div>
+            <div className="absolute w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#38bdf8]"></div>
+
+            {/* Range Labels */}
+            <span className="absolute top-1/2 left-[58%] -translate-y-1/2 text-[9px] font-mono text-cyan-400/50">10km</span>
+            <span className="absolute top-1/2 left-[78%] -translate-y-1/2 text-[9px] font-mono text-cyan-400/40">25km</span>
+
+            {/* Rotating Conic Radar Sweep Beam */}
+            <motion.div 
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: "conic-gradient(from 0deg at 50% 50%, rgba(56, 189, 248, 0.42) 0deg, rgba(31, 78, 224, 0.15) 30deg, transparent 70deg, transparent 360deg)"
+              }}
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: isScanning ? 2.5 : 6.5, ease: "linear" }}
+            />
+
+            {/* Pulsing Blue Light Hotspots with Real-Time Dynamic Coordinates */}
+            {filteredHotspots.map((spot) => (
+              <motion.div
+                key={spot.id}
+                className="absolute group cursor-pointer z-20"
+                style={{
+                  left: `${spot.coords.x}%`,
+                  top: `${spot.coords.y}%`,
+                  transform: "translate(-50%, -50%)"
+                }}
+                whileHover={{ scale: 1.35 }}
+                onClick={() => {
+                  audio.playClick();
+                  setSelectedHotspot(spot);
+                }}
+              >
+                {/* Outer Pulsing Aura */}
+                <div className="relative flex items-center justify-center">
+                  <span className={`animate-ping absolute rounded-full bg-cyan-400 opacity-75 ${
+                    spot.isRecentlyUpdated ? "h-10 w-10 bg-amber-400" : "h-7 w-7"
+                  }`}></span>
+                  
+                  {/* Center Core Blue Light */}
+                  <span className={`relative flex rounded-full border-2 border-white shadow-[0_0_16px_#38bdf8] ${
+                    spot.isRecentlyUpdated ? "h-4 w-4 bg-amber-300" : "h-3.5 w-3.5 bg-cyan-300"
+                  }`}></span>
+                </div>
+                
+                {/* Permanent Spot Label on Map */}
+                <div className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-bold text-white bg-black/70 backdrop-blur-xs px-2 py-0.5 rounded border border-white/20 shadow-md flex items-center gap-1 group-hover:bg-[#1f4ee0] transition-colors">
+                  <span>{spot.icon}</span>
+                  <span className="hidden sm:inline">{spot.name}</span>
+                  <span className="font-mono text-cyan-300 font-extrabold">({spot.currentActive})</span>
+                </div>
+
+                {/* Tooltip on Hover */}
+                <div className="hidden group-hover:block absolute bottom-full mb-3 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white text-[#0b1f5c] text-xs font-black px-3 py-1.5 rounded-xl border-[2px] border-[#0b1f5c] shadow-[3px_3px_0_#0b1f5c] z-30 pointer-events-none">
+                  <div className="flex items-center gap-1.5">
+                    <span>{spot.name}:</span>
+                    <span className="text-[#1f4ee0] font-black">{spot.currentActive} online</span>
+                  </div>
+                  <p className="text-[10px] text-[#4a5a8a] font-medium">{spot.topActivities[0]}</p>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Radar Telemetry Footer Overlays */}
+            <div className="absolute bottom-3 left-4 text-[11px] font-bold text-cyan-200 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-cyan-500/30">
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8] animate-pulse"></span>
+              <span>Live GPS Escrow Radar: Gurugram, Delhi & Noida</span>
+            </div>
+
+            <div className="absolute bottom-3 right-4 text-[11px] font-mono text-cyan-300 z-10 hidden sm:flex items-center gap-2 bg-black/60 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-cyan-500/30">
+              <Wifi className="w-3.5 h-3.5 text-emerald-400" />
+              <span>PING 24ms · 100% ID SECURE</span>
+            </div>
+          </div>
+        )}
 
         {/* 5. LIVE ACTIVITY FEED STREAM ("HAPPENING RIGHT NOW IN NCR") */}
         <div className="mt-6 pt-5 border-t-[2px] border-[#0b1f5c]/20">
@@ -847,8 +931,27 @@ export default function LiveHangoutsRadar({
                   </div>
                 </div>
 
+                {/* Venue Address & Google Maps Navigation */}
+                <div className="bg-[#f3f8ff] border border-[#0b1f5c]/20 rounded-xl p-2.5 flex items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2 text-[#4a5a8a] text-[11px] truncate">
+                    <MapPin className="w-3.5 h-3.5 text-[#1f4ee0] shrink-0" />
+                    <span className="truncate">{selectedHotspot.address}</span>
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                      `${selectedHotspot.name}, ${selectedHotspot.city}, India`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 flex items-center gap-1 font-bold text-[11px] text-[#1f4ee0] hover:underline"
+                  >
+                    Open in Maps
+                    <ChevronRight className="w-3 h-3" />
+                  </a>
+                </div>
+
                 {/* Direct Action */}
-                <div className="pt-2 flex items-center gap-3">
+                <div className="pt-1 flex items-center gap-2">
                   <a
                     href="#match"
                     onClick={() => {
@@ -858,9 +961,9 @@ export default function LiveHangoutsRadar({
                         onOpenBookingClick(selectedHotspot.activeCompanions[0]?.name, selectedHotspot.name);
                       }
                     }}
-                    className="btn b w-full py-3 text-sm shadow-[3px_3px_0_#0b1f5c]"
+                    className="btn b w-full py-3 text-sm shadow-[3px_3px_0_#0b1f5c] text-center"
                   >
-                    ⚡ Book Companion at {selectedHotspot.name}
+                    ⚡ Book Free Companion at {selectedHotspot.name}
                   </a>
                 </div>
 

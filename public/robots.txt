@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://happyhangouts.in/sitemap.xml

@@ -34,6 +34,7 @@ import {
 } from "motion/react";
 import { audio, setupGlobalAudioListeners } from "./utils/audio";
 import { submitToGoogleSheets, generateWhatsAppLeadUrl } from "./lib/googleSheets";
+import { analytics, trackPageView } from "./utils/analytics";
 import AnimatedCharacterStorySection from "./components/AnimatedCharacterStorySection";
 import LiveHangoutsRadar from "./components/LiveHangoutsRadar";
 
@@ -615,6 +616,9 @@ export default function App() {
         form_type: waitlistRole === "partner" ? "Become a Hangout Partner" : "Become a Hangout Seeker",
         timestamp: new Date().toISOString()
       });
+
+      // Track Google Analytics Lead Submission Conversion Event
+      analytics.trackLeadSubmit(waitlistRole, waitlistCity, true);
     } catch (err) {
       // safe fallback
     }
@@ -632,6 +636,8 @@ export default function App() {
     setBookingCompanion(companion);
     setBookingLocation(companion.location);
     setBookingSuccess(false);
+    // Track Google Analytics companion inspection / booking initiation
+    analytics.trackBookingClick(companion.name, companion.location, companion.rate);
   };
 
   // Confirm booking
@@ -640,6 +646,9 @@ export default function App() {
     audio.playSuccess();
     setBookingSuccess(true);
     triggerBoom(`Booking request sent for ${bookingCompanion.name}! 🎉`);
+
+    // Track Google Analytics booking conversion
+    analytics.trackBookingClick(bookingCompanion.name, bookingLocation, 0);
 
     const message = `Hi Happy Hangouts! I'd like to book my FREE Hangout (Launch Offer: First 3 Hangouts Free to build trust & reviews) with ${bookingCompanion.name} (${bookingCompanion.emoji} ${bookingCompanion.categoryLabel}) at ${bookingLocation} for ${bookingDate} (${bookingTime}). Regular rate ₹${bookingCompanion.rate}/hr waived!`;
     const waUrl = `https://wa.me/918800843189?text=${encodeURIComponent(message)}`;

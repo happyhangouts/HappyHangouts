@@ -82,6 +82,11 @@ async function startServer() {
     }
   });
 
+  // Google Search Console Verification Endpoint
+  app.get("/google870e153a6c963091.html", (req, res) => {
+    res.type("text/html").send("google-site-verification: google870e153a6c963091.html");
+  });
+
   // API endpoint for Kabir Chatbot
   app.post("/api/chat", async (req, res) => {
     try {

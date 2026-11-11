@@ -21,7 +21,13 @@ import {
   Coffee,
   Music,
   Check,
-  ChevronRight
+  ChevronRight,
+  Flame,
+  ThumbsUp,
+  MessageCircle,
+  HelpCircle,
+  Clock,
+  ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { audio } from "../utils/audio";
@@ -39,52 +45,62 @@ export interface CharacterConfig {
   clothingColor: string;
   catchphrase: string;
   description: string;
+  quickLocation: string;
+  quickActivity: string;
 }
 
 export const CHARACTERS: Record<CharacterId, CharacterConfig> = {
   muba: {
     id: "muba",
     name: "Muba",
-    role: "NCR Vibe Coordinator & Guide",
+    role: "NCR Vibe Coordinator & Local Guide",
     emoji: "⚡",
     avatarBg: "#ffc933",
     accentColor: "#1f4ee0",
     clothingColor: "#ffc933",
     catchphrase: "Akele kyu? Happy Hangouts Hai na!! 🙌",
-    description: "Your high-energy local buddy who knows every corner of Gurugram & Delhi."
+    description: "Your high-energy local buddy who knows every corner of Gurugram & Delhi.",
+    quickLocation: "All NCR",
+    quickActivity: "Vibe Matchmaking"
   },
   ujjwal: {
     id: "ujjwal",
     name: "Ujjwal Poonia",
-    role: "Badminton Champion · Sec 29",
+    role: "Badminton Champion · Sec 29 Gurugram",
     emoji: "🏸",
     avatarBg: "#7cc4ff",
     accentColor: "#0b1f5c",
     clothingColor: "#7cc4ff",
-    catchphrase: "Ready for a 21-point rally? Let's smash!",
-    description: "4.9 ★ Host · Competitive doubles player & sports fitness enthusiast."
+    catchphrase: "Court booked hai, smash lagane kab aa rahe ho?",
+    description: "4.9 ★ Host · Competitive doubles player & sports fitness enthusiast.",
+    quickLocation: "Sector 29 Arena, Gurugram",
+    quickActivity: "Badminton"
   },
   sonika: {
     id: "sonika",
     name: "Sonika Sharma",
-    role: "Cafe & Startup Guide · CyberHub",
+    role: "Cafe & Startup Guide · DLF CyberHub",
     emoji: "☕",
     avatarBg: "#ffdd80",
     accentColor: "#b45309",
     clothingColor: "#f59e0b",
-    catchphrase: "Good coffee, zero awkwardness, honest conversations.",
-    description: "4.9 ★ Top Rated · Pour-over lover & indie startup consultant."
+    catchphrase: "Good pour-over coffee, zero awkwardness, honest startup talks.",
+    description: "4.9 ★ Top Rated · Specialty coffee lover & indie startup consultant.",
+    quickLocation: "DLF CyberHub, Gurugram",
+    quickActivity: "Cafe Chat"
   },
   jyoti: {
     id: "jyoti",
     name: "Jyoti Nandal",
-    role: "Heritage & Trek Guide · Sunder Nursery",
+    role: "Heritage & Botanical Guide · Sunder Nursery",
     emoji: "🥾",
     avatarBg: "#a8f0c6",
     accentColor: "#047857",
     clothingColor: "#10b981",
-    catchphrase: "Sunrise at Sunder Nursery beats any lazy morning!",
-    description: "5.0 ★ Super Host · Botanical trails, nature photowalks & sunrise walks."
+    catchphrase: "Delhi sunrise at Sunder Nursery beats sleeping till 2 PM any day!",
+    description: "5.0 ★ Super Host · Botanical trails, nature photowalks & sunrise walks.",
+    quickLocation: "Sunder Nursery & Lodhi, Delhi",
+    quickActivity: "Trek & Photowalk"
   },
   falguni: {
     id: "falguni",
@@ -94,8 +110,10 @@ export const CHARACTERS: Record<CharacterId, CharacterConfig> = {
     avatarBg: "#ff9e80",
     accentColor: "#b91c1c",
     clothingColor: "#ef4444",
-    catchphrase: "Bring your favorite song lyrics, I'll play the chords!",
-    description: "4.8 ★ Host · Acoustic guitar jamming & indie open mics in Central Delhi."
+    catchphrase: "Bring your favorite playlist lyrics, I'll strum the chords!",
+    description: "4.8 ★ Host · Acoustic guitar jamming & indie music in Central Delhi.",
+    quickLocation: "Khan Market & CP, Delhi",
+    quickActivity: "Music Jam"
   }
 };
 
@@ -108,6 +126,12 @@ export interface StoryScene {
   dialogue: string;
   speechSubtext: string;
   stageBackdrop: "cyberhub" | "badminton_court" | "safety_vault" | "sunder_nursery" | "earnings_vault";
+  relatableTag: string;
+  companionAction?: {
+    companionName: string;
+    location: string;
+    buttonLabel: string;
+  };
   interactiveAction?: {
     label: string;
     actionOutcome: string;
@@ -128,388 +152,417 @@ export interface StoryEpisode {
 
 export const STORY_EPISODES: StoryEpisode[] = [
   {
-    id: "how-it-works",
+    id: "relatable-weekends",
     number: "01",
-    title: "How Happy Hangouts Works in Real Life",
-    shortTitle: "How It Works",
-    badge: "Interactive Walkthrough",
-    icon: "💡",
+    title: "Saturday 11 AM in Delhi NCR: The Real Weekend Struggle",
+    shortTitle: "Weekend Reality",
+    badge: "100% Relatable",
+    icon: "🛋️",
     speakerId: "muba",
     scenes: [
       {
-        id: "hiw-1",
-        stageTitle: "The Saturday 11 AM Dilemma in Gurugram",
-        locationBadge: "DLF CyberHub, Gurugram",
+        id: "rel-1",
+        stageTitle: "The Saturday 11:30 AM Flatmate Dilemma",
+        locationBadge: "Gurgaon Phase 3 / South Delhi Flat",
         characterMood: "thinking",
-        dialogue: "It's Saturday morning in Gurugram. My roommates are asleep, friends are out of town, and I really want to play badminton or grab good coffee. Sitting at home alone? No way!",
-        speechSubtext: "Everyone in Delhi NCR has felt this solo weekend boredom.",
+        dialogue: "It's Saturday 11:30 AM in Gurgaon. You wake up, open WhatsApp, and the college group is dead silence. Flatmates went home to Jaipur or Chandigarh, or they're sleeping till 3 PM. You want to play badminton or grab good chai, but going alone feels awkward. Sitting at home scrolling reels all day? No way!",
+        speechSubtext: "Every single person who moved to Delhi NCR has stared at the ceiling on a lonely weekend.",
         stageBackdrop: "cyberhub",
+        relatableTag: "Saturday Solo Dilemma",
         interactiveAction: {
-          label: "📱 Tap to open Happy Hangouts app",
-          actionOutcome: "Browsing 50+ verified activity partners in Gurugram & Delhi!"
+          label: "📱 Open Happy Hangouts Live Radar",
+          actionOutcome: "BAM! 42 verified activity partners active right now across CyberHub, CP & Sec 29!"
         },
         keyTakeaways: [
-          "Zero endless texting or awkward dating app swiping",
-          "Activity-first: connect strictly over hobbies & sports",
-          "Choose verified local companions in your exact neighborhood"
+          "Ditch solo weekend doom-scrolling and bedroom boredom",
+          "Connect over actual sports, coffee, photowalks & jam sessions",
+          "Meet verified companions who are as excited to hang out as you are"
         ]
       },
       {
-        id: "hiw-2",
-        stageTitle: "Finding the Perfect Badminton Partner",
-        locationBadge: "Sector 29 Sports Complex",
+        id: "rel-2",
+        stageTitle: "Dost Cancelled Badminton 20 Mins Before?",
+        locationBadge: "Sector 29 Arena, Gurugram",
+        characterMood: "active",
+        dialogue: "You booked a court in Sector 29, bought new shuttlecocks, and 20 mins before match time your buddy texts: 'Bhai neend aa rahi hai, next week pakka!' 😭 Instead of wasting your court booking, open Happy Hangouts! Ujjwal Poonia is 10 mins away, racket ready, and loves 21-point competitive rallies!",
+        speechSubtext: "The universal Delhi NCR pain point: friends dropping out at the very last moment.",
+        stageBackdrop: "badminton_court",
+        relatableTag: "Friend Dropped Out Fix",
+        companionAction: {
+          companionName: "Ujjwal Poonia",
+          location: "Sector 29 Arena, Gurugram",
+          buttonLabel: "⚡ Book Free Badminton with Ujjwal"
+        },
+        interactiveAction: {
+          label: "🏸 Pass the Shuttlecock to Ujjwal",
+          actionOutcome: "SMASH! Ujjwal accepts match: First 3 Hangouts Free (₹0 fee applied)!"
+        },
+        keyTakeaways: [
+          "Never waste a pre-booked sports court again",
+          "Coached drills, doubles rallies, and fitness partners on demand",
+          "First 3 hangouts are 100% FREE to build trust and mutual reviews"
+        ]
+      },
+      {
+        id: "rel-3",
+        stageTitle: "Solo Cafe Awkwardness? Meet Sonika at CyberHub",
+        locationBadge: "DLF CyberHub (Blue Tokai), Gurugram",
+        characterMood: "thinking",
+        dialogue: "Ever sat alone at Blue Tokai CyberHub pretending to stare intensely at your laptop screen just so you don't look lonely? Sonika Sharma gets it! Meet up for pour-over Ethiopian brews, brainstorm startup pitch decks, or talk indie books without awkward romance pressure.",
+        speechSubtext: "Cafe co-working is 10x better when you have a sharp, friendly mind across the table.",
+        stageBackdrop: "cyberhub",
+        relatableTag: "Solo Cafe Anxiety Solved",
+        companionAction: {
+          companionName: "Sonika Sharma",
+          location: "DLF CyberHub, Gurugram",
+          buttonLabel: "☕ Book Free Coffee Chat with Sonika"
+        },
+        interactiveAction: {
+          label: "☕ Brew Fresh Pour-Over Coffee",
+          actionOutcome: "Aroma unlocked! Sonika is ready for deep tech, career & book chats."
+        },
+        keyTakeaways: [
+          "Zero creepy small talk — genuine intellectual & lifestyle banter",
+          "Perfect for remote founders, techies, designers & newcomers",
+          "Meet strictly in public, vibrant third-wave cafes"
+        ]
+      },
+      {
+        id: "rel-4",
+        stageTitle: "Weather is 10/10: Sunder Nursery Sunrise Trails",
+        locationBadge: "Sunder Nursery & Lodhi, Delhi",
         characterMood: "excited",
-        dialogue: "I filter by 'Badminton' in Sector 29 and boom — there's Ujjwal Poonia! 4.9 rating, Aadhaar verified. And best of all: your first 3 hangouts are 100% FREE to build mutual trust and reviews on both sides! Zero financial risk!",
-        speechSubtext: "Every profile shows real photos, hourly rates, and verified trust badges.",
+        dialogue: "Delhi autumn weather is a pure 10/10. Fresh morning breeze, heritage arches, and blooming roses at Sunder Nursery. But your friends refuse to wake up before noon! Jyoti Nandal is already there with her camera and botanical guide map. Lakefront chai and photowalks hit different!",
+        speechSubtext: "Don't let gorgeous NCR weather slip away while your flatmates sleep.",
+        stageBackdrop: "sunder_nursery",
+        relatableTag: "Morning Weather Perfection",
+        companionAction: {
+          companionName: "Jyoti Nandal",
+          location: "Sunder Nursery & Lodhi, Delhi",
+          buttonLabel: "🥾 Book Free Trail with Jyoti"
+        },
+        interactiveAction: {
+          label: "📸 Snap Lakefront Sunrise Photo",
+          actionOutcome: "Golden hour photo captured! 5,000 steps done before 10 AM."
+        },
+        keyTakeaways: [
+          "Explore hidden Mughal heritage pavilions & lakeside lawns",
+          "Fresh morning air and wholesome weekend fitness steps",
+          "Great company for photography, birdwatching & quiet reading"
+        ]
+      }
+    ]
+  },
+  {
+    id: "dating-vs-hangouts",
+    number: "02",
+    title: "Why Happy Hangouts Beats Dating Apps 100x",
+    shortTitle: "Dating Apps vs Us",
+    badge: "Zero Creepiness",
+    icon: "⚡",
+    speakerId: "muba",
+    scenes: [
+      {
+        id: "dvs-1",
+        stageTitle: "The Exhausting Dating App Small Talk Trap",
+        locationBadge: "Any Dating App Screen",
+        characterMood: "thinking",
+        dialogue: "Let's be completely honest: dating apps in Delhi NCR are exhausting! You swipe 100 times, get ghosted, or chat for 5 days about 'Hey, what are you doing?'. And when you finally meet, there's heavy romantic pressure and awkward expectations. Who has the energy for that?!",
+        speechSubtext: "People don't want forced romance; they just want someone fun to do activities with.",
+        stageBackdrop: "cyberhub",
+        relatableTag: "Dating App Fatigue",
+        interactiveAction: {
+          label: "🚫 Delete Forced Romance Pressure",
+          actionOutcome: "Relief! Welcome to activity-first companionship."
+        },
+        keyTakeaways: [
+          "Zero romance drama, zero awkward expectations",
+          "Skip the 5 days of boring 'what are your hobbies' texting",
+          "Pick an activity you already love, and do it with a verified buddy"
+        ]
+      },
+      {
+        id: "dvs-2",
+        stageTitle: "Activity-First: Conversations Flow Naturally",
+        locationBadge: "Siri Fort Courts & Khan Market",
+        characterMood: "excited",
+        dialogue: "When you meet to rally badminton, jam acoustic guitars, or walk Sunder Nursery, there are ZERO awkward silences! You're already focusing on the game, the music, or the trail. The laughter and banter happen organically without anyone judging your outfit or relationship status!",
+        speechSubtext: "Shared passion creates instant comfort and mutual respect.",
         stageBackdrop: "badminton_court",
+        relatableTag: "Natural Chemistry",
+        companionAction: {
+          companionName: "Falguni Baddi",
+          location: "Khan Market & Connaught Place (CP), Delhi",
+          buttonLabel: "🎸 Book Free Jam with Falguni"
+        },
         interactiveAction: {
-          label: "⚡ Lock in Free Session with Ujjwal",
-          actionOutcome: "Booking request confirmed: ₹0 Free Hangout (1 of 3 credits applied)!"
+          label: "🎸 Strum Acoustic G-Chord",
+          actionOutcome: "Harmonized! Falguni starts playing indie acoustic chords."
         },
         keyTakeaways: [
-          "First 3 hangouts are 100% FREE to build mutual trust & reviews",
-          "100% ID and biometric selfie verified companions",
-          "Meet strictly in vibrant, public sports arenas or cafes"
+          "Focus is 100% on the hobby, sports or cafe experience",
+          "No creepy interrogations or forced romantic advances",
+          "Strict hourly sessions — you have complete control over your time"
         ]
       },
       {
-        id: "hiw-3",
-        stageTitle: "Safety First: Public Meetup & Escrow Protection",
-        locationBadge: "Sector 29 Arena & Escrow Vault",
-        characterMood: "explaining",
-        dialogue: "Here's the genius part: my payment stays in safe Escrow! The host doesn't get paid until we both complete the session and give a thumbs up. And we meet strictly in public sports complexes!",
-        speechSubtext: "Your money and personal safety are fully locked and protected.",
-        stageBackdrop: "safety_vault",
-        interactiveAction: {
-          label: "🛡️ Verify Escrow Lock Status",
-          actionOutcome: "100% Escrow Protected: Funds only release on mutual approval!"
-        },
-        keyTakeaways: [
-          "UPI Escrow protection: funds held safely until session ends",
-          "Zero private flats or isolated locations allowed",
-          "Real-time safety timer and 1-tap SOS assistance"
-        ]
-      },
-      {
-        id: "hiw-4",
-        stageTitle: "Weekend Saved: Game On & High Fives!",
-        locationBadge: "Sector 29 Badminton Arena",
+        id: "dvs-3",
+        stageTitle: "Launch Privilege: First 3 Hangouts are 100% FREE",
+        locationBadge: "Trust Vault & Free Pass",
         characterMood: "celebrating",
-        dialogue: "We played 3 competitive sets, smashed some incredible rallies, and grabbed refreshing nimbu paani afterwards. Weekend dilemma solved! Akele kyu? Happy Hangouts Hai na!!",
-        speechSubtext: "From sitting alone at home to an energizing weekend rally in 2 hours.",
-        stageBackdrop: "badminton_court",
+        dialogue: "To prove this is genuine and build mutual trust, your first 3 hangouts are 100% FREE! (₹0 fee). The host agrees, you agree, and after having a blast, you trade genuine 5-star reviews to build your community profile. Zero financial risk on both sides!",
+        speechSubtext: "Mutual trust is built when both parties experience the platform risk-free.",
+        stageBackdrop: "earnings_vault",
+        relatableTag: "First 3 Free Privilege",
         interactiveAction: {
-          label: "🎉 Celebrate & Give Thumbs Up",
-          actionOutcome: "5-Star Review submitted! Host funds released via instant UPI."
+          label: "🎁 Claim 3 Free Hangouts Credit",
+          actionOutcome: "Pass Armed: ₹0 Fee applied for Sessions 1, 2, and 3!"
         },
         keyTakeaways: [
-          "Instant mood boost & healthy active weekend",
-          "Built a reliable badminton buddy for future matches",
-          "No awkward romance expectations — pure activity fun"
+          "Sessions 1, 2, and 3 are completely free (₹0 platform & host fee)",
+          "Designed to establish comfort, verified trust & 5-star feedback",
+          "Available for both new companions and activity hosts"
         ]
       }
     ]
   },
   {
     id: "safety-shield",
-    number: "02",
-    title: "The 4-Pillar Safety Shield Explained",
+    number: "03",
+    title: "Is It Actually Safe? The 4-Pillar Shield in Plain Words",
     shortTitle: "4-Pillar Safety",
-    badge: "Trust Protocol",
+    badge: "Ironclad Security",
     icon: "🛡️",
     speakerId: "muba",
     scenes: [
       {
-        id: "safe-1",
-        stageTitle: "Pillar 1: Aadhaar + Biometric Face Verification",
-        locationBadge: "Identity Verification Center",
+        id: "saf-1",
+        stageTitle: "Pillar 1: Aadhaar + Biometric Face Check",
+        locationBadge: "ID Verification Vault",
         characterMood: "explaining",
-        dialogue: "Safety isn't just an afterthought here; it's our core engine! Every companion must complete Government ID verification (Aadhaar or PAN) plus a live biometric selfie scan before joining.",
-        speechSubtext: "Zero bots, zero fake profiles, zero anonymous accounts.",
+        dialogue: "Girls and newcomers ask: 'Is it actually safe? What about creeps?'. Here is our ironclad rule: every companion must complete Government ID verification (Aadhaar or PAN) PLUS a live biometric selfie scan before setting foot on the platform. Zero anonymous accounts, zero fake photos!",
+        speechSubtext: "We reject 100% of unverified or suspicious profiles immediately.",
         stageBackdrop: "safety_vault",
+        relatableTag: "100% ID Verified",
         interactiveAction: {
-          label: "🔍 Run Biometric Scanner Beam",
-          actionOutcome: "Biometric Match: 100% Genuine Human Verified!"
+          label: "🔍 Trigger Aadhaar Liveness Scan",
+          actionOutcome: "Biometric Verified: 100% Real Human ID Authenticated."
         },
         keyTakeaways: [
-          "Aadhaar / PAN government document verification",
-          "Live liveness detection to eliminate fake photos",
-          "Verified badge displayed prominently on every profile"
+          "Government ID & live biometric selfie match mandatory",
+          "Zero bots, zero stock photos, zero catfishing",
+          "Verified trust badge displayed publicly on every host profile"
         ]
       },
       {
-        id: "safe-2",
-        stageTitle: "Pillar 2: Strictly Public Venues — No Private Homes",
-        locationBadge: "DLF CyberHub & Khan Market",
+        id: "saf-2",
+        stageTitle: "Pillar 2: Strictly Public Places — No Private Homes, Ever!",
+        locationBadge: "CyberHub, CP & Siri Fort",
         characterMood: "explaining",
-        dialogue: "We enforce an absolute ironclad rule: hangouts ONLY happen in designated public venues like DLF CyberHub, Khan Market, Siri Fort, or Sunder Nursery. Never in private apartments, ever!",
-        speechSubtext: "Both partners stay safe, comfortable, and among vibrant public crowds.",
+        dialogue: "We enforce an absolute zero-exception policy: all hangouts take place strictly in verified public venues — like DLF CyberHub, Khan Market, Siri Fort Sports Complex, or Sunder Nursery. Never in private flats, hotels, or isolated cars. Broad daylight and bustling crowds keep everyone safe!",
+        speechSubtext: "Public venues eliminate uncomfortable situations completely.",
         stageBackdrop: "cyberhub",
+        relatableTag: "Public Daylight Venues",
         interactiveAction: {
-          label: "📍 View Permitted Public Hubs",
-          actionOutcome: "45+ approved cafes, parks, and sports complexes across NCR."
+          label: "📍 View Verified Safe Hotspots",
+          actionOutcome: "8 Major NCR public meeting hubs mapped with Google Maps GPS!"
         },
         keyTakeaways: [
-          "Strict public venue policy enforced on all bookings",
-          "Vetted sports arenas, third-wave cafes, and parks",
-          "Instant booking cancellation if venue changes to private"
+          "Public venues only: third-wave cafes, sports clubs & parks",
+          "Broad daylight meeting hours preferred",
+          "Instant account ban if a user suggests meeting in private"
         ]
       },
       {
-        id: "safe-3",
-        stageTitle: "Pillar 3: Real-Time Session Timer & 1-Tap SOS Beacon",
-        locationBadge: "Active Hangout Tracker",
-        characterMood: "active",
-        dialogue: "While you're hanging out, your session has a live tracker. You can share your live GPS beacon with family, and a 1-tap SOS button connects immediately to our NCR safety desk.",
-        speechSubtext: "Peace of mind for you and your loved ones while you enjoy your day.",
-        stageBackdrop: "safety_vault",
-        interactiveAction: {
-          label: "🚨 Test Safety Beacon Signal",
-          actionOutcome: "Beacon Active: GPS coordinates securely synced to safety desk."
-        },
-        keyTakeaways: [
-          "Live GPS session beacon with 1-tap family sharing",
-          "Emergency SOS response line active 7 days a week",
-          "Session check-in ping after 30 minutes"
-        ]
-      },
-      {
-        id: "safe-4",
-        stageTitle: "Pillar 4: UPI Escrow Protection & 2-Way Reviews",
-        locationBadge: "Financial Escrow Vault",
+        id: "saf-3",
+        stageTitle: "Pillar 3: UPI Escrow Vault — Hosts Only Paid on Approval",
+        locationBadge: "Digital Escrow Vault",
         characterMood: "celebrating",
-        dialogue: "No cash awkwardness! Your payment stays in an escrow vault. Only when the hangout ends smoothly and you tap thumbs up do the funds transfer to the companion. Safe and simple!",
-        speechSubtext: "Mutual reviews ensure high standards and zero tolerance for misbehavior.",
+        dialogue: "No awkward cash exchanges! When you book, your payment sits in a secure digital escrow vault. If the host doesn't show up, you get an immediate 100% refund. The host only gets paid after both of you tap thumbs up at the end of the hangout!",
+        speechSubtext: "Your money is held in a protected bank escrow until you are 100% satisfied.",
         stageBackdrop: "earnings_vault",
+        relatableTag: "Escrow Payment Vault",
         interactiveAction: {
-          label: "🔒 Inspect Escrow Vault Lock",
-          actionOutcome: "Vault Armed: 100% refund guarantee if host fails to show up!"
+          label: "🔒 Test Escrow Protection Lock",
+          actionOutcome: "Vault Locked: Funds protected until mutual session completion."
         },
         keyTakeaways: [
-          "Zero cash exchanges — all transactions routed through UPI escrow",
-          "Full refund protection for cancellations or no-shows",
-          "Mandatory two-way ratings maintain a safe community"
+          "Zero cash handling — automated UPI escrow transactions",
+          "100% money-back guarantee for cancellations or no-shows",
+          "Two-way reviews filter out bad actors permanently"
         ]
       }
     ]
   },
   {
-    id: "meet-hosts",
-    number: "03",
-    title: "Meet Our Founding NCR Hosts",
+    id: "meet-ncr-hosts",
+    number: "04",
+    title: "Meet the 4 Founding NCR Companion Hosts",
     shortTitle: "Meet the Hosts",
     badge: "Verified Profiles",
     icon: "👥",
     speakerId: "ujjwal",
     scenes: [
       {
-        id: "host-1",
-        stageTitle: "Ujjwal Poonia: Badminton Rallies in Sector 29",
+        id: "host-u",
+        stageTitle: "Ujjwal Poonia: Competitive Badminton & Fitness",
         locationBadge: "Sector 29, Gurugram (₹400/hr)",
         characterMood: "active",
-        dialogue: "Hey! I'm Ujjwal. Whether you want high-intensity match practice or friendly rallies to burn 500 calories after work, grab your racket and let's hit the court in Sector 29!",
+        dialogue: "Hey! I'm Ujjwal. Need a doubles partner or intense singles rally in Sector 29? Whether you're training for a tournament or just want to burn 500 calories after sitting at a corporate desk all day, grab your racket and let's play!",
         speechSubtext: "4.9 ★ Rating · 40+ Matches Played · All Skill Levels Welcome",
         stageBackdrop: "badminton_court",
+        relatableTag: "Badminton Partner",
+        companionAction: {
+          companionName: "Ujjwal Poonia",
+          location: "Sector 29 Arena, Gurugram",
+          buttonLabel: "⚡ Book Free Badminton with Ujjwal"
+        },
         interactiveAction: {
-          label: "🏸 Swing Racket with Ujjwal",
-          actionOutcome: "Smash rally! High energy 21-point match ready to book."
+          label: "🏸 Smash with Ujjwal",
+          actionOutcome: "Rally in progress! High energy 21-point game ready."
         },
         keyTakeaways: [
-          "Available weekday mornings & weekend evenings",
-          "Court booking assistance provided in Gurugram",
-          "Coaching tips and doubles tactics included"
+          "Available weekday mornings & weekend evenings in Sector 29",
+          "Court booking coordination assistance provided",
+          "Friendly drills for beginners & high-speed rallies for advanced players"
         ]
       },
       {
-        id: "host-2",
+        id: "host-s",
         stageTitle: "Sonika Sharma: Pour-Over Coffee & Startup Chats",
         locationBadge: "DLF CyberHub, Gurugram (₹450/hr)",
         characterMood: "thinking",
-        dialogue: "Hi! I'm Sonika. Love artisan coffee and brainstorming business ideas? Let's meet at Blue Tokai in CyberHub. No fluff, no small talk — just authentic startup conversations.",
-        speechSubtext: "4.9 ★ Rating · Specialty Coffee Enthusiast · Startup Nomad",
+        dialogue: "Hi! I'm Sonika. Love artisan coffee and brainstorming startup pitches? Let's meet at Blue Tokai in CyberHub. No small talk fluff — let's review your deck, talk indie books, and share honest career insights.",
+        speechSubtext: "4.9 ★ Rating · Specialty Coffee Buff · Startup Consultant",
         stageBackdrop: "cyberhub",
+        relatableTag: "CyberHub Startup Coffee",
+        companionAction: {
+          companionName: "Sonika Sharma",
+          location: "DLF CyberHub, Gurugram",
+          buttonLabel: "☕ Book Free Coffee Chat with Sonika"
+        },
         interactiveAction: {
-          label: "☕ Brew Pour-Over with Sonika",
-          actionOutcome: "Fresh Ethiopian roast poured! Ready for deep startup chats."
+          label: "☕ Pour Fresh Coffee with Sonika",
+          actionOutcome: "Artisan brew ready! Great conversations on decks & indie books."
         },
         keyTakeaways: [
-          "Cozy cafe vibes at DLF CyberHub & 32nd Avenue",
-          "Perfect for founders, designers, and remote professionals",
-          "Honest feedback on decks, ideas, and career pivots"
+          "Cozy cafe spots across DLF CyberHub & 32nd Avenue",
+          "Honest feedback on startup ideas, design, and career transitions",
+          "Zero awkwardness — relaxed and inspiring cafe company"
         ]
       },
       {
-        id: "host-3",
-        stageTitle: "Jyoti Nandal: Sunrise Botanical Trails",
-        locationBadge: "Sunder Nursery, Delhi (₹500/hr)",
+        id: "host-j",
+        stageTitle: "Jyoti Nandal: Heritage Photowalks & Botanical Trails",
+        locationBadge: "Sunder Nursery & Lodhi, Delhi (₹500/hr)",
         characterMood: "explaining",
-        dialogue: "Namaste! I'm Jyoti. Delhi mornings are magical when you spend them among Mughal monuments and lush trees at Sunder Nursery. Join me for photography and heritage walks!",
-        speechSubtext: "5.0 ★ Super Host · Heritage Buff · Sunrise Trail Specialist",
+        dialogue: "Namaste! I'm Jyoti. Delhi mornings are breathtaking when you spend them among lush trees and Mughal monuments at Sunder Nursery. Join me for photowalks, history stories, and lakeside peaceful walks!",
+        speechSubtext: "5.0 ★ Super Host · Heritage Enthusiast · Botanical Trail Specialist",
         stageBackdrop: "sunder_nursery",
+        relatableTag: "Heritage Photowalks",
+        companionAction: {
+          companionName: "Jyoti Nandal",
+          location: "Sunder Nursery & Lodhi, Delhi",
+          buttonLabel: "🥾 Book Free Trail with Jyoti"
+        },
         interactiveAction: {
-          label: "🥾 Explore Trail with Jyoti",
-          actionOutcome: "Hidden lakefront pavilion discovered at Sunder Nursery!"
+          label: "🥾 Walk Botanical Trails with Jyoti",
+          actionOutcome: "Historic lakefront pavilion discovered at Sunder Nursery!"
         },
         keyTakeaways: [
-          "Sunrise botanical trails & lakefront photography",
-          "Fascinating historical stories of Delhi's monuments",
-          "Fresh morning air and peaceful birdwatching"
+          "Sunrise walks among Mughal monuments & lakefront lawns",
+          "Fascinating stories of Old and New Delhi's heritage",
+          "Peaceful, safe outdoor air away from city traffic"
         ]
       },
       {
-        id: "host-4",
-        stageTitle: "Falguni Baddi: Acoustic Jamming in Khan Market",
-        locationBadge: "Khan Market, Delhi (₹450/hr)",
+        id: "host-f",
+        stageTitle: "Falguni Baddi: Acoustic Indie Jamming in Khan Market",
+        locationBadge: "Khan Market & CP, Delhi (₹450/hr)",
         characterMood: "celebrating",
-        dialogue: "Hey music lovers! I'm Falguni. If you play an instrument, write songs, or just want to sing along to acoustic indie classics, let's jam together in Central Delhi!",
-        speechSubtext: "4.8 ★ Host · Singer-Songwriter · Creative Jamming Partner",
+        dialogue: "Hey music lovers! I'm Falguni. If you play guitar, write poetry, or just want to sing along to acoustic indie favorites, let's jam in Khan Market! No audition, no judgment — just pure creative musical expression.",
+        speechSubtext: "4.8 ★ Host · Singer-Songwriter · Acoustic Jam Partner",
         stageBackdrop: "cyberhub",
+        relatableTag: "Acoustic Jam Sessions",
+        companionAction: {
+          companionName: "Falguni Baddi",
+          location: "Khan Market & Connaught Place (CP), Delhi",
+          buttonLabel: "🎸 Book Free Jam with Falguni"
+        },
         interactiveAction: {
-          label: "🎸 Strum Guitar with Falguni",
-          actionOutcome: "Acoustic chord progression unlocked! Beautiful indie vibe."
+          label: "🎵 Strum Acoustic Chords with Falguni",
+          actionOutcome: "Harmonized chord progression unlocked! Beautiful acoustic vibe."
         },
         keyTakeaways: [
           "Acoustic guitar jamming & lyric writing sessions",
-          "Central Delhi & Khan Market cafe settings",
-          "Welcoming to complete beginners and seasoned musicians"
-        ]
-      }
-    ]
-  },
-  {
-    id: "community-stories",
-    number: "04",
-    title: "New to NCR? No More Solo Weekends",
-    shortTitle: "NCR Stories",
-    badge: "Community Life",
-    icon: "🌿",
-    speakerId: "muba",
-    scenes: [
-      {
-        id: "comm-1",
-        stageTitle: "Moving to Gurugram or Delhi Alone",
-        locationBadge: "Cyber City & Golf Course Road",
-        characterMood: "thinking",
-        dialogue: "Thousands of young professionals move to Gurugram and Delhi every month for tech and corporate jobs. Great career, but weekends can feel quiet and isolated when you don't know anyone.",
-        speechSubtext: "The 'big city loneliness' is real, and dating apps are often awkward and exhausting.",
-        stageBackdrop: "cyberhub",
-        interactiveAction: {
-          label: "💭 Reflect on the Newcomer Dilemma",
-          actionOutcome: "Happy Hangouts was built specifically to solve this problem!"
-        },
-        keyTakeaways: [
-          "Corporate transplants often struggle to build weekend tribes",
-          "Dating apps bring unwanted romantic pressure and ghosting",
-          "People want activity buddies, not complicated dates"
-        ]
-      },
-      {
-        id: "comm-2",
-        stageTitle: "Activity-First: The Natural Way to Connect",
-        locationBadge: "Aravalli Biodiversity & Sunder Nursery",
-        characterMood: "excited",
-        dialogue: "Happy Hangouts removes the pressure! When you meet to play badminton, hike an Aravalli trail, or try a new cafe, the focus is on the activity. Conversations flow naturally and comfortably.",
-        speechSubtext: "Zero awkward silences because you're already doing something exciting together.",
-        stageBackdrop: "sunder_nursery",
-        interactiveAction: {
-          label: "🌿 Connect on a Nature Walk",
-          actionOutcome: "Shared laughter, great memories, and healthy outdoor steps!"
-        },
-        keyTakeaways: [
-          "Shared activities create immediate organic common ground",
-          "Strict hourly sessions give everyone total control of their time",
-          "Safe, wholesome, and energizing weekend experiences"
-        ]
-      },
-      {
-        id: "comm-3",
-        stageTitle: "Building Your Authentic Local Circle",
-        locationBadge: "Greater NCR Network",
-        characterMood: "celebrating",
-        dialogue: "Over time, our members discover their favorite badminton rivals, weekend chai companions, and concert buddies. Delhi NCR starts feeling like home. Akele kyu? Happy Hangouts Hai na!!",
-        speechSubtext: "From complete stranger to trusted weekend companion in safe public spaces.",
-        stageBackdrop: "cyberhub",
-        interactiveAction: {
-          label: "🙌 High Five the Community",
-          actionOutcome: "Welcome to Happy Hangouts NCR! You'll never spend a weekend alone."
-        },
-        keyTakeaways: [
-          "Curate your personal circle of verified activity hosts",
-          "Explore hidden gems across Gurugram, South Delhi & Central Delhi",
-          "Join community group walks and weekend meetup hubs"
-        ]
-      }
-    ]
-  },
-  {
-    id: "host-earnings",
-    number: "05",
-    title: "Become a Host: Earn ₹25k–₹40k/mo on Your Schedule",
-    shortTitle: "Host Earnings",
-    badge: "Income Blueprint",
-    icon: "💰",
-    speakerId: "muba",
-    scenes: [
-      {
-        id: "earn-1",
-        stageTitle: "Turn Your Free Time & Passions Into Income",
-        locationBadge: "Host Onboarding Hub",
-        characterMood: "explaining",
-        dialogue: "Already playing badminton on weekends? Passionate about third-wave coffee or heritage walks? You can become a verified Happy Hangouts host and earn ₹300 to ₹700 per hour on your terms!",
-        speechSubtext: "You decide your schedule, your hourly rate, and which requests you accept.",
-        stageBackdrop: "earnings_vault",
-        interactiveAction: {
-          label: "💼 Calculate My Host Potential",
-          actionOutcome: "10 hours/week at ₹450/hr = ~₹34,400 monthly take-home!"
-        },
-        keyTakeaways: [
-          "Set your own transparent hourly rate (₹300 to ₹700/hr)",
-          "100% flexibility: host when you want, where you want",
-          "Keep 80% take-home pay with automated direct UPI transfers"
-        ]
-      },
-      {
-        id: "earn-2",
-        stageTitle: "Total Control Over Your Schedule & Locations",
-        locationBadge: "Partner Dashboard",
-        characterMood: "active",
-        dialogue: "You choose strictly public spots close to your home or office. If a request doesn't fit your day, decline with zero penalty. You are your own boss!",
-        speechSubtext: "Safe, dignified, and completely transparent platform guidelines.",
-        stageBackdrop: "cyberhub",
-        interactiveAction: {
-          label: "📅 Set Available Time Slots",
-          actionOutcome: "Calendar updated: Accepting morning sports & weekend coffee chats."
-        },
-        keyTakeaways: [
-          "Accept or decline requests based on your availability",
-          "Only meet at verified public venues you feel comfortable in",
-          "ID-verified guests only — your safety is equally protected"
-        ]
-      },
-      {
-        id: "earn-3",
-        stageTitle: "Weekly Direct UPI Payouts to Your Bank Account",
-        locationBadge: "Instant Bank Settlement",
-        characterMood: "celebrating",
-        dialogue: "Earnings are settled directly into your bank account via UPI every Monday. Founding hosts in Gurugram and Delhi are already earning ₹25,000 to ₹40,000 extra each month doing what they love!",
-        speechSubtext: "Monetize your sports passion, city knowledge, and social energy.",
-        stageBackdrop: "earnings_vault",
-        interactiveAction: {
-          label: "💸 Simulate Monday UPI Payout",
-          actionOutcome: "Chime! ₹8,600 credited to your UPI account for 5 sessions!"
-        },
-        keyTakeaways: [
-          "Direct UPI weekly payouts with complete earnings reports",
-          "Build a top-rated profile with glowing 5-star reviews",
-          "Founding host badge unlocks priority bookings in your area"
+          "Cozy cafe settings in Central Delhi and Khan Market",
+          "Welcoming to total beginners and experienced musicians alike"
         ]
       }
     ]
   }
 ];
 
+// Quick Relatable Situations Selector Options
+const RELATABLE_SITUATIONS = [
+  {
+    id: "sit-badminton",
+    icon: "🏸",
+    title: "Friend bailed on badminton?",
+    subtitle: "Court booked at Sec 29, but no partner",
+    targetEpisodeIdx: 0,
+    targetSceneIdx: 1,
+    speaker: "ujjwal" as CharacterId
+  },
+  {
+    id: "sit-cafe",
+    icon: "☕",
+    title: "Bored of solo cafe WFH?",
+    subtitle: "Need pour-over coffee & startup talks",
+    targetEpisodeIdx: 0,
+    targetSceneIdx: 2,
+    speaker: "sonika" as CharacterId
+  },
+  {
+    id: "sit-trail",
+    icon: "🥾",
+    title: "Weather 10/10 & flatmates sleeping?",
+    subtitle: "Sunrise photowalk at Sunder Nursery",
+    targetEpisodeIdx: 0,
+    targetSceneIdx: 3,
+    speaker: "jyoti" as CharacterId
+  },
+  {
+    id: "sit-jam",
+    icon: "🎸",
+    title: "Want acoustic jam without cringe?",
+    subtitle: "Indie chords in Khan Market",
+    targetEpisodeIdx: 1,
+    targetSceneIdx: 1,
+    speaker: "falguni" as CharacterId
+  },
+  {
+    id: "sit-safety",
+    icon: "🛡️",
+    title: "Is it actually safe for girls?",
+    subtitle: "Aadhaar + Escrow + Public places only",
+    targetEpisodeIdx: 2,
+    targetSceneIdx: 0,
+    speaker: "muba" as CharacterId
+  },
+  {
+    id: "sit-free",
+    icon: "🎁",
+    title: "First 3 Hangouts Free: What's the deal?",
+    subtitle: "Zero fee to build mutual trust & reviews",
+    targetEpisodeIdx: 1,
+    targetSceneIdx: 2,
+    speaker: "muba" as CharacterId
+  }
+];
+
 interface AnimatedCharacterStorySectionProps {
-  onOpenBookingClick?: () => void;
+  onOpenBookingClick?: (companionName?: string, location?: string) => void;
   onApplyHostClick?: () => void;
   onExploreSafetyClick?: () => void;
 }
@@ -529,20 +582,36 @@ export default function AnimatedCharacterStorySection({
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
   const [characterPokeCount, setCharacterPokeCount] = useState<number>(0);
 
+  // Relatable Reaction Live Counters State
+  const [reactions, setReactions] = useState<{ [key: string]: number }>({
+    literallyMe: 1428,
+    storyOfMyLife: 986,
+    needThisNow: 754,
+    freeHangoutSaved: 1195
+  });
+  const [userClickedReactions, setUserClickedReactions] = useState<{ [key: string]: boolean }>({});
+
   // Audio / Speech Narration State
   const [voiceNarrationEnabled, setVoiceNarrationEnabled] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [autoPlay, setAutoPlay] = useState<boolean>(false);
-
-  const currentEpisode = STORY_EPISODES[selectedEpisodeIdx];
-  const currentScene = currentEpisode.scenes[currentSceneIdx];
-  const activeSpeakerId = activeSpeakerOverride || currentEpisode.speakerId;
-  const currentSpeaker = CHARACTERS[activeSpeakerId];
-
-  const speechTimerRef = useRef<NodeJS.Timeout | null>(null);
   const autoPlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Stop any active speech synthesis
+  const currentEpisode = STORY_EPISODES[selectedEpisodeIdx];
+  const currentScene = currentEpisode.scenes[currentSceneIdx] || currentEpisode.scenes[0];
+  const activeSpeakerId = activeSpeakerOverride || currentScene.companionAction?.companionName.toLowerCase().includes("ujjwal") 
+    ? "ujjwal" 
+    : currentScene.companionAction?.companionName.toLowerCase().includes("sonika")
+    ? "sonika"
+    : currentScene.companionAction?.companionName.toLowerCase().includes("jyoti")
+    ? "jyoti"
+    : currentScene.companionAction?.companionName.toLowerCase().includes("falguni")
+    ? "falguni"
+    : currentEpisode.speakerId;
+    
+  const currentSpeaker = CHARACTERS[activeSpeakerId] || CHARACTERS.muba;
+
+  // Stop synthetic speech safely
   const stopSpeech = () => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -563,17 +632,9 @@ export default function AnimatedCharacterStorySection({
       utterance.pitch = activeSpeakerId === "muba" ? 1.15 : activeSpeakerId === "ujjwal" ? 1.0 : activeSpeakerId === "sonika" ? 1.1 : 1.05;
       utterance.lang = "en-IN";
 
-      utterance.onstart = () => {
-        setIsSpeaking(true);
-      };
-
-      utterance.onend = () => {
-        setIsSpeaking(false);
-      };
-
-      utterance.onerror = () => {
-        setIsSpeaking(false);
-      };
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
 
       window.speechSynthesis.speak(utterance);
     } catch (e) {
@@ -590,9 +651,7 @@ export default function AnimatedCharacterStorySection({
       speakDialogue(currentScene.dialogue);
     }
 
-    return () => {
-      stopSpeech();
-    };
+    return () => stopSpeech();
   }, [selectedEpisodeIdx, currentSceneIdx, activeSpeakerId, voiceNarrationEnabled]);
 
   // Auto-play timer
@@ -604,7 +663,7 @@ export default function AnimatedCharacterStorySection({
 
     autoPlayTimerRef.current = setInterval(() => {
       handleNextScene();
-    }, 6500);
+    }, 7000);
 
     return () => {
       if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
@@ -617,7 +676,6 @@ export default function AnimatedCharacterStorySection({
     if (currentSceneIdx < currentEpisode.scenes.length - 1) {
       setCurrentSceneIdx(currentSceneIdx + 1);
     } else {
-      // Loop or go to next episode
       if (selectedEpisodeIdx < STORY_EPISODES.length - 1) {
         setSelectedEpisodeIdx(selectedEpisodeIdx + 1);
         setCurrentSceneIdx(0);
@@ -649,6 +707,14 @@ export default function AnimatedCharacterStorySection({
     setActiveSpeakerOverride(null);
   };
 
+  const handleSelectSituation = (sit: typeof RELATABLE_SITUATIONS[0]) => {
+    audio.playClick();
+    setSelectedEpisodeIdx(sit.targetEpisodeIdx);
+    setCurrentSceneIdx(sit.targetSceneIdx);
+    setActiveSpeakerOverride(sit.speaker);
+    audio.playSuccess();
+  };
+
   const handleToggleVoice = () => {
     audio.playToggle();
     const nextVal = !voiceNarrationEnabled;
@@ -677,6 +743,16 @@ export default function AnimatedCharacterStorySection({
     }
   };
 
+  // Relatable Reaction Click
+  const handleReactionClick = (key: string) => {
+    audio.playClick();
+    audio.playBlip(680);
+    setReactions((prev) => ({ ...prev, [key]: prev[key] + 1 }));
+    setUserClickedReactions((prev) => ({ ...prev, [key]: true }));
+    setCharacterActionPulse(true);
+    setTimeout(() => setCharacterActionPulse(false), 500);
+  };
+
   // Poke Character (Interactive Easter Egg)
   const handlePokeCharacter = () => {
     audio.playClick();
@@ -687,11 +763,11 @@ export default function AnimatedCharacterStorySection({
 
     const quotes = [
       "Akele kyu? Happy Hangouts Hai na!! 🙌",
-      "Special launch perk: your first 3 hangouts are 100% FREE to build trust and trade reviews! 🎁",
-      "Ready for some fun in CyberHub or CP? Let's go!",
-      "100% ID verified, strictly public places, zero drama!",
-      "Badminton, artisan chai, or sunrise trails — you pick!",
-      "Need a partner this weekend? We've got you covered!"
+      "Special launch perk: first 3 hangouts are 100% FREE! Zero risk to try. 🎁",
+      "Dost ne badminton plan cancel kiya? Ujjwal is ready in Sector 29!",
+      "Pour-over coffee in CyberHub or photowalks in Sunder Nursery — let's go!",
+      "Strictly public daylight places. 100% Aadhaar verified companions!",
+      "Dating app romance pressure se thak gaye? Connect strictly over hobbies!"
     ];
     const pickedQuote = quotes[characterPokeCount % quotes.length];
     setActionFeedback(`"${pickedQuote}"`);
@@ -730,14 +806,14 @@ export default function AnimatedCharacterStorySection({
                 🎁 First 3 Hangouts Free
               </span>
               <span className="text-xs font-black text-[#1f4ee0] uppercase tracking-wider flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5" /> Living Animated Guide
+                <Sparkles className="w-3.5 h-3.5" /> Living Delhi NCR Stories
               </span>
             </div>
             <h2 className="text-[32px] sm:text-[48px] font-extrabold tracking-tight text-[#0b1f5c] leading-tight">
-              Akele kyu? Let Muba & Friends Show You!
+              Akele kyu? Real NCR Stories Brought to Life!
             </h2>
             <p className="text-[#4a5a8a] font-medium text-base sm:text-lg max-w-2xl mt-1">
-              Watch Muba, Ujjwal, Sonika, Jyoti, and Falguni act out real hangouts, explain our 4-pillar safety shield, and show how Gurugram and Delhi meet.
+              Watch Muba, Ujjwal, Sonika, Jyoti, and Falguni act out real weekend dilemmas: cancelled plans, solo cafe boredom, and how genuine Delhi NCR companions meet safely.
             </p>
           </div>
 
@@ -749,126 +825,145 @@ export default function AnimatedCharacterStorySection({
               onClick={handleToggleVoice}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border-[2px] font-display font-extrabold text-xs transition-all shadow-[2px_2px_0_#0b1f5c] cursor-pointer ${
                 voiceNarrationEnabled
-                  ? "bg-[#ffc933] text-[#0b1f5c] border-[#0b1f5c] animate-pulse"
-                  : "bg-white text-[#4a5a8a] border-[#0b1f5c] hover:bg-slate-50"
+                  ? "bg-emerald-400 text-[#0b1f5c] border-[#0b1f5c]"
+                  : "bg-white text-[#0b1f5c] border-[#0b1f5c] hover:bg-slate-100"
               }`}
-              title="Toggle Browser Voice Narration"
             >
               {voiceNarrationEnabled ? (
                 <>
-                  <Volume2 className="w-4 h-4 text-[#0b1f5c]" />
-                  <span>Voice Narrator: ON</span>
+                  <Volume2 className="w-4 h-4 text-[#0b1f5c] animate-pulse" />
+                  <span>Voice Narration ON</span>
                 </>
               ) : (
                 <>
                   <VolumeX className="w-4 h-4 text-[#4a5a8a]" />
-                  <span>Voice Narrator: OFF</span>
+                  <span>Listen to Characters</span>
                 </>
               )}
             </button>
 
-            {/* Auto-Play Toggle */}
+            {/* Auto Play Story Button */}
             <button
               type="button"
               onClick={() => {
-                audio.playToggle();
+                audio.playClick();
                 setAutoPlay(!autoPlay);
               }}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border-[2px] font-display font-extrabold text-xs transition-all shadow-[2px_2px_0_#0b1f5c] cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border-[2px] font-display font-extrabold text-xs transition-all shadow-[2px_2px_0_#0b1f5c] cursor-pointer ${
                 autoPlay
                   ? "bg-[#1f4ee0] text-white border-[#0b1f5c]"
-                  : "bg-white text-[#0b1f5c] border-[#0b1f5c] hover:bg-slate-50"
+                  : "bg-white text-[#0b1f5c] border-[#0b1f5c] hover:bg-slate-100"
               }`}
             >
-              {autoPlay ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current" />}
-              <span>{autoPlay ? "Auto-Play ON" : "Auto-Play"}</span>
+              {autoPlay ? (
+                <>
+                  <Pause className="w-4 h-4" />
+                  <span>Auto-Playing</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Auto-Play Story</span>
+                </>
+              )}
             </button>
           </div>
         </motion.div>
 
-        {/* 1. EPISODE PICKER TABS */}
-        <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-thin">
-          {STORY_EPISODES.map((ep, idx) => {
-            const isSelected = idx === selectedEpisodeIdx;
-            return (
-              <button
-                key={ep.id}
-                type="button"
-                onClick={() => handleSelectEpisode(idx)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border-[2.5px] font-display font-black text-xs sm:text-sm whitespace-nowrap transition-all shrink-0 cursor-pointer ${
-                  isSelected
-                    ? "bg-[#0b1f5c] text-white border-[#0b1f5c] shadow-[4px_4px_0_#ffc933] scale-[1.02]"
-                    : "bg-white text-[#0b1f5c] border-[#0b1f5c] hover:bg-[#ffc933]/20 shadow-[2px_2px_0_#0b1f5c]"
-                }`}
-              >
-                <span className="text-base">{ep.icon}</span>
-                <span>{ep.shortTitle}</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-[#4a5a8a]"}`}>
-                  {ep.scenes.length} Scenes
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 2. THE ANIMATED CHARACTER THEATRE STAGE */}
-        <div className="bg-white border-[3px] border-[#0b1f5c] rounded-[32px] shadow-[8px_8px_0_#0b1f5c] overflow-hidden mb-8">
-          
-          {/* Stage Top Bar: Location & Episode Title */}
-          <div className="bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c] px-5 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="bg-[#ffc933] text-[#0b1f5c] text-xs font-black px-2.5 py-1 rounded-full border border-[#0b1f5c]">
-                EPISODE {currentEpisode.number}
-              </span>
-              <h3 className="font-display font-extrabold text-[#0b1f5c] text-base sm:text-lg">
-                {currentEpisode.title}
-              </h3>
-            </div>
-
+        {/* 1. ULTRA-RELATABLE SITUATION QUICK-PICKER ("Which situation are you in right now?") */}
+        <div className="mb-6 bg-white border-[2.5px] border-[#0b1f5c] rounded-2xl p-4 sm:p-5 shadow-[4px_4px_0_#0b1f5c]">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-[#1f4ee0] bg-white px-3 py-1 rounded-full border border-[#0b1f5c]">
-                <MapPin className="w-3.5 h-3.5 text-rose-500" />
-                {currentScene.locationBadge}
-              </span>
+              <span className="text-lg">🎯</span>
+              <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#0b1f5c]">
+                Which Weekend Situation Resonates with You? (Tap to Jump)
+              </h4>
             </div>
+            <span className="text-[11px] font-bold text-[#1f4ee0] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+              Interactive Situation Matcher
+            </span>
           </div>
 
-          {/* MAIN STAGE VIEWPORT (Dynamic Graphic Canvas) */}
-          <div className="p-6 sm:p-10 bg-gradient-to-b from-[#eaf2ff] via-[#f7faff] to-white relative min-h-[460px] flex flex-col justify-between overflow-hidden">
-            
-            {/* Background Graphic Accents based on scene */}
-            <div className="absolute top-4 right-6 pointer-events-none opacity-25">
-              {currentScene.stageBackdrop === "cyberhub" && (
-                <div className="text-7xl font-black text-[#1f4ee0]">🏙️ ☕ ⚡</div>
-              )}
-              {currentScene.stageBackdrop === "badminton_court" && (
-                <div className="text-7xl font-black text-emerald-600">🏸 🏆 ⚡</div>
-              )}
-              {currentScene.stageBackdrop === "safety_vault" && (
-                <div className="text-7xl font-black text-blue-600">🛡️ 🔒 100%</div>
-              )}
-              {currentScene.stageBackdrop === "sunder_nursery" && (
-                <div className="text-7xl font-black text-emerald-700">🌿 🌸 🏛️</div>
-              )}
-              {currentScene.stageBackdrop === "earnings_vault" && (
-                <div className="text-7xl font-black text-amber-500">💰 💸 ₹₹</div>
-              )}
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            {RELATABLE_SITUATIONS.map((sit) => {
+              const isActive = selectedEpisodeIdx === sit.targetEpisodeIdx && currentSceneIdx === sit.targetSceneIdx;
+              return (
+                <button
+                  key={sit.id}
+                  type="button"
+                  onClick={() => handleSelectSituation(sit)}
+                  className={`text-left p-2.5 rounded-xl border-[2px] transition-all cursor-pointer flex flex-col justify-between ${
+                    isActive
+                      ? "bg-[#ffc933] border-[#0b1f5c] shadow-[2.5px_2.5px_0_#0b1f5c] scale-[1.02]"
+                      : "bg-[#f3f8ff] border-[#0b1f5c]/40 hover:border-[#0b1f5c] hover:bg-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xl">{sit.icon}</span>
+                    <span className="text-[9px] font-extrabold uppercase px-1 rounded bg-white/80 border border-[#0b1f5c]/20 text-[#0b1f5c]">
+                      {sit.speaker}
+                    </span>
+                  </div>
+                  <p className="text-xs font-black text-[#0b1f5c] leading-tight line-clamp-2">
+                    {sit.title}
+                  </p>
+                  <p className="text-[10px] text-[#4a5a8a] font-medium truncate mt-1">
+                    {sit.subtitle}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-            {/* Top Scene Subtitle */}
-            <div className="relative z-10 mb-4 flex items-center justify-between">
-              <div>
-                <span className="text-[11px] font-black uppercase tracking-wider text-[#1f4ee0] block">
-                  Scene {currentSceneIdx + 1} of {currentEpisode.scenes.length}
+        {/* 2. THE LIVING THEATRE STAGE BOX */}
+        <div className="border-[3px] border-[#0b1f5c] rounded-[32px] bg-white p-4 sm:p-7 shadow-[8px_8px_0_#0b1f5c] relative mb-6">
+          
+          {/* Episode Tabs (Top Strip) */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-5 border-b-[2px] border-[#0b1f5c]/20 scrollbar-none">
+            {STORY_EPISODES.map((ep, idx) => {
+              const isSelected = selectedEpisodeIdx === idx;
+              return (
+                <button
+                  key={ep.id}
+                  type="button"
+                  onClick={() => handleSelectEpisode(idx)}
+                  className={`chip text-xs sm:text-sm py-2 px-3.5 transition-all shrink-0 cursor-pointer ${
+                    isSelected ? "active" : ""
+                  }`}
+                >
+                  <span>{ep.icon}</span>
+                  <span className="font-extrabold">Ep {ep.number}: {ep.shortTitle}</span>
+                  <span className={`text-[10px] ml-1.5 px-1.5 py-0.2 rounded-full font-mono ${
+                    isSelected ? "bg-white text-[#0b1f5c]" : "bg-blue-100 text-[#1f4ee0]"
+                  }`}>
+                    {ep.badge}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* STAGE ARENA: Interactive Set */}
+          <div className="bg-[#f8fbff] border-[2.5px] border-[#0b1f5c] rounded-[24px] p-5 sm:p-8 relative overflow-hidden min-h-[460px] flex flex-col justify-between shadow-inner">
+            
+            {/* Top Stage Badges & Backdrop Watermark */}
+            <div className="flex items-center justify-between flex-wrap gap-2 relative z-10 mb-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="bg-[#1f4ee0] text-white text-xs font-black px-3 py-1 rounded-full border border-[#0b1f5c] shadow-xs flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#ffc933]" />
+                  {currentScene.locationBadge}
                 </span>
-                <h4 className="text-xl sm:text-2xl font-extrabold text-[#0b1f5c]">
-                  {currentScene.stageTitle}
-                </h4>
+
+                <span className="bg-[#ffc933] text-[#0b1f5c] text-[11px] font-extrabold px-2.5 py-1 rounded-full border border-[#0b1f5c] shadow-xs">
+                  💬 {currentScene.relatableTag}
+                </span>
               </div>
 
               {/* Host Quick Switcher (Meet our Hosts Episode) */}
-              {currentEpisode.id === "meet-hosts" && (
+              {currentEpisode.id === "meet-ncr-hosts" && (
                 <div className="flex items-center gap-1.5 bg-white p-1 rounded-2xl border-[2px] border-[#0b1f5c] shadow-xs">
+                  <span className="text-[10px] font-black text-[#0b1f5c] px-2 hidden sm:inline">Inspect Host:</span>
                   {(["ujjwal", "sonika", "jyoti", "falguni"] as CharacterId[]).map((hId) => (
                     <button
                       key={hId}
@@ -894,17 +989,17 @@ export default function AnimatedCharacterStorySection({
             </div>
 
             {/* STAGE CENTER: ANIMATED CHARACTER + SPEECH BUBBLE */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10 py-4 my-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10 py-3 my-auto">
               
-              {/* LEFT: THE ANIMATED CHARACTER (SVG + Framer Motion) */}
+              {/* LEFT: THE ANIMATED CHARACTER (Vector Figure + Props) */}
               <div className="lg:col-span-4 flex flex-col items-center justify-center">
                 
                 {/* Character Interactive Hitbox */}
                 <motion.div
                   onClick={handlePokeCharacter}
                   animate={{
-                    y: characterActionPulse ? [0, -25, 0] : [0, -8, 0],
-                    rotate: characterActionPulse ? [0, -5, 5, 0] : 0,
+                    y: characterActionPulse ? [0, -22, 0] : [0, -8, 0],
+                    rotate: characterActionPulse ? [0, -4, 4, 0] : 0,
                     scale: characterActionPulse ? 1.08 : 1
                   }}
                   transition={{
@@ -912,13 +1007,13 @@ export default function AnimatedCharacterStorySection({
                     scale: { duration: 0.3 }
                   }}
                   whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer relative group flex flex-col items-center"
+                  className="cursor-pointer relative group flex flex-col items-center select-none"
                   title="Click me to talk or high-five!"
                 >
                   
                   {/* Glowing Character Aura / Shadow */}
                   <div 
-                    className="absolute -inset-4 rounded-full blur-xl opacity-35 transition-all group-hover:opacity-60"
+                    className="absolute -inset-4 rounded-full blur-xl opacity-35 transition-all group-hover:opacity-65"
                     style={{ backgroundColor: currentSpeaker.accentColor }}
                   />
 
@@ -959,33 +1054,35 @@ export default function AnimatedCharacterStorySection({
 
                       {/* Arms (Left & Right) with dynamic props */}
                       {activeSpeakerId === "ujjwal" ? (
-                        // Ujjwal with badminton racket
+                        // Ujjwal with badminton racket + flying shuttlecock
                         <g>
                           <line x1="55" y1="120" x2="30" y2="105" stroke="#0b1f5c" strokeWidth="12" strokeLinecap="round" />
                           <circle cx="20" cy="85" r="18" fill="none" stroke="#1f4ee0" strokeWidth="3" />
                           <line x1="20" y1="85" x2="28" y2="105" stroke="#0b1f5c" strokeWidth="3.5" />
                           {/* Flying Shuttlecock */}
-                          <text x="8" y="70" fontSize="16">🏸</text>
+                          <text x="8" y="70" fontSize="18" className="animate-bounce">🏸</text>
                         </g>
                       ) : activeSpeakerId === "sonika" ? (
-                        // Sonika holding coffee mug with steam
+                        // Sonika holding pour-over coffee mug with steam
                         <g>
                           <line x1="145" y1="125" x2="165" y2="135" stroke="#0b1f5c" strokeWidth="12" strokeLinecap="round" />
                           <rect x="160" y="125" width="18" height="18" rx="4" fill="#ffffff" stroke="#0b1f5c" strokeWidth="2.5" />
-                          <text x="160" y="120" fontSize="14">☕</text>
+                          <text x="160" y="120" fontSize="16">☕</text>
                         </g>
                       ) : activeSpeakerId === "jyoti" ? (
-                        // Jyoti with binoculars
+                        // Jyoti with explorer camera & hiking gear
                         <g>
                           <line x1="145" y1="125" x2="160" y2="115" stroke="#0b1f5c" strokeWidth="12" strokeLinecap="round" />
-                          <text x="155" y="115" fontSize="16">🥾</text>
+                          <text x="155" y="115" fontSize="18">📸</text>
+                          <text x="35" y="125" fontSize="16">🌸</text>
                         </g>
                       ) : activeSpeakerId === "falguni" ? (
                         // Falguni with acoustic guitar
                         <g>
                           <ellipse cx="40" cy="140" rx="20" ry="14" fill="#d97706" stroke="#0b1f5c" strokeWidth="2.5" />
                           <line x1="40" y1="140" x2="25" y2="100" stroke="#0b1f5c" strokeWidth="4" />
-                          <text x="15" y="95" fontSize="14">🎵</text>
+                          <text x="15" y="95" fontSize="16">🎵</text>
+                          <text x="45" y="85" fontSize="14">🎶</text>
                         </g>
                       ) : (
                         // Muba holding glowing smartphone
@@ -1073,7 +1170,7 @@ export default function AnimatedCharacterStorySection({
                       {currentSpeaker.role}
                     </p>
                     <p className="text-[10px] text-[#1f4ee0] font-black underline mt-0.5 group-hover:scale-105 transition-transform">
-                      Tap me to interact! 👆
+                      Tap me to hear my catchphrase! 👆
                     </p>
                   </div>
 
@@ -1090,7 +1187,7 @@ export default function AnimatedCharacterStorySection({
                   initial={{ opacity: 0, scale: 0.95, x: 20 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   transition={{ duration: 0.35 }}
-                  className="bg-white border-[3px] border-[#0b1f5c] rounded-[26px] p-5 sm:p-7 shadow-[6px_6px_0_#0b1f5c] relative mb-4"
+                  className="bg-white border-[3px] border-[#0b1f5c] rounded-[26px] p-5 sm:p-7 shadow-[6px_6px_0_#0b1f5c] relative mb-3"
                 >
                   
                   {/* Bubble Pointer Arrow on desktop */}
@@ -1100,25 +1197,25 @@ export default function AnimatedCharacterStorySection({
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                     <div className="flex items-center gap-2">
                       <div 
-                        className="w-7 h-7 rounded-full flex items-center justify-center text-sm border border-[#0b1f5c]"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-base border-[1.5px] border-[#0b1f5c] shadow-xs"
                         style={{ backgroundColor: currentSpeaker.avatarBg }}
                       >
                         {currentSpeaker.emoji}
                       </div>
                       <div>
-                        <p className="text-xs font-black text-[#0b1f5c] leading-none">
+                        <p className="text-xs sm:text-sm font-black text-[#0b1f5c] leading-none">
                           {currentSpeaker.name}
                         </p>
-                        <p className="text-[10px] text-[#4a5a8a] font-semibold">
-                          {currentScene.characterMood.toUpperCase()} VIBE
+                        <p className="text-[10px] text-[#4a5a8a] font-semibold mt-0.5">
+                          {currentScene.characterMood.toUpperCase()} · {currentScene.stageTitle}
                         </p>
                       </div>
                     </div>
 
                     {isSpeaking && (
-                      <div className="flex items-center gap-1 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-300">
+                      <div className="flex items-center gap-1.5 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-300 shadow-2xs">
                         <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                        <span className="text-[10px] font-black text-rose-600">SPEAKING...</span>
+                        <span className="text-[10px] font-black text-rose-600">SPEAKING DIALOGUE...</span>
                       </div>
                     )}
                   </div>
@@ -1128,8 +1225,8 @@ export default function AnimatedCharacterStorySection({
                     "{currentScene.dialogue}"
                   </p>
 
-                  <p className="text-xs sm:text-sm text-[#4a5a8a] font-medium italic border-l-2 border-[#ffc933] pl-3 py-0.5">
-                    💡 {currentScene.speechSubtext}
+                  <p className="text-xs sm:text-sm text-[#4a5a8a] font-medium italic border-l-3 border-[#ffc933] pl-3 py-1 bg-amber-50/50 rounded-r-lg">
+                    💡 <span className="font-bold text-[#0b1f5c]">Relatable Truth:</span> {currentScene.speechSubtext}
                   </p>
 
                   {/* Key Takeaways Checklist for the scene */}
@@ -1142,23 +1239,50 @@ export default function AnimatedCharacterStorySection({
                     ))}
                   </div>
 
+                  {/* Direct 1-Click Booking Action for this Companion */}
+                  {currentScene.companionAction && (
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          audio.playClick();
+                          if (onOpenBookingClick && currentScene.companionAction) {
+                            onOpenBookingClick(
+                              currentScene.companionAction.companionName,
+                              currentScene.companionAction.location
+                            );
+                          }
+                        }}
+                        className="btn b text-xs sm:text-sm py-2.5 px-4 shadow-[3px_3px_0_#0b1f5c] cursor-pointer flex items-center gap-2"
+                      >
+                        <Zap className="w-4 h-4 fill-current text-white" />
+                        <span>{currentScene.companionAction.buttonLabel}</span>
+                        <span className="text-[10px] bg-white text-[#1f4ee0] px-2 py-0.5 rounded-full font-black">₹0 Free</span>
+                      </button>
+
+                      <span className="text-[11px] font-bold text-[#4a5a8a]">
+                        Meet at {currentScene.companionAction.location}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Interactive Action Button for this Scene */}
                   {currentScene.interactiveAction && (
-                    <div className="mt-5 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <button
                         type="button"
                         onClick={handleTriggerAction}
-                        className="btn b text-xs sm:text-sm py-2.5 px-5 shadow-[3px_3px_0_#0b1f5c] cursor-pointer"
+                        className="px-4 py-2 bg-[#f3f8ff] hover:bg-[#eaf3ff] border-[2px] border-[#0b1f5c] rounded-xl text-xs font-black text-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] cursor-pointer flex items-center gap-1.5 transition-all active:translate-y-0.5"
                       >
-                        <Sparkles className="w-4 h-4 fill-current" />
-                        {currentScene.interactiveAction.label}
+                        <Sparkles className="w-3.5 h-3.5 text-[#1f4ee0]" />
+                        <span>{currentScene.interactiveAction.label}</span>
                       </button>
 
                       {actionFeedback && (
                         <motion.div 
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          className="bg-emerald-50 text-emerald-800 border-[1.5px] border-emerald-600 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                          className="bg-emerald-50 text-emerald-800 border-[1.5px] border-emerald-600 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs"
                         >
                           <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                           <span>{actionFeedback}</span>
@@ -1169,12 +1293,60 @@ export default function AnimatedCharacterStorySection({
 
                 </motion.div>
 
+                {/* 3. RELATABLE REACTION BUTTONS (Community Peer Engagement) */}
+                <div className="bg-slate-50 border-[2px] border-[#0b1f5c]/25 rounded-2xl p-2.5 sm:p-3 flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-1.5 text-xs font-black text-[#0b1f5c]">
+                    <span>How relatable is this scene?</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => handleReactionClick("literallyMe")}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer flex items-center gap-1 shadow-2xs ${
+                        userClickedReactions.literallyMe
+                          ? "bg-rose-100 text-rose-800 border-rose-400 scale-105"
+                          : "bg-white text-[#0b1f5c] border-[#0b1f5c]/30 hover:border-[#0b1f5c]"
+                      }`}
+                    >
+                      <span>😭 Literally Me</span>
+                      <span className="font-mono text-[10px] text-[#4a5a8a]">{reactions.literallyMe.toLocaleString()}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleReactionClick("storyOfMyLife")}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer flex items-center gap-1 shadow-2xs ${
+                        userClickedReactions.storyOfMyLife
+                          ? "bg-amber-100 text-amber-900 border-amber-400 scale-105"
+                          : "bg-white text-[#0b1f5c] border-[#0b1f5c]/30 hover:border-[#0b1f5c]"
+                      }`}
+                    >
+                      <span>💯 Story of My Life</span>
+                      <span className="font-mono text-[10px] text-[#4a5a8a]">{reactions.storyOfMyLife.toLocaleString()}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleReactionClick("needThisNow")}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer flex items-center gap-1 shadow-2xs ${
+                        userClickedReactions.needThisNow
+                          ? "bg-blue-100 text-blue-900 border-blue-400 scale-105"
+                          : "bg-white text-[#0b1f5c] border-[#0b1f5c]/30 hover:border-[#0b1f5c]"
+                      }`}
+                    >
+                      <span>🏸 Need This Now</span>
+                      <span className="font-mono text-[10px] text-[#4a5a8a]">{reactions.needThisNow.toLocaleString()}</span>
+                    </button>
+                  </div>
+                </div>
+
               </div>
 
             </div>
 
             {/* STAGE BOTTOM CONTROLS: TIMELINE STEPPER & SCENE SWITCHER */}
-            <div className="relative z-10 pt-4 border-t-[2px] border-[#0b1f5c]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="relative z-10 pt-4 mt-2 border-t-[2px] border-[#0b1f5c]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
               
               {/* Scene Timeline Dots / Stepper */}
               <div className="flex items-center gap-2">
@@ -1229,14 +1401,20 @@ export default function AnimatedCharacterStorySection({
 
         </div>
 
-        {/* 3. QUICK ACTION STRIP (Conversion Callouts) */}
+        {/* 4. QUICK ACTION STRIP (Conversion Callouts) */}
         <div className="bg-[#ffc933] border-[2.5px] border-[#0b1f5c] rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_#0b1f5c] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-lg">🎁</span>
+              <span className="text-xs font-black uppercase tracking-wider bg-white text-[#0b1f5c] px-2 py-0.5 rounded-full border border-[#0b1f5c]">
+                Zero Risk Launch Privilege
+              </span>
+            </div>
             <h4 className="font-display font-extrabold text-xl text-[#0b1f5c]">
-              Ready to experience this in Gurugram or Delhi?
+              Your First 3 Hangouts are 100% Free! (₹0 fee)
             </h4>
             <p className="text-xs sm:text-sm text-[#0b1f5c] font-bold mt-0.5">
-              Browse 50+ verified activity partners or join our founding hosts earning ₹25k–₹40k/month.
+              Meet verified badminton players, specialty coffee lovers, and photowalk guides across Gurugram, Delhi & Noida.
             </p>
           </div>
 
@@ -1249,7 +1427,7 @@ export default function AnimatedCharacterStorySection({
               }}
               className="btn b text-xs sm:text-sm py-2.5 px-4 shadow-[3px_3px_0_#0b1f5c]"
             >
-              ⚡ Book a Hangout Partner
+              ⚡ Book Free Companion
             </a>
             <a
               href="#join"

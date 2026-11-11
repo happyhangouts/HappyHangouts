@@ -37,6 +37,8 @@ import { submitToGoogleSheets, generateWhatsAppLeadUrl } from "./lib/googleSheet
 import { analytics, trackPageView } from "./utils/analytics";
 import AnimatedCharacterStorySection from "./components/AnimatedCharacterStorySection";
 import LiveHangoutsRadar from "./components/LiveHangoutsRadar";
+import BacklinkHub from "./components/BacklinkHub";
+import HangoutRequestDispatcher from "./components/HangoutRequestDispatcher";
 
 // Verified Companion Model for Gurgaon & Delhi
 export interface CompanionProfile {
@@ -460,6 +462,7 @@ export default function App() {
   const [bookingTime, setBookingTime] = useState("Evening (6:00 PM)");
   const [bookingLocation, setBookingLocation] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [isDispatching, setIsDispatching] = useState(false);
 
   // Global Audio listener initialization
   useEffect(() => {
@@ -636,26 +639,20 @@ export default function App() {
     setBookingCompanion(companion);
     setBookingLocation(companion.location);
     setBookingSuccess(false);
+    setIsDispatching(false);
     // Track Google Analytics companion inspection / booking initiation
     analytics.trackBookingClick(companion.name, companion.location, companion.rate);
   };
 
-  // Confirm booking
+  // Confirm booking & trigger live 5-minute Uber/Ola-style dispatch
   const handleConfirmBooking = () => {
     if (!bookingCompanion) return;
+    audio.playClick();
     audio.playSuccess();
-    setBookingSuccess(true);
-    triggerBoom(`Booking request sent for ${bookingCompanion.name}! 🎉`);
+    setIsDispatching(true);
 
     // Track Google Analytics booking conversion
     analytics.trackBookingClick(bookingCompanion.name, bookingLocation, 0);
-
-    const message = `Hi Happy Hangouts! I'd like to book my FREE Hangout (Launch Offer: First 3 Hangouts Free to build trust & reviews) with ${bookingCompanion.name} (${bookingCompanion.emoji} ${bookingCompanion.categoryLabel}) at ${bookingLocation} for ${bookingDate} (${bookingTime}). Regular rate ₹${bookingCompanion.rate}/hr waived!`;
-    const waUrl = `https://wa.me/918800843189?text=${encodeURIComponent(message)}`;
-
-    setTimeout(() => {
-      window.open(waUrl, "_blank", "noopener,noreferrer");
-    }, 1200);
   };
 
   // Filter companions
@@ -1344,7 +1341,20 @@ export default function App() {
 
       {/* 5.5 ANIMATED CHARACTER STORY THEATRE */}
       <AnimatedCharacterStorySection 
-        onOpenBookingClick={() => {
+        onOpenBookingClick={(companionName, location) => {
+          if (companionName) {
+            const found = COMPANIONS.find(c => 
+              c.name.toLowerCase().includes(companionName.toLowerCase()) || 
+              companionName.toLowerCase().includes(c.name.toLowerCase())
+            );
+            if (found) {
+              handleOpenBooking(found);
+              return;
+            }
+          }
+          if (location) {
+            setBookingLocation(location);
+          }
           scrollToSection("match");
         }}
         onApplyHostClick={() => {
@@ -2085,9 +2095,31 @@ export default function App() {
         </div>
       </section>
 
-      {/* 10. BOOKING INQUIRY MODAL */}
+      {/* 9.5. PRESS, CITATIONS & BACKLINK DIRECTORY NETWORK */}
+      <BacklinkHub triggerBoom={triggerBoom} />
+
+      {/* 10. BOOKING INQUIRY & 5-MINUTE UBER/OLA ACTION DISPATCHER MODAL */}
       <AnimatePresence>
-        {bookingCompanion && (
+        {bookingCompanion && isDispatching && (
+          <HangoutRequestDispatcher
+            companion={bookingCompanion}
+            meetingLocation={bookingLocation}
+            meetingDate={bookingDate}
+            meetingTime={bookingTime}
+            onClose={() => {
+              setIsDispatching(false);
+              setBookingCompanion(null);
+            }}
+            onMatchAnother={() => {
+              setIsDispatching(false);
+              setBookingCompanion(null);
+              scrollToSection("match");
+            }}
+            triggerBoom={triggerBoom}
+          />
+        )}
+
+        {bookingCompanion && !isDispatching && (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -2229,16 +2261,35 @@ export default function App() {
                     </p>
                   </div>
 
+                  {/* Uber/Ola 5-Minute Partner Window Explainer Notice */}
+                  <div className="p-3 bg-[#eef4ff] border-[2px] border-[#1f4ee0] rounded-2xl flex items-start gap-2.5 shadow-xs">
+                    <div className="w-6 h-6 rounded-full bg-[#1f4ee0] text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-black">
+                      ⚡
+                    </div>
+                    <div>
+                      <p className="text-xs font-extrabold text-[#0b1f5c] flex items-center gap-1.5">
+                        <span>Uber/Ola 5-Minute Action Window</span>
+                        <span className="bg-[#ffc933] text-[#0b1f5c] text-[10px] font-black px-2 py-0.2 rounded-full border border-[#0b1f5c]">
+                          Live Timer
+                        </span>
+                      </p>
+                      <p className="text-[11px] text-[#334e8c] font-medium mt-0.5 leading-snug">
+                        Once sent, <strong>{bookingCompanion.name}</strong> has exactly <strong>5 minutes</strong> to confirm or decline. If not responded in time, your request automatically cancels with ₹0 charges.
+                      </p>
+                    </div>
+                  </div>
+
                   <div className="pt-2">
                     <button
                       type="button"
                       onClick={handleConfirmBooking}
-                      className="btn b w-full py-3.5 text-base shadow-[4px_4px_0_#0b1f5c] cursor-pointer"
+                      className="btn b w-full py-3.5 text-base shadow-[4px_4px_0_#0b1f5c] cursor-pointer flex items-center justify-center gap-2 group"
                     >
-                      Confirm Free Hangout on WhatsApp 🙌
+                      <Zap className="w-5 h-5 text-amber-300 group-hover:scale-125 transition-transform" />
+                      <span>Send Request to {bookingCompanion.name} (5-Min Live Action) ⚡</span>
                     </button>
                     <p className="text-[11px] text-center text-[#4a5a8a] mt-2 font-medium">
-                      Strictly public places. Escrow guarantee. Free cancellation up to 2 hours prior.
+                      Strictly public places. Escrow guarantee. Free auto-cancel after 5 minutes.
                     </p>
                   </div>
                 </div>
@@ -2249,23 +2300,174 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* 11. FOOTER */}
-      <footer className="py-10 text-center text-[#4a5a8a] border-t-[2.5px] border-[#0b1f5c] bg-white">
+      {/* 11. FOOTER & SEO CITATION DIRECTORY */}
+      <footer className="py-12 sm:py-16 text-[#4a5a8a] border-t-[2.5px] border-[#0b1f5c] bg-white">
         <div className="wrap">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="font-display font-extrabold text-xl text-[#0b1f5c]">
-              Happy Hangouts
-            </span>
-            <span className="text-xs bg-[#ffc933] text-[#0b1f5c] font-black px-2 py-0.5 rounded-full border border-[#0b1f5c]">
-              NCR Edition
-            </span>
+          {/* Top Grid of Backlink & Directory Citations */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-10 border-b border-[#0b1f5c]/15 text-left">
+            
+            {/* Brand Column */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="font-display font-extrabold text-2xl text-[#0b1f5c]">
+                  Happy Hangouts
+                </span>
+                <span className="text-xs bg-[#ffc933] text-[#0b1f5c] font-black px-2.5 py-0.5 rounded-full border border-[#0b1f5c]">
+                  NCR Edition
+                </span>
+              </div>
+              <p className="text-sm font-semibold text-[#0b1f5c] mb-2 leading-snug">
+                Akele kyu? Happy Hangouts Hai na!! 🙌
+              </p>
+              <p className="text-xs text-[#4a5a8a] leading-relaxed mb-4 max-w-sm">
+                India's first escrow-protected marketplace to find verified companions for badminton rallies, specialty cafe work, photowalks, and music jamming across Gurugram, Delhi & Noida.
+              </p>
+              <div className="flex items-center gap-2 text-xs font-black text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-300 w-fit">
+                <span>⭐ 4.9 / 5 Rating</span>
+                <span>·</span>
+                <span>First 3 Hangouts Free</span>
+              </div>
+            </div>
+
+            {/* Hotspots Directory Column */}
+            <div>
+              <h5 className="text-xs font-black uppercase tracking-wider text-[#0b1f5c] mb-3">
+                📍 NCR Hotspot Hubs
+              </h5>
+              <ul className="space-y-2 text-xs font-semibold">
+                <li>
+                  <a href="#radar" onClick={() => scrollToSection("radar")} className="hover:text-[#1f4ee0] transition-colors">
+                    DLF CyberHub (Gurgaon)
+                  </a>
+                </li>
+                <li>
+                  <a href="#radar" onClick={() => scrollToSection("radar")} className="hover:text-[#1f4ee0] transition-colors">
+                    Connaught Place (CP Delhi)
+                  </a>
+                </li>
+                <li>
+                  <a href="#radar" onClick={() => scrollToSection("radar")} className="hover:text-[#1f4ee0] transition-colors">
+                    Khan Market & Lodhi
+                  </a>
+                </li>
+                <li>
+                  <a href="#radar" onClick={() => scrollToSection("radar")} className="hover:text-[#1f4ee0] transition-colors">
+                    Sunder Nursery Botanical
+                  </a>
+                </li>
+                <li>
+                  <a href="#radar" onClick={() => scrollToSection("radar")} className="hover:text-[#1f4ee0] transition-colors">
+                    Siri Fort Sports Arena
+                  </a>
+                </li>
+                <li>
+                  <a href="#radar" onClick={() => scrollToSection("radar")} className="hover:text-[#1f4ee0] transition-colors">
+                    Advant Navis & Sec 18 Noida
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Activity Passions Column */}
+            <div>
+              <h5 className="text-xs font-black uppercase tracking-wider text-[#0b1f5c] mb-3">
+                ⚡ Companion Passions
+              </h5>
+              <ul className="space-y-2 text-xs font-semibold">
+                <li>
+                  <a href="#match" onClick={() => { setSelectedCategory("badminton"); scrollToSection("match"); }} className="hover:text-[#1f4ee0] transition-colors">
+                    🏸 Badminton Partners
+                  </a>
+                </li>
+                <li>
+                  <a href="#match" onClick={() => { setSelectedCategory("cafe"); scrollToSection("match"); }} className="hover:text-[#1f4ee0] transition-colors">
+                    ☕ Cafe Chat & Co-working
+                  </a>
+                </li>
+                <li>
+                  <a href="#match" onClick={() => { setSelectedCategory("trek"); scrollToSection("match"); }} className="hover:text-[#1f4ee0] transition-colors">
+                    🥾 Aravalli Sunrise Trails
+                  </a>
+                </li>
+                <li>
+                  <a href="#match" onClick={() => { setSelectedCategory("music"); scrollToSection("match"); }} className="hover:text-[#1f4ee0] transition-colors">
+                    🎸 Acoustic Indie Jamming
+                  </a>
+                </li>
+                <li>
+                  <a href="#match" onClick={() => { setSelectedCategory("boardgames"); scrollToSection("match"); }} className="hover:text-[#1f4ee0] transition-colors">
+                    🎲 Board Games & Catan
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Trust & External Backlinks Column */}
+            <div>
+              <h5 className="text-xs font-black uppercase tracking-wider text-[#0b1f5c] mb-3">
+                🔗 Citations & Safety
+              </h5>
+              <ul className="space-y-2 text-xs font-semibold">
+                <li>
+                  <a href="#safe" onClick={() => scrollToSection("safe")} className="hover:text-[#1f4ee0] transition-colors">
+                    ID & Aadhaar Verification
+                  </a>
+                </li>
+                <li>
+                  <a href="#safe" onClick={() => scrollToSection("safe")} className="hover:text-[#1f4ee0] transition-colors">
+                    Escrow Digital Protection
+                  </a>
+                </li>
+                <li>
+                  <a href="#backlinks" onClick={() => scrollToSection("backlinks")} className="hover:text-[#1f4ee0] transition-colors">
+                    Embed Partner Badge
+                  </a>
+                </li>
+                <li>
+                  <a href="https://lbb.in/delhi" target="_blank" rel="noopener noreferrer" className="hover:text-[#1f4ee0] transition-colors flex items-center gap-1">
+                    LBB Delhi Feature
+                  </a>
+                </li>
+                <li>
+                  <a href="https://whatshot.in/delhi-ncr" target="_blank" rel="noopener noreferrer" className="hover:text-[#1f4ee0] transition-colors flex items-center gap-1">
+                    What's Hot Gurgaon
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.happyhangouts.life" target="_blank" rel="noopener noreferrer" className="hover:text-[#1f4ee0] transition-colors">
+                    www.happyhangouts.life
+                  </a>
+                </li>
+              </ul>
+            </div>
+
           </div>
-          <p className="text-sm font-semibold mb-2">
-            Happy Hangouts · <a href="https://www.happyhangouts.life" target="_blank" rel="noopener noreferrer" className="underline font-bold text-[#0b1f5c]">www.happyhangouts.life</a> · Akele kyu? Happy Hangouts Hai na!! 🙌
-          </p>
-          <p className="text-xs text-[#4a5a8a]">
-            Verified Activity Companions & Escrow Protection in Gurugram & Delhi.
-          </p>
+
+          {/* Bottom Copyright & Canonical Notice */}
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-center sm:text-left">
+            <div>
+              <p className="font-semibold text-[#0b1f5c]">
+                © {new Date().getFullYear()} Happy Hangouts. All rights reserved.
+              </p>
+              <p className="text-[11px] text-[#4a5a8a] mt-0.5">
+                Connecting genuine humans across Gurugram, Delhi & Noida in safe public daylight spaces.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 text-xs font-bold text-[#1f4ee0]">
+              <a href="#backlinks" onClick={() => scrollToSection("backlinks")} className="hover:underline">
+                Press Kit & Badges
+              </a>
+              <span>·</span>
+              <a href="#faq" onClick={() => scrollToSection("faq")} className="hover:underline">
+                Safety FAQ
+              </a>
+              <span>·</span>
+              <a href="https://wa.me/918800843189" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                WhatsApp Support
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
 

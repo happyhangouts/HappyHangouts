@@ -8,7 +8,6 @@ import {
   MapPin, 
   ShieldCheck, 
   MessageCircle, 
-  Sparkles, 
   Navigation, 
   Calendar, 
   Radio, 
@@ -55,7 +54,6 @@ export default function HangoutRequestDispatcher({
   useEffect(() => {
     if (status !== "waiting") return;
 
-    // Play initial radar sonar ping
     audio.playBlip(620);
 
     const timer = setInterval(() => {
@@ -66,16 +64,21 @@ export default function HangoutRequestDispatcher({
           return 0;
         }
 
-        // Add periodic realistic timeline updates
         if (prev === 295) {
-          setTimelineEvents((t) => [...t, `Host device received notification (${companion.location})`]);
-          audio.playBlip(580);
-        } else if (prev === 280) {
-          setTimelineEvents((t) => [...t, "Host is reviewing the meetup location and time slot..."]);
+          setTimelineEvents((e) => [
+            ...e,
+            `Notification delivered to ${companion.name}'s verified device`
+          ]);
         } else if (prev === 240) {
-          setTimelineEvents((t) => [...t, "4 minutes remaining for host action"]);
+          setTimelineEvents((e) => [
+            ...e,
+            `${companion.name} active in Gurugram/Delhi radius (within 5 km)`
+          ]);
         } else if (prev === 120) {
-          setTimelineEvents((t) => [...t, "⚠️ 2 minutes remaining before automatic cancellation"]);
+          setTimelineEvents((e) => [
+            ...e,
+            `Halfway mark: awaiting confirmation from ${companion.name}`
+          ]);
         }
 
         return prev - 1;
@@ -83,45 +86,48 @@ export default function HangoutRequestDispatcher({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [status]);
+  }, [status, companion.name]);
 
-  // Auto-cancel handler when 5 minutes expire
+  // Auto-cancellation when timer hits 0 (Uber/Ola style)
   const handleAutoCancel = () => {
     setStatus("expired");
-    audio.playToggle();
-    setTimelineEvents((t) => [
-      ...t,
-      `⏰ 5:00 minutes elapsed without host response. Request automatically cancelled.`
+    audio.playBlip(320);
+    setTimelineEvents((e) => [
+      ...e,
+      "5-minute window expired. Request automatically cancelled with ₹0 fee."
     ]);
   };
 
-  // Host Confirms Action
+  // Host Action: Confirmed
   const handleHostConfirm = () => {
     audio.playSuccess();
     setStatus("confirmed");
-    setTimelineEvents((t) => [
-      ...t,
-      `🎉 ${companion.name} CONFIRMED the meetup! Escrow lock armed at ₹0.`
+    if (triggerBoom) triggerBoom("Hangout Confirmed!");
+    setTimelineEvents((e) => [
+      ...e,
+      `✓ ${companion.name} accepted the hangout request! Meetup locked.`
     ]);
-    if (triggerBoom) {
-      triggerBoom(`Confirmed! ${companion.name} accepted your hangout request! 🎉`);
-    }
   };
 
-  // Host Declines Action
+  // Host Action: Declined
   const handleHostDecline = () => {
-    audio.playToggle();
+    audio.playBlip(320);
     setStatus("declined");
-    setTimelineEvents((t) => [
-      ...t,
-      `${companion.name} is currently in another session and declined this slot.`
+    setTimelineEvents((e) => [
+      ...e,
+      `✕ ${companion.name} had a scheduling conflict. Request closed.`
     ]);
   };
 
-  // Fast-Forward to 0:00 (Simulate 5-minute timeout)
+  // Host Action: Simulate Timeout
   const handleSimulateTimeout = () => {
+    audio.playBlip(320);
     setSecondsLeft(0);
-    handleAutoCancel();
+    setStatus("expired");
+    setTimelineEvents((e) => [
+      ...e,
+      "Simulation: 5-minute window expired. Request auto-cancelled with ₹0 charge."
+    ]);
   };
 
   // Retry Request (Reset 5:00 countdown)
@@ -150,29 +156,29 @@ export default function HangoutRequestDispatcher({
   const waUrl = `https://wa.me/918800843189?text=${encodeURIComponent(waMessage)}`;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
       <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 20 }}
+        initial={{ opacity: 0, scale: 0.94, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 20 }}
-        className="bg-white border-[3px] border-[#0b1f5c] rounded-[28px] max-w-lg w-full shadow-[10px_10px_0_#0b1f5c] overflow-hidden relative my-auto"
+        exit={{ opacity: 0, scale: 0.94, y: 16 }}
+        className="bg-white border border-[#E4E4E7] rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden relative my-auto"
       >
         
         {/* Top Header Strip */}
-        <div className="bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c] p-4 sm:p-5 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#1f4ee0] text-white flex items-center justify-center text-sm font-black shadow-xs">
+        <div className="bg-[#FAF9F5] border-b border-[#E4E4E7] p-4 sm:p-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white flex items-center justify-center text-xs font-semibold">
               <Radio className="w-4 h-4 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-[#0b1f5c] leading-tight">
-                {status === "waiting" && "Live Partner Dispatching..."}
-                {status === "confirmed" && "Meetup Confirmed! 🎉"}
-                {status === "declined" && "Partner Unavailable"}
+              <h3 className="font-serif text-lg font-medium text-[#18181B] leading-tight">
+                {status === "waiting" && "Live Partner Dispatch"}
+                {status === "confirmed" && "Hangout Confirmed"}
+                {status === "declined" && "Companion Unavailable"}
                 {status === "expired" && "Request Automatically Cancelled"}
               </h3>
-              <p className="text-[11px] font-bold text-[#4a5a8a]">
-                Uber/Ola-Style 5-Minute Auto-Action Rule Active
+              <p className="text-[11px] text-[#71717A] font-normal">
+                Uber/Ola-style 5-minute action window active
               </p>
             </div>
           </div>
@@ -180,22 +186,19 @@ export default function HangoutRequestDispatcher({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-full border-[2px] border-[#0b1f5c] hover:bg-slate-200 transition-colors cursor-pointer"
+            className="p-1.5 rounded-full border border-[#E4E4E7] hover:bg-slate-100 transition-colors cursor-pointer text-[#71717A]"
             title="Close"
           >
-            <X className="w-4 h-4 text-[#0b1f5c]" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Uber/Ola Concept Explainer Banner */}
-        <div className="bg-[#0b1f5c] text-white px-4 py-2 flex items-center justify-between text-xs font-bold gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-base">🚕</span>
-            <span className="text-[11px] text-white/90">
-              Partner has <strong>5:00 mins</strong> to confirm or reject. If no response, system auto-cancels with <strong>₹0 charge</strong>.
-            </span>
-          </div>
-          <span className="text-[9px] bg-white/20 text-white uppercase px-2 py-0.5 rounded-full font-mono shrink-0">
+        <div className="bg-[#18181B] text-white px-4 py-2.5 flex items-center justify-between text-xs gap-2">
+          <span className="text-[11px] text-white/90">
+            Partner has <strong>5:00 mins</strong> to confirm. If no response, system auto-cancels with <strong>₹0 charge</strong>.
+          </span>
+          <span className="text-[10px] bg-white/20 text-white uppercase px-2 py-0.5 rounded-full font-mono shrink-0">
             Auto-Cancel
           </span>
         </div>
@@ -212,8 +215,7 @@ export default function HangoutRequestDispatcher({
                 <div className="relative w-36 h-36 flex items-center justify-center">
                   
                   {/* Outer Pulsing Radar Rings */}
-                  <div className="absolute inset-0 rounded-full border-2 border-blue-400/30 animate-ping pointer-events-none"></div>
-                  <div className="absolute -inset-3 rounded-full border border-blue-500/20 animate-pulse pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-full border border-orange-500/20 animate-ping pointer-events-none"></div>
 
                   {/* SVG Circular Progress */}
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
@@ -222,7 +224,7 @@ export default function HangoutRequestDispatcher({
                       cy="50"
                       r="42"
                       className="text-slate-100"
-                      strokeWidth="7"
+                      strokeWidth="6"
                       stroke="currentColor"
                       fill="transparent"
                     />
@@ -230,14 +232,8 @@ export default function HangoutRequestDispatcher({
                       cx="50"
                       cy="50"
                       r="42"
-                      className={`${
-                        secondsLeft > 120 
-                          ? "text-[#1f4ee0]" 
-                          : secondsLeft > 60 
-                          ? "text-amber-500" 
-                          : "text-rose-600"
-                      } transition-all duration-1000`}
-                      strokeWidth="7"
+                      className="text-[#C2410C] transition-all duration-1000 ease-linear"
+                      strokeWidth="6"
                       strokeDasharray={264}
                       strokeDashoffset={264 - (264 * progressPercent) / 100}
                       strokeLinecap="round"
@@ -248,49 +244,46 @@ export default function HangoutRequestDispatcher({
 
                   {/* Center Time Remaining */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="font-mono text-3xl font-black text-[#0b1f5c] tracking-tight">
+                    <span className="font-serif text-3xl font-semibold text-[#18181B] tracking-tight">
                       {formatTime(secondsLeft)}
                     </span>
-                    <span className="text-[10px] font-bold text-[#4a5a8a] uppercase tracking-wider">
+                    <span className="text-[10px] text-[#71717A] uppercase tracking-wider font-medium">
                       Host Timeout
                     </span>
                   </div>
                 </div>
 
-                <p className="text-xs font-bold text-[#0b1f5c] mt-2 flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <p className="text-xs text-[#18181B] font-medium mt-2 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#C2410C] animate-ping"></span>
                   <span>Awaiting action from {companion.name}...</span>
                 </p>
               </div>
 
               {/* Companion Target Card */}
-              <div className="bg-[#f3f8ff] border-[2px] border-[#0b1f5c] rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-[3px_3px_0_#0b1f5c]">
+              <div className="bg-[#FAF9F5] border border-[#E4E4E7] rounded-2xl p-3.5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div 
-                    className="w-12 h-12 rounded-full border-[2px] border-[#0b1f5c] flex items-center justify-center text-2xl shrink-0"
-                    style={{ backgroundColor: companion.bgColor }}
-                  >
-                    {companion.emoji}
+                  <div className="w-12 h-12 rounded-full border border-[#E4E4E7] bg-white flex items-center justify-center font-serif text-base font-semibold text-[#18181B] shrink-0">
+                    {companion.name.split(" ").map(n => n[0]).join("")}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-black text-[#0b1f5c] truncate">{companion.name}</p>
-                      <span className="text-[10px] font-extrabold bg-[#ffc933] text-[#0b1f5c] px-1.5 py-0.2 rounded border border-[#0b1f5c]">
+                      <p className="text-sm font-semibold text-[#18181B] truncate">{companion.name}</p>
+                      <span className="text-[10px] text-[#C2410C] bg-[#FFF7ED] px-1.5 py-0.2 rounded border border-[#FED7AA] font-medium">
                         ★ {companion.rating}
                       </span>
                     </div>
-                    <p className="text-xs text-[#4a5a8a] font-medium truncate">
+                    <p className="text-xs text-[#71717A] truncate font-normal">
                       {companion.categoryLabel} · {meetingLocation}
                     </p>
-                    <p className="text-[10px] text-[#1f4ee0] font-bold">
+                    <p className="text-[11px] text-[#52525B] font-medium">
                       {meetingDate} · {meetingTime}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-300 block">
-                    ₹0 Free Pass
+                  <span className="text-xs font-semibold text-[#C2410C] bg-[#FFF7ED] px-2 py-0.5 rounded-full border border-[#FED7AA] block">
+                    ₹0 Free
                   </span>
                   <span className="text-[10px] text-slate-400 line-through">
                     ₹{companion.rate}/hr
@@ -299,50 +292,49 @@ export default function HangoutRequestDispatcher({
               </div>
 
               {/* Live Dispatch Log / Timeline */}
-              <div className="bg-slate-50 border border-[#0b1f5c]/20 rounded-xl p-3 space-y-1.5 max-h-24 overflow-y-auto">
-                <span className="text-[10px] font-black uppercase text-[#4a5a8a] block">
+              <div className="bg-slate-50 border border-[#E4E4E7] rounded-xl p-3 space-y-1.5 max-h-24 overflow-y-auto">
+                <span className="text-[10px] font-semibold uppercase text-[#71717A] tracking-wider block">
                   Live Dispatch Stream:
                 </span>
                 {timelineEvents.map((ev, i) => (
-                  <p key={i} className="text-[11px] text-[#0b1f5c] font-medium leading-tight flex items-start gap-1.5">
-                    <span className="text-[#1f4ee0] font-bold">›</span>
+                  <p key={i} className="text-[11px] text-[#52525B] font-normal leading-tight flex items-start gap-1.5">
+                    <span className="text-[#C2410C] font-bold">›</span>
                     <span>{ev}</span>
                   </p>
                 ))}
               </div>
 
-              {/* DEMO SIMULATION CONTROLS (So user can test all 3 states right now!) */}
-              <div className="bg-amber-50 border border-amber-300 rounded-xl p-2.5">
+              {/* DEMO SIMULATION CONTROLS */}
+              <div className="bg-[#FAF9F5] border border-[#E4E4E7] rounded-xl p-2.5">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-amber-600" />
-                    Simulate Host Actions (Demo Testing):
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#71717A]">
+                    Simulate Host Actions (Demo Preview):
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-1.5 text-xs font-black">
+                <div className="grid grid-cols-3 gap-1.5 text-xs font-medium">
                   <button
                     type="button"
                     onClick={handleHostConfirm}
-                    className="py-1.5 px-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg cursor-pointer transition-colors text-center text-[11px]"
+                    className="py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg cursor-pointer transition-colors text-center text-[11px]"
                   >
-                    ✓ Partner Confirms
+                    ✓ Confirms
                   </button>
 
                   <button
                     type="button"
                     onClick={handleHostDecline}
-                    className="py-1.5 px-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg cursor-pointer transition-colors text-center text-[11px]"
+                    className="py-1.5 px-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg cursor-pointer transition-colors text-center text-[11px]"
                   >
-                    ✕ Partner Declines
+                    ✕ Declines
                   </button>
 
                   <button
                     type="button"
                     onClick={handleSimulateTimeout}
-                    className="py-1.5 px-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg cursor-pointer transition-colors text-center text-[11px]"
+                    className="py-1.5 px-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg cursor-pointer transition-colors text-center text-[11px]"
                   >
-                    ⏰ Timeout 5:00
+                    Timeout 5:00
                   </button>
                 </div>
               </div>
@@ -355,7 +347,7 @@ export default function HangoutRequestDispatcher({
                     audio.playClick();
                     onClose();
                   }}
-                  className="w-full py-2.5 bg-white hover:bg-slate-100 border-[2px] border-[#0b1f5c] text-[#0b1f5c] rounded-xl text-xs font-black cursor-pointer transition-colors"
+                  className="btn outline w-full py-2.5 text-xs"
                 >
                   Cancel Request (No Charge)
                 </button>
@@ -368,35 +360,35 @@ export default function HangoutRequestDispatcher({
           {status === "confirmed" && (
             <div className="space-y-4 py-2">
               <div className="text-center">
-                <div className="w-16 h-16 bg-emerald-100 border-[2.5px] border-[#0b1f5c] text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl shadow-[3px_3px_0_#0b1f5c]">
-                  🎉
+                <div className="w-14 h-14 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-3 font-serif text-2xl font-bold">
+                  ✓
                 </div>
-                <span className="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-300">
+                <span className="text-xs uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200 font-semibold">
                   Accepted within 5-Minute Window
                 </span>
-                <h4 className="text-2xl font-black text-[#0b1f5c] mt-2 mb-1">
-                  Meetup Locked with {companion.name}!
+                <h4 className="font-serif text-2xl font-medium text-[#18181B] mt-2 mb-1">
+                  Meetup Locked with {companion.name}
                 </h4>
-                <p className="text-xs text-[#4a5a8a] max-w-sm mx-auto">
+                <p className="text-xs text-[#71717A] max-w-sm mx-auto">
                   {companion.name} confirmed your session at <strong>{meetingLocation}</strong> for <strong>{meetingDate} ({meetingTime})</strong>.
                 </p>
               </div>
 
               {/* Free Launch Pass Summary Box */}
-              <div className="bg-emerald-50 border-[2px] border-emerald-600 rounded-2xl p-3.5 shadow-xs">
-                <div className="flex items-center justify-between text-xs font-black text-emerald-950 mb-1">
-                  <span>🎁 First 3 Hangouts Free Benefit:</span>
-                  <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full">
-                    ₹0 Charged (100% Free)
+              <div className="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3.5">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#C2410C] mb-1">
+                  <span>First 3 Hangouts Free:</span>
+                  <span className="bg-[#C2410C] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    ₹0 Charged
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-emerald-900 font-medium">
+                <div className="flex items-center justify-between text-xs text-[#71717A]">
                   <span>Companion Regular Fee:</span>
-                  <span className="line-through text-slate-500 font-bold">₹{companion.rate}/hr</span>
+                  <span className="line-through">₹{companion.rate}/hr</span>
                 </div>
-                <div className="flex items-center justify-between text-sm font-black text-emerald-950 pt-1 border-t border-emerald-200 mt-1">
+                <div className="flex items-center justify-between text-sm font-semibold text-[#18181B] pt-1 border-t border-[#FED7AA]/60 mt-1">
                   <span>Your Total Cost:</span>
-                  <span className="text-base text-emerald-700 font-black">₹0 Free Launch Credit</span>
+                  <span className="font-serif text-base text-[#C2410C]">₹0 Launch Credit</span>
                 </div>
               </div>
 
@@ -407,7 +399,7 @@ export default function HangoutRequestDispatcher({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => audio.playClick()}
-                  className="btn b w-full py-3.5 text-sm shadow-[3px_3px_0_#0b1f5c] flex items-center justify-center gap-2"
+                  className="btn b w-full py-3 text-sm flex items-center justify-center gap-2"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span>Chat with {companion.name} on WhatsApp</span>
@@ -420,9 +412,9 @@ export default function HangoutRequestDispatcher({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => audio.playClick()}
-                  className="w-full py-2.5 bg-white hover:bg-slate-100 border-[2px] border-[#0b1f5c] rounded-xl text-xs font-black text-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] flex items-center justify-center gap-1.5 transition-colors"
+                  className="btn outline w-full py-2.5 text-xs flex items-center justify-center gap-1.5"
                 >
-                  <Navigation className="w-3.5 h-3.5 text-[#1f4ee0]" />
+                  <Navigation className="w-3.5 h-3.5 text-[#C2410C]" />
                   <span>Get Directions to {meetingLocation} in Google Maps</span>
                 </a>
               </div>
@@ -431,7 +423,7 @@ export default function HangoutRequestDispatcher({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-xs font-bold text-[#4a5a8a] hover:underline cursor-pointer"
+                  className="text-xs font-medium text-[#71717A] hover:underline cursor-pointer"
                 >
                   Back to Hangouts
                 </button>
@@ -443,28 +435,28 @@ export default function HangoutRequestDispatcher({
           {status === "expired" && (
             <div className="space-y-4 py-2">
               <div className="text-center">
-                <div className="w-16 h-16 bg-amber-100 border-[2.5px] border-[#0b1f5c] text-amber-700 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl shadow-[3px_3px_0_#0b1f5c]">
-                  ⏰
+                <div className="w-14 h-14 bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] rounded-full flex items-center justify-center mx-auto mb-3 font-serif text-2xl font-bold">
+                  ⏱
                 </div>
-                <span className="text-xs font-black uppercase tracking-wider text-amber-800 bg-amber-50 px-3 py-1 rounded-full border border-amber-300">
+                <span className="text-xs uppercase tracking-wider text-[#C2410C] bg-[#FFF7ED] px-3 py-0.5 rounded-full border border-[#FED7AA] font-semibold">
                   5:00 Minute Window Elapsed
                 </span>
-                <h4 className="text-2xl font-black text-[#0b1f5c] mt-2 mb-1">
+                <h4 className="font-serif text-2xl font-medium text-[#18181B] mt-2 mb-1">
                   Request Cancelled Automatically
                 </h4>
-                <p className="text-xs text-[#4a5a8a] max-w-sm mx-auto leading-relaxed">
-                  Just like Uber/Ola, when a host doesn't respond within 5 minutes, we cancel the request automatically so you aren't kept waiting.
+                <p className="text-xs text-[#71717A] max-w-sm mx-auto leading-relaxed">
+                  Just like Uber or Ola, when a host does not respond within 5 minutes, we cancel the request automatically with ₹0 charge so you aren't kept waiting.
                 </p>
               </div>
 
               {/* Zero-Penalty Guarantee Box */}
-              <div className="bg-[#f3f8ff] border-[2px] border-[#0b1f5c] rounded-2xl p-4 shadow-xs">
-                <div className="flex items-center gap-2 mb-1 text-xs font-black text-[#0b1f5c]">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="bg-[#FAF9F5] border border-[#E4E4E7] rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-1 text-xs font-semibold text-[#18181B]">
+                  <ShieldCheck className="w-4 h-4 text-[#C2410C] shrink-0" />
                   <span>Zero Fees Deducted · 100% Free Credits Intact</span>
                 </div>
-                <p className="text-[11px] text-[#4a5a8a] leading-relaxed">
-                  Your "First 3 Hangouts Free" launch credit was not used and remains 100% available. You can re-ping {companion.name} or match with another active companion nearby.
+                <p className="text-[11px] text-[#52525B] leading-relaxed font-normal">
+                  Your "First 3 Hangouts Free" launch credit was not used and remains 100% available. You can re-ping {companion.name} or match with another companion.
                 </p>
               </div>
 
@@ -473,7 +465,7 @@ export default function HangoutRequestDispatcher({
                 <button
                   type="button"
                   onClick={handleRetry}
-                  className="btn b w-full py-3 text-sm shadow-[3px_3px_0_#0b1f5c] flex items-center justify-center gap-2 cursor-pointer"
+                  className="btn b w-full py-3 text-sm flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>Re-Ping {companion.name} (Restart 5:00 Timer)</span>
@@ -486,10 +478,10 @@ export default function HangoutRequestDispatcher({
                     onClose();
                     if (onMatchAnother) onMatchAnother();
                   }}
-                  className="w-full py-2.5 bg-white hover:bg-slate-100 border-[2px] border-[#0b1f5c] rounded-xl text-xs font-black text-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  className="btn outline w-full py-2.5 text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <UserCheck className="w-3.5 h-3.5 text-[#1f4ee0]" />
-                  <span>Match with Another Verified Companion Nearby</span>
+                  <UserCheck className="w-3.5 h-3.5 text-[#C2410C]" />
+                  <span>Match with Another Verified Companion</span>
                 </button>
               </div>
             </div>
@@ -499,24 +491,23 @@ export default function HangoutRequestDispatcher({
           {status === "declined" && (
             <div className="space-y-4 py-2">
               <div className="text-center">
-                <div className="w-16 h-16 bg-rose-100 border-[2.5px] border-[#0b1f5c] text-rose-700 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl shadow-[3px_3px_0_#0b1f5c]">
-                  ⚠️
+                <div className="w-14 h-14 bg-rose-50 border border-rose-200 text-rose-700 rounded-full flex items-center justify-center mx-auto mb-3 font-serif text-2xl font-bold">
+                  ✕
                 </div>
-                <h4 className="text-2xl font-black text-[#0b1f5c] mb-1">
-                  {companion.name} is Busy
+                <h4 className="font-serif text-2xl font-medium text-[#18181B] mb-1">
+                  {companion.name} is Unavailable
                 </h4>
-                <p className="text-xs text-[#4a5a8a] max-w-sm mx-auto leading-relaxed">
-                  {companion.name} is currently in another session or has a scheduling conflict for {meetingDate} ({meetingTime}).
+                <p className="text-xs text-[#71717A] max-w-sm mx-auto leading-relaxed">
+                  {companion.name} has a scheduling conflict for {meetingDate} ({meetingTime}).
                 </p>
               </div>
 
-              <div className="bg-[#f3f8ff] border-[2px] border-[#0b1f5c] rounded-2xl p-4 shadow-xs">
-                <div className="flex items-center gap-2 mb-1 text-xs font-black text-[#0b1f5c]">
-                  <Sparkles className="w-4 h-4 text-[#1f4ee0]" />
-                  <span>Try Nearby Companions with ₹0 Free Pass:</span>
+              <div className="bg-[#FAF9F5] border border-[#E4E4E7] rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-1 text-xs font-semibold text-[#18181B]">
+                  <span>Try Other Verified Companions:</span>
                 </div>
-                <p className="text-[11px] text-[#4a5a8a] leading-relaxed">
-                  We have other verified activity partners available right now in Gurugram and Delhi for badminton, coffee, or photowalks.
+                <p className="text-[11px] text-[#52525B] leading-relaxed font-normal">
+                  We have other verified companions available right now in Gurugram and Delhi for badminton, coffee, or photowalks with ₹0 free pass.
                 </p>
               </div>
 
@@ -528,7 +519,7 @@ export default function HangoutRequestDispatcher({
                     onClose();
                     if (onMatchAnother) onMatchAnother();
                   }}
-                  className="btn b w-full py-3 text-sm shadow-[3px_3px_0_#0b1f5c] flex items-center justify-center gap-2 cursor-pointer"
+                  className="btn b w-full py-3 text-sm flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <UserCheck className="w-4 h-4" />
                   <span>Choose Another Companion</span>
@@ -537,7 +528,7 @@ export default function HangoutRequestDispatcher({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full py-2.5 bg-white hover:bg-slate-100 border-[2px] border-[#0b1f5c] rounded-xl text-xs font-black text-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] transition-colors cursor-pointer"
+                  className="btn outline w-full py-2.5 text-xs cursor-pointer"
                 >
                   Close
                 </button>
@@ -548,8 +539,8 @@ export default function HangoutRequestDispatcher({
         </div>
 
         {/* Safety Guarantee Footer Note */}
-        <div className="bg-slate-50 border-t border-[#0b1f5c]/20 p-3 text-center text-[10px] font-bold text-[#4a5a8a] flex items-center justify-center gap-1.5">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+        <div className="bg-[#FAF9F5] border-t border-[#E4E4E7] p-3 text-center text-[11px] text-[#71717A] flex items-center justify-center gap-1.5 font-normal">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#C2410C]" />
           <span>Strictly Public Venues · Escrow Protection · First 3 Hangouts 100% Free</span>
         </div>
 

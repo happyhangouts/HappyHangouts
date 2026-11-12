@@ -1401,43 +1401,45 @@ export default function AnimatedCharacterStorySection({
 
         </div>
 
-        {/* 4. QUICK ACTION STRIP (Conversion Callouts) */}
-        <div className="bg-[#ffc933] border-[2.5px] border-[#0b1f5c] rounded-2xl p-5 sm:p-6 shadow-[5px_5px_0_#0b1f5c] flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg">🎁</span>
-              <span className="text-xs font-black uppercase tracking-wider bg-white text-[#0b1f5c] px-2 py-0.5 rounded-full border border-[#0b1f5c]">
-                Zero Risk Launch Privilege
-              </span>
+        {/* 4. HIGH-CONTRAST CONVERSION HERO BANNER */}
+        <div className="bg-gradient-to-r from-[#011C92] via-[#082596] to-[#0A2EB8] border-2 border-[#3DAAFC]/30 rounded-3xl p-6 sm:p-8 shadow-xl text-white flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 bg-[#19C37D]/20 text-[#19C37D] border border-[#19C37D]/40 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2.5">
+              <span className="w-2 h-2 rounded-full bg-[#19C37D] animate-pulse"></span>
+              <span>Zero Risk · First 3 Hangouts Free</span>
             </div>
-            <h4 className="font-display font-extrabold text-xl text-[#0b1f5c]">
-              Your First 3 Hangouts are 100% Free! (₹0 fee)
+            <h4 className="font-serif text-2xl sm:text-3xl font-semibold text-white tracking-tight leading-snug">
+              First 3 hangouts are on us. Literally ₹0 fee.
             </h4>
-            <p className="text-xs sm:text-sm text-[#0b1f5c] font-bold mt-0.5">
-              Meet verified badminton players, specialty coffee lovers, and photowalk guides across Gurugram, Delhi & Noida.
+            <p className="text-sm text-white/80 font-normal mt-2 leading-relaxed">
+              Tired of friends flaking on weekend badminton or dreading another solo coffee run? Meet background-verified partners across CyberHub, CP, Khan Market & Siri Fort. No awkwardness. Just genuine people.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-3.5 flex-wrap shrink-0">
+            {/* Real, unmistakable Sunshine Primary Button */}
             <a
               href="#match"
               onClick={() => {
                 audio.playClick();
                 if (onOpenBookingClick) onOpenBookingClick();
               }}
-              className="btn b text-xs sm:text-sm py-2.5 px-4 shadow-[3px_3px_0_#0b1f5c]"
+              className="inline-flex items-center justify-center gap-2 bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-sm sm:text-base py-3.5 px-6 rounded-full shadow-[0_4px_16px_rgba(255,200,61,0.4)] hover:shadow-[0_6px_22px_rgba(255,200,61,0.55)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer select-none"
             >
-              ⚡ Book Free Companion
+              <span>⚡ Book Free Partner</span>
+              <ArrowRight className="w-4 h-4" />
             </a>
+
+            {/* Real, unmistakable White/Outline Secondary Button */}
             <a
               href="#join"
               onClick={() => {
                 audio.playClick();
                 if (onApplyHostClick) onApplyHostClick();
               }}
-              className="btn text-xs sm:text-sm py-2.5 px-4 shadow-[3px_3px_0_#0b1f5c]"
+              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-[#011C92] font-bold text-sm sm:text-base py-3.5 px-6 rounded-full border-2 border-white/80 hover:border-white shadow-md transform hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer select-none"
             >
-              🙌 Get Hangout Pass
+              <span>🎟️ Get Hangout Pass</span>
             </a>
           </div>
         </div>

@@ -535,13 +535,13 @@ export default function LiveHangoutsRadar({
       >
         
         {/* Launch Privilege Banner */}
-        <div className="bg-[#ffc933] border-[2px] border-[#0b1f5c] rounded-2xl px-4 py-2.5 mb-5 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-[2px_2px_0_#0b1f5c]">
-          <div className="flex items-center gap-2 text-xs font-black text-[#0b1f5c]">
+        <div className="bg-[#011C92] border border-[#3DAAFC]/30 text-white rounded-2xl px-4 py-3 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+          <div className="flex items-center gap-2.5 text-xs font-semibold text-white/90">
             <span className="text-base">🎁</span>
-            <span>First 3 Hangouts are 100% FREE! Meet companions across any radar hub with ₹0 cost to build mutual trust & reviews.</span>
+            <span>First 3 Hangouts are 100% FREE! Meet verified partners across any radar hub with ₹0 fee to build mutual comfort & reviews.</span>
           </div>
-          <span className="text-[10px] font-black uppercase tracking-wider bg-white text-[#1f4ee0] px-2.5 py-1 rounded-full border border-[#0b1f5c] shrink-0">
-            Sessions 1, 2, 3 = ₹0
+          <span className="text-[11px] font-bold uppercase tracking-wider bg-[#FFC83D] text-[#0B1230] px-3 py-1 rounded-full shrink-0 shadow-xs">
+            Sessions 1, 2, 3 = ₹0 Free
           </span>
         </div>
 

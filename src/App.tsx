@@ -24,7 +24,9 @@ import {
   Unlock,
   Flame,
   Award,
-  Menu
+  Menu,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { 
   motion, 
@@ -534,6 +536,7 @@ export default function App() {
     womenOnly: boolean;
   } | null>(null);
   const passPreviewRef = useRef<HTMLDivElement>(null);
+  const matchCarouselRef = useRef<HTMLDivElement>(null);
 
   // Booking Modal State
   const [bookingCompanion, setBookingCompanion] = useState<CompanionProfile | null>(null);
@@ -1041,11 +1044,11 @@ export default function App() {
       {/* 2. EXPANSIVE BRAND HERO SECTION (Light Cloud & White surface, Hangout Blue & Ink typography) */}
       <header 
         id="top" 
-        className="relative py-10 sm:py-16 lg:py-24 overflow-hidden bg-gradient-to-b from-[#F3F7FF] via-white to-[#F3F7FF] text-[#0B1230] border-b border-[#0A2EB8]/10"
+        className="relative py-6 sm:py-12 lg:py-20 overflow-hidden bg-gradient-to-b from-[#F3F7FF] via-white to-[#F3F7FF] text-[#0B1230] border-b border-[#0A2EB8]/10"
       >
         <div className="wrap">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-14 items-center">
             
             {/* Left Column: Brand Mock Structure */}
             <div className="lg:col-span-7 flex flex-col items-start text-left min-w-0">
@@ -1156,38 +1159,60 @@ export default function App() {
 
             </div>
 
-            {/* Right Column: Authentic Lifestyle Hangout Photography (Not a Gaming Site) */}
+            {/* Right Column (shown first on mobile so hero photo is never buried at bottom) */}
             <motion.div 
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.65, delay: 0.2 }}
-              className="lg:col-span-5 relative min-w-0"
+              className="lg:col-span-5 relative min-w-0 order-first lg:order-last"
             >
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#0A2EB8]/15 shadow-2xl bg-white aspect-[4/3] sm:aspect-[16/12]">
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#0A2EB8]/20 shadow-2xl bg-[#0B1230] min-h-[270px] sm:min-h-[340px] lg:min-h-[410px]">
                 <img 
                   src={heroHangoutCafeImg} 
                   alt="Friends enjoying coffee and honest conversation at Hazel and Oak Cafe in Delhi NCR"
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
                 
-                {/* Subtle scrim & photo caption badge */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1230]/85 via-transparent to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 text-white">
-                  <div className="flex items-center justify-between gap-2 flex-wrap text-xs">
-                    <span className="font-serif text-xs sm:text-sm font-semibold">Hazel & Oak Café · Khan Market</span>
-                    <span className="bg-[#19C37D] text-[#0B1230] px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold shrink-0">Verified Hangout Spot</span>
-                  </div>
-                  <p className="text-[11px] text-white/95 mt-1 font-medium line-clamp-2">
-                    Real-world offline rituals across parks, courts, trails, and sunlit cafés.
-                  </p>
-                </div>
-              </div>
+                {/* Measured Dark Scrim for High-Contrast Legibility */}
+                <div className="absolute inset-0 bg-[#0B1230]/45" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#011C92]/95 via-[#0B1230]/75 to-[#0B1230]/50" />
 
-              {/* Quiet editorial trust marker */}
-              <div className="mt-3 flex items-center justify-between gap-2 flex-wrap text-[11px] sm:text-xs text-[#0B1230]/75 px-1 font-semibold">
-                <span>📍 Verified public venues across NCR</span>
-                <span>⭐ 4.9 Average experience score</span>
+                {/* Clear Structured Info Overlay on Darkened Photo */}
+                <div className="relative z-10 h-full min-h-[270px] sm:min-h-[340px] lg:min-h-[410px] p-4 sm:p-6 flex flex-col justify-between text-white">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 bg-[#19C37D] text-[#0B1230] px-2.5 py-1 rounded-full text-[11px] font-extrabold shadow-sm">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Verified Public Venues</span>
+                    </span>
+                    <span className="inline-flex items-center bg-[#FFC83D] text-[#0B1230] px-2.5 py-1 rounded-full text-[11px] font-extrabold shadow-sm">
+                      1st 3 Hangouts FREE
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 pt-8">
+                    <div className="inline-block text-[11px] uppercase tracking-[0.14em] font-extrabold text-[#3DAAFC]">
+                      Hazel &amp; Oak Café · Khan Market &amp; NCR
+                    </div>
+                    <h2 className="font-serif text-xl sm:text-2xl font-bold text-white leading-snug">
+                      Real-world offline rituals across parks, courts &amp; cafés.
+                    </h2>
+                    <ul className="space-y-1.5 text-xs sm:text-[13px] font-semibold text-white/95 bg-[#0B1230]/60 backdrop-blur-xs border border-white/15 rounded-xl p-3">
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#19C37D] shrink-0" />
+                        <span>5 curated weekly time slots · Zero profile browsing</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#FFC83D] shrink-0" />
+                        <span>Govt-ID verified captains · Women-Only option</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Star className="w-3.5 h-3.5 text-[#FFC83D] fill-[#FFC83D] shrink-0" />
+                        <span>4.9/5 average experience rating across 3,400+ meets</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </motion.div>
 
@@ -1460,8 +1485,42 @@ export default function App() {
             </label>
           </motion.div>
 
-          {/* Experience Cards Grid (Sells the Experience, Venue & Schedule — Not Individual Profiles) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Mobile Horizontal Right-Scroll Cue for Experiences */}
+          <div className="flex md:hidden items-center justify-between gap-2 mb-3 bg-white border border-[#0A2EB8]/15 rounded-xl px-3.5 py-2.5 shadow-xs">
+            <span className="text-xs font-extrabold text-[#0A2EB8]">
+              {filteredCompanions.length} Curated Experiences · Scroll right
+            </span>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  matchCarouselRef.current?.scrollBy({ left: -300, behavior: "smooth" });
+                }}
+                aria-label="Scroll experiences left"
+                className="w-8 h-8 rounded-full border border-[#0A2EB8]/20 bg-[#F3F7FF] text-[#0A2EB8] flex items-center justify-center cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  matchCarouselRef.current?.scrollBy({ left: 300, behavior: "smooth" });
+                }}
+                aria-label="Scroll experiences right"
+                className="w-8 h-8 rounded-full bg-[#FFC83D] text-[#0B1230] flex items-center justify-center cursor-pointer shadow-xs"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Experience Cards: Horizontal Right-Scroll on Mobile, Grid on Tablet/Desktop */}
+          <div
+            ref={matchCarouselRef}
+            className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory gap-4 pb-3 scroll-smooth scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 md:overflow-visible"
+          >
             {filteredCompanions.length > 0 ? (
               filteredCompanions.map((comp, idx) => {
                 const isUnlocked = unlockedPartnerIds.includes(comp.id);
@@ -1474,7 +1533,7 @@ export default function App() {
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.4, delay: (idx % 4) * 0.06 }}
                   whileHover={{ y: -4, transition: { duration: 0.18 } }}
-                  className="bg-white border border-[#0A2EB8]/15 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-[#3DAAFC]/60 transition-all flex flex-col justify-between"
+                  className="min-w-[82vw] sm:min-w-[330px] md:min-w-0 shrink-0 snap-start bg-white border border-[#0A2EB8]/15 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-[#3DAAFC]/60 transition-all flex flex-col justify-between"
                 >
                   <div>
                     {/* Experience Visual Showcase */}
@@ -1608,7 +1667,7 @@ export default function App() {
                 );
               })
             ) : (
-              <div className="col-span-full text-center p-12 border border-dashed border-[#0A2EB8]/25 rounded-2xl bg-white">
+              <div className="w-full shrink-0 col-span-full text-center p-12 border border-dashed border-[#0A2EB8]/25 rounded-2xl bg-white">
                 <p className="font-serif text-xl text-[#0B1230] font-medium">
                   No experiences found for this filter in Gurugram or Delhi.
                 </p>

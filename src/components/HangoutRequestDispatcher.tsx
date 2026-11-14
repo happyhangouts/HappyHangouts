@@ -21,6 +21,8 @@ interface HangoutRequestDispatcherProps {
   meetingLocation: string;
   meetingDate: string;
   meetingTime: string;
+  durationPrice?: number;
+  durationLabel?: string;
   womenOnly?: boolean;
   isAlreadyUnlocked?: boolean;
   onPartnerAccepted?: (companionId: string) => void;
@@ -36,6 +38,8 @@ export default function HangoutRequestDispatcher({
   meetingLocation,
   meetingDate,
   meetingTime,
+  durationPrice = 299,
+  durationLabel = "1 hr",
   womenOnly = false,
   isAlreadyUnlocked = false,
   onPartnerAccepted,
@@ -322,7 +326,7 @@ export default function HangoutRequestDispatcher({
                     ₹0 Free
                   </span>
                   <span className="text-[10px] text-[#0B1230]/45 line-through">
-                    ₹{companion.rate}/hr
+                    ₹{durationPrice} · {durationLabel}
                   </span>
                 </div>
               </div>
@@ -448,8 +452,8 @@ export default function HangoutRequestDispatcher({
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-[#0B1230]/65">
-                  <span>Hangout Partner Regular Fee:</span>
-                  <span className="line-through">₹{companion.rate}/hr</span>
+                  <span>Standard Hangout Price ({durationLabel}):</span>
+                  <span className="line-through">₹{durationPrice}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm font-bold text-[#0B1230] pt-1.5 border-t border-[#0A2EB8]/10 mt-1.5">
                   <span>Your Total Cost:</span>

@@ -849,7 +849,7 @@ export default function LiveHangoutsRadar({
                         </div>
 
                         <div className="text-right">
-                          <span className="text-xs font-black text-[#1f4ee0]">₹{comp.rate}/hr</span>
+                          <span className="text-xs font-black text-[#1f4ee0]">From ₹199</span>
                           <p className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-300">
                             {comp.status}
                           </p>

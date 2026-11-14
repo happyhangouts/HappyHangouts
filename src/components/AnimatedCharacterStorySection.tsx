@@ -406,7 +406,7 @@ export const STORY_EPISODES: StoryEpisode[] = [
       {
         id: "host-u",
         stageTitle: "Ujjwal Poonia: Competitive Badminton & Fitness",
-        locationBadge: "Sector 29, Gurugram (₹400/hr)",
+        locationBadge: "Sector 29, Gurugram (From ₹199)",
         characterMood: "active",
         dialogue: "Hey! I'm Ujjwal. Need a doubles partner or intense singles rally in Sector 29? Whether you're training for a tournament or just want to burn 500 calories after sitting at a corporate desk all day, grab your racket and let's play!",
         speechSubtext: "4.9 ★ Rating · 40+ Matches Played · All Skill Levels Welcome",
@@ -430,7 +430,7 @@ export const STORY_EPISODES: StoryEpisode[] = [
       {
         id: "host-s",
         stageTitle: "Sonika Sharma: Pour-Over Coffee & Startup Chats",
-        locationBadge: "DLF CyberHub, Gurugram (₹450/hr)",
+        locationBadge: "DLF CyberHub, Gurugram (From ₹199)",
         characterMood: "thinking",
         dialogue: "Hi! I'm Sonika. Love artisan coffee and brainstorming startup pitches? Let's meet at Blue Tokai in CyberHub. No small talk fluff — let's review your deck, talk indie books, and share honest career insights.",
         speechSubtext: "4.9 ★ Rating · Specialty Coffee Buff · Startup Consultant",
@@ -454,7 +454,7 @@ export const STORY_EPISODES: StoryEpisode[] = [
       {
         id: "host-j",
         stageTitle: "Jyoti Nandal: Heritage Photowalks & Botanical Trails",
-        locationBadge: "Sunder Nursery & Lodhi, Delhi (₹500/hr)",
+        locationBadge: "Sunder Nursery & Lodhi, Delhi (From ₹199)",
         characterMood: "explaining",
         dialogue: "Namaste! I'm Jyoti. Delhi mornings are breathtaking when you spend them among lush trees and Mughal monuments at Sunder Nursery. Join me for photowalks, history stories, and lakeside peaceful walks!",
         speechSubtext: "5.0 ★ Super Host · Heritage Enthusiast · Botanical Trail Specialist",
@@ -478,7 +478,7 @@ export const STORY_EPISODES: StoryEpisode[] = [
       {
         id: "host-f",
         stageTitle: "Falguni Baddi: Acoustic Indie Jamming in Khan Market",
-        locationBadge: "Khan Market & CP, Delhi (₹450/hr)",
+        locationBadge: "Khan Market & CP, Delhi (From ₹199)",
         characterMood: "celebrating",
         dialogue: "Hey music lovers! I'm Falguni. If you play guitar, write poetry, or just want to sing along to acoustic indie favorites, let's jam in Khan Market! No audition, no judgment — just pure creative musical expression.",
         speechSubtext: "4.8 ★ Host · Singer-Songwriter · Acoustic Jam Partner",

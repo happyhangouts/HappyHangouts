@@ -93,10 +93,10 @@ const FAQ_DATA: FaqItem[] = [
     icon: CreditCard,
     question: "How do payments work from my 2nd hangout onwards?",
     answer:
-      "After your 1st free hangout, standard session fees (typically ₹250–₹600 depending on activity and venue) apply from your 2nd experience onwards and are paid via UPI or cards. Funds are held safely in digital escrow and released after both sides check in at the public venue.",
+      "After your 1st free hangout, fixed session prices apply from your 2nd experience onwards: ₹199 for 30 minutes, ₹299 for 1 hour, or ₹499 for 2 hours (paid via UPI or cards). Funds are held safely in digital escrow and released after both sides check in at the public venue.",
     highlights: [
       "UPI & card digital escrow protection",
-      "Transparent ₹250–₹600 session pricing",
+      "Fixed ₹199 (30m) · ₹299 (1h) · ₹499 (2h)",
       "No awkward cash handoffs"
     ]
   },
@@ -123,7 +123,7 @@ const FAQ_DATA: FaqItem[] = [
     icon: RotateCcw,
     question: "What is your Cancellation & Refund policy? Can I cancel in the last hour?",
     answer:
-      "No—you cannot cancel in the last hour before your hangout start time. Last-hour cancellations (within 1 hour of start time) are strictly non-refundable to respect your Hangout Partner's committed schedule. Cancel more than 1 hour before start time (ideally 2+ hours prior) to receive a 100% refund or free reschedule.",
+      "No—you cannot cancel in the last hour before your hangout start time. Last-hour cancellations (within 1 hour of start time) are strictly non-refundable to respect your Hangout Partner's committed schedule. Cancel more than 1 hour before start time (at least 2 hours prior) to receive a 100% refund or free reschedule.",
     highlights: [
       "No cancellations in the last 1 hour",
       "100% refund if cancelled >1 hr prior",

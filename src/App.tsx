@@ -44,7 +44,6 @@ import LiveHangoutsRadar from "./components/LiveHangoutsRadar";
 import BacklinkHub from "./components/BacklinkHub";
 import HangoutRequestDispatcher from "./components/HangoutRequestDispatcher";
 import CircledHighlight from "./components/CircledHighlight";
-import LifestyleHangoutGallery from "./components/LifestyleHangoutGallery";
 import FaqSection from "./components/FaqSection";
 
 import heroHangoutCafeImg from "./assets/images/hero_hangout_cafe_1794391402838.jpg";
@@ -84,7 +83,6 @@ export interface CompanionProfile {
   categoryLabel: string;
   slotKey: FoundingSlotKey;
   slotLabel: string;
-  rate: number;
   rating: number;
   city: "Gurugram" | "Delhi";
   location: string;
@@ -99,6 +97,20 @@ export interface CompanionProfile {
   badge?: string;
 }
 
+export type HangoutDurationKey = "30m" | "1h" | "2h";
+
+const DURATION_OPTIONS: {
+  id: HangoutDurationKey;
+  pillLabel: string;
+  shortLabel: string;
+  cardLabel: string;
+  price: number;
+}[] = [
+  { id: "30m", pillLabel: "30 min · ₹199", shortLabel: "30 min", cardLabel: "₹199 · 30 min", price: 199 },
+  { id: "1h", pillLabel: "1 hr · ₹299", shortLabel: "1 hr", cardLabel: "₹299 · 1 hr", price: 299 },
+  { id: "2h", pillLabel: "2 hrs · ₹499", shortLabel: "2 hrs", cardLabel: "₹499 · 2 hrs", price: 499 }
+];
+
 const COMPANIONS: CompanionProfile[] = [
   // 1. Weekday mornings — Running buddy (Gurugram & Delhi)
   {
@@ -112,7 +124,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Running buddy",
     slotKey: "weekday_mornings",
     slotLabel: "Weekday mornings",
-    rate: 250,
     rating: 4.8,
     city: "Gurugram",
     location: "Tau Devi Lal Park & Sector 52, Gurugram",
@@ -137,7 +148,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Running buddy",
     slotKey: "weekday_mornings",
     slotLabel: "Weekday mornings",
-    rate: 350,
     rating: 4.9,
     city: "Delhi",
     location: "Lodhi Garden Jogging Track, Delhi",
@@ -164,7 +174,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Pickleball or badminton",
     slotKey: "weekday_evenings",
     slotLabel: "Weekday evenings",
-    rate: 400,
     rating: 4.9,
     city: "Gurugram",
     location: "Sector 29 & DLF Phase 4, Gurugram",
@@ -189,7 +198,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Pickleball or badminton",
     slotKey: "weekday_evenings",
     slotLabel: "Weekday evenings",
-    rate: 350,
     rating: 4.9,
     city: "Delhi",
     location: "Siri Fort & South Delhi Courts, Delhi",
@@ -216,7 +224,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Weekend hike",
     slotKey: "saturday_morning",
     slotLabel: "Saturday morning",
-    rate: 600,
     rating: 4.9,
     city: "Gurugram",
     location: "Aravalli Biodiversity Ridge, Gurugram",
@@ -241,7 +248,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Weekend hike",
     slotKey: "saturday_morning",
     slotLabel: "Saturday morning",
-    rate: 450,
     rating: 4.9,
     city: "Delhi",
     location: "Sanjay Van & Mangar Bani Trail, Delhi NCR",
@@ -268,7 +274,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Chess or board games at a café",
     slotKey: "saturday_evening",
     slotLabel: "Saturday evening",
-    rate: 300,
     rating: 4.8,
     city: "Gurugram",
     location: "32nd Avenue Courtyard Cafés, Gurugram",
@@ -293,7 +298,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Chess or board games at a café",
     slotKey: "saturday_evening",
     slotLabel: "Saturday evening",
-    rate: 400,
     rating: 4.9,
     city: "Delhi",
     location: "Khan Market & CyberHub Cafés, Delhi NCR",
@@ -320,7 +324,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Photo walk",
     slotKey: "sunday_morning",
     slotLabel: "Sunday morning",
-    rate: 500,
     rating: 5.0,
     city: "Delhi",
     location: "Sunder Nursery & Humayun Tomb Trail, Delhi",
@@ -345,7 +348,6 @@ const COMPANIONS: CompanionProfile[] = [
     categoryLabel: "Photo walk",
     slotKey: "sunday_morning",
     slotLabel: "Sunday morning",
-    rate: 450,
     rating: 4.8,
     city: "Delhi",
     location: "Lodhi Art District & Mehrauli, Delhi",
@@ -428,12 +430,13 @@ const SECTIONS = [
   { id: "top", label: "01", name: "Welcome" },
   { id: "match", label: "02", name: "Experiences" },
   { id: "how", label: "03", name: "3 Steps" },
-  { id: "videos", label: "04", name: "NCR Stories" },
-  { id: "radar", label: "05", name: "Live Radar" },
-  { id: "safe", label: "06", name: "Safety" },
-  { id: "earn", label: "07", name: "Host" },
-  { id: "join", label: "08", name: "Hangout Pass" },
-  { id: "faq", label: "09", name: "FAQ" }
+  { id: "pricing", label: "04", name: "Pricing" },
+  { id: "videos", label: "05", name: "NCR Stories" },
+  { id: "radar", label: "06", name: "Live Radar" },
+  { id: "safe", label: "07", name: "Safety" },
+  { id: "earn", label: "08", name: "Host" },
+  { id: "join", label: "09", name: "Hangout Pass" },
+  { id: "faq", label: "10", name: "FAQ" }
 ];
 
 // Animated Number Counter on Scroll
@@ -499,13 +502,14 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCity, setSelectedCity] = useState<"all" | "Gurugram" | "Delhi">("all");
   const [womenOnlyFilter, setWomenOnlyFilter] = useState(false);
-  const [budgetLimit, setBudgetLimit] = useState(600);
+  const [selectedDuration, setSelectedDuration] = useState<HangoutDurationKey>("1h");
   const [timeFilter, setTimeFilter] = useState<"any" | FoundingSlotKey>("any");
   const [minRating, setMinRating] = useState(0);
 
-  // Earnings Calculator State
-  const [calcHours, setCalcHours] = useState(8);
-  const [calcRate, setCalcRate] = useState(400);
+  // Earnings Calculator State (30m, 1h, 2h hangouts per week)
+  const [calcN30, setCalcN30] = useState(4);
+  const [calcN60, setCalcN60] = useState(4);
+  const [calcN120, setCalcN120] = useState(1);
 
   // Waitlist form state (both WhatsApp and Email required)
   const [waitlistRole, setWaitlistRole] = useState<"seeker" | "partner">("seeker");
@@ -763,6 +767,8 @@ export default function App() {
     return map[startLabel] || "at least 2 hours before";
   };
 
+  const activeDuration = DURATION_OPTIONS.find((d) => d.id === selectedDuration) || DURATION_OPTIONS[1];
+
   // Open booking modal
   const handleOpenBooking = (companion: CompanionProfile) => {
     audio.playClick();
@@ -789,7 +795,7 @@ export default function App() {
     setBookingSuccess(false);
     setIsDispatching(false);
     // Track Google Analytics companion inspection / booking initiation
-    analytics.trackBookingClick(companion.name, companion.location, companion.rate);
+    analytics.trackBookingClick(companion.name, companion.location, activeDuration.price);
   };
 
   // Confirm booking & trigger live dispatch
@@ -813,14 +819,13 @@ export default function App() {
   const filteredCompanions = COMPANIONS.filter((p) => {
     const matchesCategory = selectedCategory === "all" || p.act === selectedCategory;
     const matchesCity = selectedCity === "all" || p.city === selectedCity;
-    const matchesBudget = p.rate <= budgetLimit;
     const matchesRating = p.rating >= minRating;
     const matchesTime = timeFilter === "any" || p.slotKey === timeFilter;
-    return matchesCategory && matchesCity && matchesBudget && matchesRating && matchesTime;
+    return matchesCategory && matchesCity && matchesRating && matchesTime;
   });
 
-  // Calculate earnings (after 20% platform fee)
-  const monthlyTakeHome = Math.round(calcHours * 4.3 * calcRate * 0.8);
+  // Calculate monthly earnings estimate (80% partner share: ₹159 for 30m, ₹239 for 1h, ₹399 for 2h)
+  const monthlyTakeHome = Math.round((calcN30 * 159 + calcN60 * 239 + calcN120 * 399) * 4.3);
 
   const scrollToSection = (id: string) => {
     audio.playPageTransition();
@@ -947,18 +952,18 @@ export default function App() {
           {/* Nav links (visible cleanly on tablet md+ and desktop lg+) */}
           <div className="hidden md:flex items-center gap-4 lg:gap-6">
             <a 
-              href="#experiences" 
+              href="#match" 
               onClick={() => audio.playClick()}
               className="text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors whitespace-nowrap"
             >
               Experiences
             </a>
             <a 
-              href="#match" 
+              href="#pricing" 
               onClick={() => audio.playClick()}
               className="text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors whitespace-nowrap"
             >
-              Weekly Lineup
+              Pricing
             </a>
             <a 
               href="#videos" 
@@ -1043,8 +1048,8 @@ export default function App() {
             >
               <div className="wrap py-3 flex flex-col gap-1">
                 {[
-                  { label: "5 Core Experiences", href: "#experiences" },
-                  { label: "Weekly Experience Lineup", href: "#match" },
+                  { label: "Experiences", href: "#match" },
+                  { label: "Pricing (From ₹199)", href: "#pricing" },
                   { label: "Experience Stories", href: "#videos" },
                   { label: "Live Hangouts Radar", href: "#radar" },
                   { label: "4-Pillar Safety", href: "#safe" },
@@ -1119,7 +1124,7 @@ export default function App() {
                 transition={{ duration: 0.55, delay: 0.15 }}
                 className="text-sm sm:text-lg lg:text-xl text-[#0B1230]/80 font-normal leading-relaxed mt-5 sm:mt-6 mb-4 sm:mb-5 max-w-xl"
               >
-                Skip awkward profile browsing. Pick one of 5 curated offline experiences in Gurgaon &amp; Delhi with verified Hangout Partners — request at least 2 hours prior.
+                Skip awkward profile browsing. Pick one of 5 curated offline experiences in Gurgaon &amp; Delhi — from 30 minutes to a full afternoon — with verified Hangout Partners. Pay per hangout, from ₹199 (request at least 2 hours prior).
               </motion.p>
 
               {/* Highlighted Launch Offer Callout Card */}
@@ -1215,9 +1220,14 @@ export default function App() {
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>Verified Public Venues</span>
                     </span>
-                    <span className="inline-flex items-center bg-[#FFC83D] text-[#0B1230] px-2.5 py-1 rounded-full text-[11px] font-extrabold shadow-sm">
-                      1st Hangout FREE
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="inline-flex items-center bg-white text-[#0B1230] px-2.5 py-1 rounded-full text-[11px] font-extrabold shadow-md -rotate-2 border border-[#0A2EB8]/15">
+                        ☕ From ₹199
+                      </span>
+                      <span className="inline-flex items-center bg-[#FFC83D] text-[#0B1230] px-2.5 py-1 rounded-full text-[11px] font-extrabold shadow-sm">
+                        1st Hangout FREE
+                      </span>
+                    </div>
                   </div>
 
                   <div className="space-y-2.5 pt-8">
@@ -1298,19 +1308,6 @@ export default function App() {
             </span>
           ))}
         </div>
-      </div>
-
-      {/* 3.5. AUTHENTIC LIFESTYLE HANGOUT GALLERY SHOWCASE (The 5 Core Weekly Activities) */}
-      <div id="experiences">
-        <LifestyleHangoutGallery
-          onExploreVibes={() => scrollToSection("match")}
-          onSelectActivity={(actId) => {
-            audio.playClick();
-            setSelectedCategory(actId);
-            setTimeFilter("any");
-            scrollToSection("match");
-          }}
-        />
       </div>
 
       {/* 4. "WHAT'S YOUR VIBE?" INTERACTIVE DIRECTORY WITH SCROLL REVEALS */}
@@ -1461,27 +1458,37 @@ export default function App() {
             transition={{ duration: 0.5, delay: 0.12 }}
             className="ctl"
           >
-            {/* Budget Range */}
-            <label className="flex items-center gap-3">
-              <span>Budget up to</span>
-              <input 
-                type="range" 
-                min={200} 
-                max={1000} 
-                step={50} 
-                value={budgetLimit}
-                onChange={(e) => {
-                  const val = Number(e.target.value);
-                  setBudgetLimit(val);
-                  audio.playSlider((val - 200) / 800);
-                }}
-              />
-              <output>₹{budgetLimit}</output>
-            </label>
+            {/* Duration Pill Selector (Fixed Hangout Pricing) */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full">
+              <span className="text-sm font-semibold text-[#0B1230] shrink-0">Duration</span>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {DURATION_OPTIONS.map((dur) => {
+                  const isActive = selectedDuration === dur.id;
+                  return (
+                    <button
+                      key={dur.id}
+                      type="button"
+                      onClick={() => {
+                        audio.playClick();
+                        setSelectedDuration(dur.id);
+                      }}
+                      aria-pressed={isActive}
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
+                        isActive
+                          ? "bg-[#0A2EB8] text-white border-[#0A2EB8] shadow-xs"
+                          : "bg-[#F3F7FF] text-[#0B1230] border-[#0A2EB8]/20 hover:border-[#0A2EB8]"
+                      }`}
+                    >
+                      {dur.pillLabel}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             {/* When / Weekly Slot Filter */}
             <label className="flex items-center gap-3">
-              <span>Slot</span>
+              <span>When</span>
               <select 
                 value={timeFilter}
                 onChange={(e) => {
@@ -1592,7 +1599,7 @@ export default function App() {
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 bg-[#0B1230]/85 backdrop-blur-xs text-white px-2 py-0.5 rounded-md text-[10px] font-semibold shrink-0">
-                            <span>{comp.experienceDuration}</span>
+                            <span>{activeDuration.shortLabel}</span>
                           </span>
                         )}
                       </div>
@@ -1663,17 +1670,22 @@ export default function App() {
 
                   {/* Card Footer & CTA */}
                   <div className="px-3.5 sm:px-5 pb-3.5 sm:pb-5 pt-2 border-t border-[#F3F7FF]">
-                    <div className="flex items-center justify-between text-xs mb-3 gap-2">
+                    <div className="flex items-center justify-between text-xs mb-1.5 gap-2">
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="line-through text-[#0B1230]/40">₹{comp.rate}</span>
-                        <span className="font-bold text-[#19C37D] bg-[#19C37D]/10 px-1.5 py-0.5 rounded">
-                          ₹0 FREE
+                        <span className="font-extrabold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/15 px-2 py-0.5 rounded tabular-nums">
+                          {activeDuration.cardLabel}
+                        </span>
+                        <span className="font-bold text-[#19C37D] bg-[#19C37D]/10 px-1.5 py-0.5 rounded text-[10px]">
+                          1st Free
                         </span>
                       </div>
                       <span className="text-[11px] font-bold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/15 px-2 py-0.5 rounded-md truncate">
                         {comp.city}
                       </span>
                     </div>
+                    <p className="text-[11px] text-[#0B1230]/60 font-medium mb-2.5">
+                      Hitting it off? Extend anytime.
+                    </p>
 
                     <button 
                       type="button"
@@ -1698,7 +1710,7 @@ export default function App() {
                   No experiences found for this filter in Gurugram or Delhi.
                 </p>
                 <p className="text-[#0B1230]/60 text-sm mt-2 max-w-md mx-auto font-normal">
-                  Try adjusting the budget slider up to ₹1,000 or selecting "All 5 Weekly Slots" — new weekly experiences open every week.
+                  Try selecting "All 5 Weekly Slots" or "Both Cities" — new weekly experiences open every week.
                 </p>
                 <button
                   type="button"
@@ -1706,7 +1718,7 @@ export default function App() {
                     audio.playClick();
                     setSelectedCategory("all");
                     setSelectedCity("all");
-                    setBudgetLimit(1000);
+                    setSelectedDuration("1h");
                     setTimeFilter("any");
                     setMinRating(0);
                   }}
@@ -1795,6 +1807,132 @@ export default function App() {
               </p>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* 5.5 NEW FIXED PRICING SECTION */}
+      <section id="pricing" className="py-16 sm:py-24 bg-[#F3F7FF] border-b border-[#0A2EB8]/10">
+        <div className="wrap">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45 }}
+            className="max-w-2xl text-left sm:text-center sm:mx-auto mb-10 sm:mb-14"
+          >
+            <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#0A2EB8] block mb-2">
+              Simple pricing
+            </span>
+            <h2 className="font-serif text-3xl sm:text-5xl text-[#0B1230] font-normal tracking-tight">
+              Start small. <CircledHighlight circleColor="#FFC83D">Stay longer.</CircledHighlight>
+            </h2>
+            <p className="text-[#0B1230]/75 text-base sm:text-lg mt-3 font-normal">
+              Pay per hangout. No subscriptions, no hidden charges. Venue or café bills are not included.
+            </p>
+          </motion.div>
+
+          {/* 3 Tilted Sticker-Style Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto items-stretch">
+            {/* 30 Min */}
+            <div className="flex flex-col items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  setSelectedDuration("30m");
+                  scrollToSection("match");
+                }}
+                className="w-full flex-1 bg-white border-2 border-[#0B1230] rounded-3xl p-6 sm:p-7 text-left shadow-[5px_5px_0_#0A2EB8] sm:-rotate-2 hover:rotate-0 hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <span className="inline-block text-[11px] font-extrabold uppercase tracking-wider bg-[#F3F7FF] text-[#0A2EB8] border border-[#0A2EB8]/20 px-2.5 py-0.5 rounded-full">
+                    Try it out
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold text-[#0B1230] mt-3">30 Min</h3>
+                  <div className="font-serif text-4xl sm:text-5xl font-extrabold text-[#0A2EB8] mt-2 tabular-nums">
+                    ₹199
+                  </div>
+                  <p className="text-xs text-[#0B1230]/70 mt-2 font-medium">
+                    Quick coffee, warm-up run, or casual first meet.
+                  </p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-1 text-xs font-extrabold text-[#0A2EB8]">
+                  Browse 30 min hangouts →
+                </span>
+              </button>
+              <span className="mt-3 text-xs font-bold text-[#0B1230]/70 tabular-nums">
+                ₹398/hr
+              </span>
+            </div>
+
+            {/* 1 Hour (Highlighted with Yellow Accent) */}
+            <div className="flex flex-col items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  setSelectedDuration("1h");
+                  scrollToSection("match");
+                }}
+                className="w-full flex-1 bg-[#FFC83D] border-2 border-[#0B1230] rounded-3xl p-6 sm:p-7 text-left shadow-[6px_6px_0_#0B1230] sm:rotate-1 hover:rotate-0 hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <span className="inline-block text-[11px] font-extrabold uppercase tracking-wider bg-[#0B1230] text-[#FFC83D] px-2.5 py-0.5 rounded-full">
+                    Most popular
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold text-[#0B1230] mt-3">1 Hour</h3>
+                  <div className="font-serif text-4xl sm:text-5xl font-extrabold text-[#0B1230] mt-2 tabular-nums">
+                    ₹299
+                  </div>
+                  <p className="text-xs text-[#0B1230]/85 mt-2 font-semibold">
+                    The sweet spot for court rallies, runs, or café chess.
+                  </p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-1 text-xs font-extrabold text-[#0B1230]">
+                  Browse 1 hr hangouts →
+                </span>
+              </button>
+              <span className="mt-3 text-xs font-bold text-[#0B1230]/70 tabular-nums">
+                ₹299/hr
+              </span>
+            </div>
+
+            {/* 2 Hours */}
+            <div className="flex flex-col items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  setSelectedDuration("2h");
+                  scrollToSection("match");
+                }}
+                className="w-full flex-1 bg-white border-2 border-[#0B1230] rounded-3xl p-6 sm:p-7 text-left shadow-[5px_5px_0_#0A2EB8] sm:rotate-2 hover:rotate-0 hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <span className="inline-block text-[11px] font-extrabold uppercase tracking-wider bg-[#19C37D]/15 text-[#0B1230] border border-[#19C37D] px-2.5 py-0.5 rounded-full">
+                    Best value
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold text-[#0B1230] mt-3">2 Hours</h3>
+                  <div className="font-serif text-4xl sm:text-5xl font-extrabold text-[#0A2EB8] mt-2 tabular-nums">
+                    ₹499
+                  </div>
+                  <p className="text-xs font-bold text-[#19C37D] mt-2">
+                    Save ₹99 vs two 1-hour hangouts
+                  </p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-1 text-xs font-extrabold text-[#0A2EB8]">
+                  Browse 2 hrs hangouts →
+                </span>
+              </button>
+              <span className="mt-3 text-xs font-bold text-[#0B1230]/70 tabular-nums">
+                ₹250/hr
+              </span>
+            </div>
+          </div>
+
+          <p className="mt-8 text-center text-sm sm:text-base font-semibold text-[#0B1230] max-w-2xl mx-auto bg-white border border-[#0A2EB8]/15 rounded-2xl px-5 py-3.5 shadow-xs">
+            Hitting it off? Extend your hangout anytime: +₹100 takes 30 minutes to 1 hour, +₹200 takes 1 hour to 2 hours.
+          </p>
         </div>
       </section>
 
@@ -1949,48 +2087,70 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-5xl text-[#0B1230] font-normal tracking-tight">
               Earn by leading local <CircledHighlight circleColor="#3DAAFC">experiences</CircledHighlight>
             </h2>
-            <p className="text-[#0B1230]/75 text-base sm:text-lg mb-8 leading-relaxed mt-3 font-normal">
-              Host weekly morning runs, evening pickleball or badminton, Saturday hikes, café board games, or Sunday photo walks across Delhi and Gurugram.
+            <p className="text-[#0B1230] text-sm sm:text-base font-semibold mt-3">
+              Make the first 30 minutes great. Happy hangouts often get extended, and you earn more.
+            </p>
+            <p className="text-[#0B1230]/75 text-base sm:text-lg mb-8 leading-relaxed mt-2 font-normal">
+              Host weekly morning runs, evening pickleball or badminton, Saturday hikes, café board games, or Sunday photo walks across Delhi and Gurugram. Partners keep 80% of every session: ₹159 (30 min), ₹239 (1 hr), or ₹399 (2 hrs).
             </p>
 
             <div className="flex flex-col gap-5 bg-white p-6 sm:p-7 rounded-2xl border border-[#0A2EB8]/15 shadow-sm">
-              {/* Hours slider */}
+              {/* Slider 1: 30-minute hangouts per week */}
               <div>
-                <div className="flex justify-between items-center mb-1 text-sm">
-                  <span className="font-medium text-[#0B1230]">Hours per week:</span>
-                  <span className="font-serif text-xl text-[#0A2EB8] font-bold">{calcHours} hrs</span>
+                <div className="flex justify-between items-center mb-1 text-sm gap-2">
+                  <span className="font-medium text-[#0B1230]">30-minute hangouts per week <span className="text-xs text-[#0B1230]/60">(₹159 each)</span>:</span>
+                  <span className="font-serif text-xl text-[#0A2EB8] font-bold tabular-nums shrink-0">{calcN30}</span>
                 </div>
                 <input 
                   type="range" 
-                  min={2} 
-                  max={30} 
-                  value={calcHours}
+                  min={0} 
+                  max={20} 
+                  value={calcN30}
                   className="w-full accent-[#0A2EB8]"
                   onChange={(e) => {
                     const val = Number(e.target.value);
-                    setCalcHours(val);
-                    audio.playSlider((val - 2) / 28);
+                    setCalcN30(val);
+                    audio.playSlider(val / 20);
                   }}
                 />
               </div>
 
-              {/* Rate slider */}
+              {/* Slider 2: 1-hour hangouts per week */}
               <div>
-                <div className="flex justify-between items-center mb-1 text-sm">
-                  <span className="font-medium text-[#0B1230]">Session fee per hour:</span>
-                  <span className="font-serif text-xl text-[#0A2EB8] font-bold">₹{calcRate}</span>
+                <div className="flex justify-between items-center mb-1 text-sm gap-2">
+                  <span className="font-medium text-[#0B1230]">1-hour hangouts per week <span className="text-xs text-[#0B1230]/60">(₹239 each)</span>:</span>
+                  <span className="font-serif text-xl text-[#0A2EB8] font-bold tabular-nums shrink-0">{calcN60}</span>
                 </div>
                 <input 
                   type="range" 
-                  min={200} 
-                  max={1000} 
-                  step={50} 
-                  value={calcRate}
+                  min={0} 
+                  max={20} 
+                  value={calcN60}
                   className="w-full accent-[#0A2EB8]"
                   onChange={(e) => {
                     const val = Number(e.target.value);
-                    setCalcRate(val);
-                    audio.playSlider((val - 200) / 800);
+                    setCalcN60(val);
+                    audio.playSlider(val / 20);
+                  }}
+                />
+              </div>
+
+              {/* Slider 3: 2-hour hangouts per week */}
+              <div>
+                <div className="flex justify-between items-center mb-1 text-sm gap-2">
+                  <span className="font-medium text-[#0B1230]">2-hour hangouts per week <span className="text-xs text-[#0B1230]/60">(₹399 each)</span>:</span>
+                  <span className="font-serif text-xl text-[#0A2EB8] font-bold tabular-nums shrink-0">{calcN120}</span>
+                </div>
+                <input 
+                  type="range" 
+                  min={0} 
+                  max={10} 
+                  value={calcN120}
+                  className="w-full accent-[#0A2EB8]"
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setCalcN120(val);
+                    audio.playSlider(val / 10);
                   }}
                 />
               </div>
@@ -2008,11 +2168,11 @@ export default function App() {
             <span className="text-xs uppercase tracking-[0.16em] font-bold text-[#0A2EB8] block">
               Estimated Monthly Take-Home
             </span>
-            <b className="font-serif text-4xl sm:text-6xl text-[#0A2EB8] my-3 block font-bold">
+            <b className="font-serif text-4xl sm:text-6xl text-[#0A2EB8] my-3 block font-bold tabular-nums">
               ₹{monthlyTakeHome.toLocaleString("en-IN")}
             </b>
-            <p className="text-xs sm:text-sm text-[#0B1230]/70 font-normal leading-relaxed">
-              Based on {calcHours} hrs/week at ₹{calcRate}/hr, after 20% platform hosting & escrow support.
+            <p className="text-xs sm:text-sm text-[#0B1230]/75 font-normal leading-relaxed">
+              After the 20% platform fee. Illustrative estimate. Venue bonuses may be added at launch.
             </p>
 
             {/* Hangout Partner Trust Notice */}
@@ -2052,8 +2212,11 @@ export default function App() {
             <h2 className="font-serif text-[32px] sm:text-[50px] font-normal tracking-tight mt-3 mb-2 text-[#0B1230]">
               Unlock Your <CircledHighlight circleColor="#3DAAFC">Hangout Pass</CircledHighlight>
             </h2>
-            <p className="text-[#0B1230]/75 text-sm sm:text-lg font-normal mb-8">
+            <p className="text-[#0B1230]/75 text-sm sm:text-lg font-normal mb-2">
               Complete all details below and tap submit — your official #HH-2026 Digital Hangout Pass will unlock immediately once submitted.
+            </p>
+            <p className="text-[#0A2EB8] text-xs sm:text-sm font-bold mb-8">
+              Launch prices: ₹199 for 30 min, ₹299 for 1 hr, ₹499 for 2 hrs.
             </p>
           </motion.div>
 
@@ -2649,6 +2812,8 @@ export default function App() {
             meetingLocation={bookingLocation}
             meetingDate={bookingDate}
             meetingTime={`${bookingTime} · ${bookingStartHour}`}
+            durationPrice={activeDuration.price}
+            durationLabel={activeDuration.shortLabel}
             womenOnly={bookingWomenOnly}
             isAlreadyUnlocked={unlockedPartnerIds.includes(bookingCompanion.id)}
             onPartnerAccepted={(acceptedId) => {
@@ -2894,19 +3059,38 @@ export default function App() {
                     />
                   </div>
 
-                  {/* 1st Hangout Free Trust Callout */}
-                  <div className="p-4 bg-[#19C37D]/10 border border-[#19C37D]/30 rounded-2xl">
-                    <div className="flex items-center justify-between text-xs font-bold text-[#19C37D] mb-1">
+                  {/* 1st Hangout Free Trust Callout & Duration Selector */}
+                  <div className="p-4 bg-[#19C37D]/10 border border-[#19C37D]/30 rounded-2xl space-y-2.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#19C37D]">
                       <span>Launch Offer:</span>
                       <span className="bg-[#19C37D] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                         ₹0 (1st Hangout Free)
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-[#0B1230]/60 pt-1 border-t border-[#19C37D]/20">
-                      <span>Regular Experience Fee (from 2nd hangout):</span>
-                      <span className="line-through">₹{bookingCompanion.rate}</span>
+                    <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                      {DURATION_OPTIONS.map((dur) => (
+                        <button
+                          key={dur.id}
+                          type="button"
+                          onClick={() => {
+                            audio.playClick();
+                            setSelectedDuration(dur.id);
+                          }}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
+                            selectedDuration === dur.id
+                              ? "bg-[#0A2EB8] text-white border-[#0A2EB8]"
+                              : "bg-white text-[#0B1230] border-[#0A2EB8]/20"
+                          }`}
+                        >
+                          {dur.pillLabel}
+                        </button>
+                      ))}
                     </div>
-                    <div className="flex items-center justify-between text-sm font-bold text-[#0B1230] mt-1">
+                    <div className="flex items-center justify-between text-xs text-[#0B1230]/65 pt-1 border-t border-[#19C37D]/20">
+                      <span>Standard Price (from 2nd hangout):</span>
+                      <span className="line-through tabular-nums">{activeDuration.cardLabel}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm font-bold text-[#0B1230]">
                       <span>Your Cost Today:</span>
                       <span className="font-serif text-base text-[#19C37D] font-bold">₹0 (1st Hangout Free)</span>
                     </div>

@@ -22,6 +22,7 @@ interface HangoutRequestDispatcherProps {
   meetingLocation: string;
   meetingDate: string;
   meetingTime: string;
+  womenOnly?: boolean;
   isAlreadyUnlocked?: boolean;
   onPartnerAccepted?: (companionId: string) => void;
   onClose: () => void;
@@ -36,6 +37,7 @@ export default function HangoutRequestDispatcher({
   meetingLocation,
   meetingDate,
   meetingTime,
+  womenOnly = false,
   isAlreadyUnlocked = false,
   onPartnerAccepted,
   onClose,
@@ -154,7 +156,9 @@ export default function HangoutRequestDispatcher({
   const progressPercent = (secondsLeft / TOTAL_TIMEOUT_SECONDS) * 100;
 
   // WhatsApp chat message
-  const waMessage = `Hi ${companion.name}! I booked our FREE Hangout (Launch Offer: First 3 Hangouts Free) at ${meetingLocation} for ${meetingDate} (${meetingTime}) via Happy Hangouts. Excited to meet!`;
+  const activeCaptainName = womenOnly ? companion.womenCaptainName : companion.name;
+  const bookingModeTag = womenOnly ? " [WOMEN-ONLY BOOKING — Verified Woman Captain]" : "";
+  const waMessage = `Hi! I reserved a FREE spot for "${companion.experienceTitle}" (${companion.categoryLabel})${bookingModeTag} at ${meetingLocation} on ${meetingDate} (${meetingTime}) via Happy Hangouts. Excited for the experience!`;
   const waUrl = `https://wa.me/918800843189?text=${encodeURIComponent(waMessage)}`;
 
   return (
@@ -180,15 +184,15 @@ export default function HangoutRequestDispatcher({
             </div>
             <div className="min-w-0">
               <h3 className="font-serif text-lg font-bold text-[#0B1230] leading-tight truncate">
-                {status === "waiting" && "Live Partner Dispatch"}
-                {status === "confirmed" && "Hangout Accepted · Photo Unlocked"}
-                {status === "declined" && "Partner Unavailable"}
+                {status === "waiting" && "Confirming Experience Spot"}
+                {status === "confirmed" && "Experience Spot Confirmed!"}
+                {status === "declined" && "Slot Unavailable"}
                 {status === "expired" && "Request Auto-Cancelled"}
               </h3>
               <p className="text-[11px] text-[#0B1230]/65 font-medium truncate">
                 {status === "confirmed"
-                  ? `${companion.name} accepted your request`
-                  : "5-minute action window · Photo unlocks on accept"}
+                  ? `${companion.experienceTitle} · Check-in Ready`
+                  : "5-minute captain check-in · Host details share on confirm"}
               </p>
             </div>
           </div>
@@ -204,17 +208,23 @@ export default function HangoutRequestDispatcher({
           </button>
         </div>
 
-        {/* Uber/Ola + Privacy Concept Explainer Banner */}
+        {/* Experience-First Privacy Explainer Banner */}
         <div className="bg-[#011C92] text-white px-4 py-2.5 flex items-center justify-between text-xs gap-2">
           <span className="text-[11px] text-white/95 leading-snug">
             {photoUnlocked
-              ? `✓ Accepted! ${companion.name}'s verified photo is unlocked below.`
-              : "Partner has 5:00 mins to accept. Face photo stays locked until accepted."}
+              ? `✓ Confirmed! Meet ${womenOnly ? "Woman Captain" : "captain"} ${activeCaptainName} at ${meetingLocation}.`
+              : womenOnly
+              ? "👩 Women-Only Booking: Verified Woman Captain & female-only cohort locked."
+              : "Experience-first matching: Captain identity stays private until your spot is confirmed."}
           </span>
           <span className={`text-[10px] uppercase px-2 py-0.5 rounded font-bold shrink-0 ${
-            photoUnlocked ? "bg-[#19C37D] text-[#0B1230]" : "bg-[#3DAAFC]/25 text-[#3DAAFC]"
+            photoUnlocked
+              ? "bg-[#19C37D] text-[#0B1230]"
+              : womenOnly
+              ? "bg-[#FFC83D] text-[#0B1230]"
+              : "bg-[#3DAAFC]/25 text-[#3DAAFC]"
           }`}>
-            {photoUnlocked ? "Unlocked" : "Privacy Lock"}
+            {photoUnlocked ? "Spot Locked" : womenOnly ? "Women-Only" : "Experience First"}
           </span>
         </div>
 
@@ -270,51 +280,39 @@ export default function HangoutRequestDispatcher({
 
                 <p className="text-xs text-[#0B1230] font-semibold mt-2 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#3DAAFC] animate-ping"></span>
-                  <span>Awaiting acceptance from {companion.name}...</span>
+                  <span>
+                    {womenOnly
+                      ? `Confirming Women-Only spot with ${activeCaptainName}...`
+                      : `Confirming spot with ${activeCaptainName}...`}
+                  </span>
                 </p>
               </div>
 
-              {/* Companion Target Card with LOCKED Photo */}
+              {/* Experience Target Card */}
               <div className="bg-[#F3F7FF] border border-[#0A2EB8]/15 rounded-2xl p-3.5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  {/* Locked Photo / Interest Photo Preview */}
                   <div className="relative w-14 h-14 rounded-2xl overflow-hidden border border-[#0A2EB8]/20 bg-white shrink-0">
-                    {isAlreadyUnlocked ? (
-                      <img
-                        src={companion.partnerPhoto}
-                        alt={companion.partnerPhotoAlt}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover object-top"
-                      />
-                    ) : (
-                      <>
-                        <img
-                          src={companion.interestPhoto}
-                          alt={companion.interestPhotoAlt}
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover blur-[2px] brightness-75 scale-105"
-                        />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#011C92]/45 text-white">
-                          <Lock className="w-4 h-4" />
-                        </div>
-                      </>
-                    )}
+                    <img
+                      src={companion.interestPhoto}
+                      alt={companion.interestPhotoAlt}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <p className="text-sm font-bold text-[#0B1230] truncate">{companion.name}</p>
-                      <span className="text-[10px] text-[#0A2EB8] bg-white px-1.5 py-0.5 rounded border border-[#0A2EB8]/20 font-bold">
-                        ★ {companion.rating}
-                      </span>
+                      <p className="text-sm font-bold text-[#0B1230] truncate">{companion.experienceTitle}</p>
                     </div>
                     <p className="text-xs text-[#0B1230]/75 truncate font-medium">
-                      {companion.categoryLabel} · {meetingLocation}
+                      {companion.slotLabel} · {meetingLocation}
                     </p>
                     <p className="text-[11px] text-[#0A2EB8] font-semibold flex items-center gap-1 mt-0.5">
-                      <Lock className="w-3 h-3 shrink-0" />
+                      <ShieldCheck className="w-3 h-3 shrink-0" />
                       <span className="truncate">
-                        {isAlreadyUnlocked ? "Photo already unlocked" : "Face photo locked until accepted"}
+                        {womenOnly
+                          ? "👩 Women-Only · Verified Woman Captain"
+                          : "Govt-ID vetted captain · Reveals on confirm"}
                       </span>
                     </p>
                   </div>
@@ -347,10 +345,10 @@ export default function HangoutRequestDispatcher({
               <div className="bg-[#F3F7FF] border border-[#0A2EB8]/15 rounded-xl p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#0A2EB8]">
-                    Partner Action Preview (Demo):
+                    Experience Dispatch Preview (Demo):
                   </span>
                   <span className="text-[10px] font-semibold text-[#0B1230]/60">
-                    Accept reveals photo
+                    Confirming locks spot & host
                   </span>
                 </div>
 
@@ -360,7 +358,7 @@ export default function HangoutRequestDispatcher({
                     onClick={handleHostConfirm}
                     className="py-2 px-2 min-h-[42px] bg-[#19C37D] hover:bg-[#15ad6e] text-[#0B1230] rounded-lg cursor-pointer transition-colors text-center text-[11px] shadow-xs"
                   >
-                    ✓ Accept & Unlock Photo
+                    ✓ Confirm Spot
                   </button>
 
                   <button
@@ -402,7 +400,7 @@ export default function HangoutRequestDispatcher({
           {status === "confirmed" && (
             <div className="space-y-4 py-1">
               
-              {/* Unlocked Partner Portrait Reveal Card */}
+              {/* Confirmed Experience Pass Card */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.94, y: 8 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -410,31 +408,33 @@ export default function HangoutRequestDispatcher({
                 className="bg-gradient-to-br from-[#F3F7FF] to-white border-2 border-[#19C37D]/50 rounded-2xl p-4 shadow-md"
               >
                 <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-                  <div className="relative w-28 h-28 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[#19C37D] shadow-md shrink-0 bg-[#F3F7FF]">
+                  <div className="relative w-28 h-24 sm:w-28 sm:h-24 rounded-2xl overflow-hidden border-2 border-[#19C37D] shadow-md shrink-0 bg-[#F3F7FF]">
                     <img
-                      src={companion.partnerPhoto}
-                      alt={companion.partnerPhotoAlt}
+                      src={companion.interestPhoto}
+                      alt={companion.interestPhotoAlt}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover object-top"
+                      className="w-full h-full object-cover"
                     />
-                    <span className="absolute bottom-1 right-1 bg-[#19C37D] text-[#0B1230] rounded-full p-1 shadow-xs" title="ID & Selfie Verified">
+                    <span className="absolute bottom-1 right-1 bg-[#19C37D] text-[#0B1230] rounded-full p-1 shadow-xs" title="Experience Confirmed">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                     </span>
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <div className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[#0B1230] bg-[#19C37D]/20 px-2.5 py-0.5 rounded font-bold mb-1.5">
-                      <Unlock className="w-3 h-3 text-[#19C37D]" />
-                      <span>Partner Accepted · Photo Unlocked</span>
+                      <CheckCircle2 className="w-3 h-3 text-[#19C37D]" />
+                      <span>
+                        {womenOnly ? `Women-Only Confirmed · ${companion.slotLabel}` : `Spot Confirmed · ${companion.slotLabel}`}
+                      </span>
                     </div>
-                    <h4 className="font-serif text-2xl font-bold text-[#0B1230] leading-tight">
-                      {companion.name}
+                    <h4 className="font-serif text-xl font-bold text-[#0B1230] leading-tight">
+                      {companion.experienceTitle}
                     </h4>
                     <p className="text-xs text-[#0B1230]/75 mt-1 leading-relaxed">
-                      Confirmed for <strong>{meetingLocation}</strong> · {meetingDate} ({meetingTime})
+                      <strong>{meetingLocation}</strong> · {meetingDate} ({meetingTime})
                     </p>
                     <p className="text-[11px] font-semibold text-[#0A2EB8] mt-1">
-                      Goal: {companion.goals}
+                      {womenOnly ? "👩 Woman Captain assigned:" : "Captain assigned:"} {activeCaptainName} (ID Verified · ★ {companion.rating})
                     </p>
                   </div>
                 </div>
@@ -547,7 +547,7 @@ export default function HangoutRequestDispatcher({
                   className="btn outline w-full py-2.5 text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <UserCheck className="w-3.5 h-3.5 text-[#0A2EB8]" />
-                  <span>Match with Another Verified Partner</span>
+                  <span>Explore Other Experiences</span>
                 </button>
               </div>
             </div>

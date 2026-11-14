@@ -20,6 +20,10 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { audio } from "../utils/audio";
+import thumbHowItWorksImg from "../assets/images/video_thumb_how_it_works_1793357739439.jpg";
+import thumbSafetyEscrowImg from "../assets/images/video_thumb_safety_escrow_1793357740741.jpg";
+import thumbHostSpotlightImg from "../assets/images/video_thumb_host_spotlight_1793357740785.jpg";
+import thumbCommunityWalkImg from "../assets/images/video_thumb_community_walk_1793357742267.jpg";
 
 export interface InformativeVideo {
   id: string;
@@ -49,7 +53,7 @@ export const INFORMATIVE_VIDEOS: InformativeVideo[] = [
     category: "how-it-works",
     categoryLabel: "How It Works",
     badge: "Must Watch",
-    thumbnail: "/src/assets/images/video_thumb_how_it_works_1793357739439.jpg",
+    thumbnail: thumbHowItWorksImg,
     videoUrl: "/assets/videos/hh_how_it_works.mp4",
     presenter: "Muba & Community Team",
     presenterRole: "Local Vibe Lead · NCR",
@@ -78,7 +82,7 @@ export const INFORMATIVE_VIDEOS: InformativeVideo[] = [
     category: "safety",
     categoryLabel: "Safety & Escrow",
     badge: "Trust Protocol",
-    thumbnail: "/src/assets/images/video_thumb_safety_escrow_1793357740741.jpg",
+    thumbnail: thumbSafetyEscrowImg,
     videoUrl: "/assets/videos/hh_safety_shield.mp4",
     presenter: "Safety Operations Lead",
     presenterRole: "Trust & Safety · Gurugram & Delhi",
@@ -106,7 +110,7 @@ export const INFORMATIVE_VIDEOS: InformativeVideo[] = [
     category: "hosts",
     categoryLabel: "Host Spotlight",
     badge: "Featured Hosts",
-    thumbnail: "/src/assets/images/video_thumb_host_spotlight_1793357740785.jpg",
+    thumbnail: thumbHostSpotlightImg,
     videoUrl: "/assets/videos/hh_hosts_spotlight.mp4",
     presenter: "Ujjwal, Sonika, Jyoti & Falguni",
     presenterRole: "Founding Activity Hosts",
@@ -134,7 +138,7 @@ export const INFORMATIVE_VIDEOS: InformativeVideo[] = [
     category: "community",
     categoryLabel: "Community Stories",
     badge: "NCR Stories",
-    thumbnail: "/src/assets/images/video_thumb_community_walk_1793357742267.jpg",
+    thumbnail: thumbCommunityWalkImg,
     videoUrl: "/assets/videos/hh_community_walks.mp4",
     presenter: "NCR Community Members",
     presenterRole: "Active Hangout Seekers",
@@ -162,7 +166,7 @@ export const INFORMATIVE_VIDEOS: InformativeVideo[] = [
     category: "hosts",
     categoryLabel: "Host Guide",
     badge: "Host Blueprint",
-    thumbnail: "/src/assets/images/video_thumb_host_spotlight_1793357740785.jpg",
+    thumbnail: thumbHostSpotlightImg,
     videoUrl: "/assets/videos/hh_host_earnings.mp4",
     presenter: "Partner Onboarding Team",
     presenterRole: "Host Success Lead",

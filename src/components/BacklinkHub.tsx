@@ -144,7 +144,7 @@ export default function BacklinkHub({ triggerBoom }: BacklinkHubProps) {
   };
 
   return (
-    <section id="backlinks" className="py-16 sm:py-24 bg-white border-b-[2.5px] border-[#0b1f5c]">
+    <section id="backlinks" className="hidden md:block py-16 sm:py-24 bg-white border-b-[2.5px] border-[#0b1f5c]">
       <div className="wrap">
         
         {/* Section Header */}

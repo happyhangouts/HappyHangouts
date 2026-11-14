@@ -69,12 +69,11 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     lng: 77.0895,
     address: "DLF Cyber City, DLF Phase 2, Sector 24, Gurugram, Haryana 122002",
     icon: "☕",
-    category: "cafe",
-    topActivities: ["Specialty Coffee", "Startup Brainstorming", "Post-Work Drinks"],
+    category: "games",
+    topActivities: ["Chess & Board Games at a Café", "Saturday Evening Matches"],
     activeCompanions: [
-      { name: "Sonika Sharma", emoji: "☕", activity: "Cafe & Startup Talk", rate: 450, status: "In Session (Escrow Active)" },
-      { name: "Meera Reddy", emoji: "📚", activity: "Pour-over & Indie Books", rate: 400, status: "Available Now" },
-      { name: "Aaryan Gupta", emoji: "💡", activity: "Tech Co-working", rate: 450, status: "Meeting in 15m" }
+      { name: "Meera Reddy", emoji: "♟️", activity: "Chess & Iced Coffee at Café", rate: 400, status: "In Session (Escrow Active)" },
+      { name: "Rohan Verma", emoji: "🎲", activity: "Catan & Board Games", rate: 300, status: "Available Now" }
     ]
   },
   {
@@ -88,78 +87,78 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     address: "Sector 29 Arena & Leisure Valley, Gurugram, Haryana 122001",
     icon: "🏸",
     category: "sports",
-    topActivities: ["Badminton Rallies", "Evening Fitness", "Craft Brewery Talks"],
+    topActivities: ["Pickleball or Badminton", "Weekday Evenings"],
     activeCompanions: [
-      { name: "Ujjwal Poonia", emoji: "🏸", activity: "Competitive Badminton", rate: 400, status: "In Session (Escrow Active)" },
-      { name: "Aarav Mehta", emoji: "🏸", activity: "Smash Rallies & Drills", rate: 350, status: "Available Now" }
+      { name: "Ujjwal Poonia", emoji: "🏸", activity: "Badminton Doubles (Weekday Eve)", rate: 400, status: "In Session (Escrow Active)" },
+      { name: "Aarav Mehta", emoji: "🏓", activity: "Pickleball & Court Rallies", rate: 350, status: "Available Now" }
     ]
   },
   {
     id: "spot-horizon",
-    name: "Golf Course Road (Horizon)",
+    name: "Tau Devi Lal & Aravalli Trail",
     city: "Gurugram",
     baseActive: 19,
     coords: { x: 42, y: 74 },
     lat: 28.4744,
     lng: 77.0984,
-    address: "One Horizon Center, Golf Course Road, Sector 43, Gurugram, Haryana 122002",
-    icon: "🏙️",
-    category: "cafe",
-    topActivities: ["Artisan Cafes", "Corporate Networking", "Running"],
+    address: "Sector 52 / Aravalli Biodiversity Ridge, Gurugram, Haryana 122002",
+    icon: "🏃",
+    category: "sports",
+    topActivities: ["Running Buddy (Weekday AM)", "Weekend Hike (Saturday AM)"],
     activeCompanions: [
-      { name: "Sana Farooqui", emoji: "🗣️", activity: "Language & Mindset Exchange", rate: 450, status: "Available Now" },
-      { name: "Vikram Sen", emoji: "☕", activity: "Espresso Tasting", rate: 500, status: "In Session (Escrow Active)" }
+      { name: "Dev Malhotra", emoji: "🏃", activity: "Weekday Morning 5K Running Buddy", rate: 250, status: "Available Now" },
+      { name: "Kabir Sen", emoji: "🥾", activity: "Saturday Morning Aravalli Hike", rate: 600, status: "In Session (Escrow Active)" }
     ]
   },
   {
     id: "spot-cp",
-    name: "Connaught Place (CP)",
+    name: "32nd Avenue & Khan Market",
     city: "Delhi",
     baseActive: 36,
     coords: { x: 64, y: 28 },
-    lat: 28.6315,
-    lng: 77.2167,
-    address: "Connaught Place Inner Circle & Rajiv Chowk, New Delhi, Delhi 110001",
+    lat: 28.6003,
+    lng: 77.2270,
+    address: "Khan Market & 32nd Avenue Cafés, Delhi NCR",
     icon: "♟️",
-    category: "culture",
-    topActivities: ["Heritage Walk", "Board Games & Chess", "Historic Cafes"],
+    category: "games",
+    topActivities: ["Chess or Board Games at a Café", "Saturday Evening"],
     activeCompanions: [
-      { name: "Rohan Verma", emoji: "🎲", activity: "Strategy Games & Catan", rate: 350, status: "In Session (Escrow Active)" },
-      { name: "Aditi Sharma", emoji: "☕", activity: "Old Delhi Heritage Stories", rate: 450, status: "Available Now" }
+      { name: "Rohan Verma", emoji: "🎲", activity: "Board Games & Chai (Sat Eve)", rate: 300, status: "In Session (Escrow Active)" },
+      { name: "Meera Reddy", emoji: "♟️", activity: "Casual Blitz Chess at Café", rate: 400, status: "Available Now" }
     ]
   },
   {
     id: "spot-khan",
-    name: "Khan Market",
+    name: "Lodhi Garden & Art District",
     city: "Delhi",
     baseActive: 24,
     coords: { x: 72, y: 44 },
-    lat: 28.6003,
-    lng: 77.2270,
-    address: "Khan Market & Lodhi Colony, New Delhi, Delhi 110003",
-    icon: "🎸",
+    lat: 28.5931,
+    lng: 77.2197,
+    address: "Lodhi Garden & Lodhi Colony Art District, New Delhi, Delhi 110003",
+    icon: "📸",
     category: "culture",
-    topActivities: ["Acoustic Jamming", "Boutique Bookstores", "Third-Wave Chai"],
+    topActivities: ["Running Buddy (Weekday AM)", "Photo Walk (Sunday AM)"],
     activeCompanions: [
-      { name: "Falguni Baddi", emoji: "🎸", activity: "Acoustic Indie Jamming", rate: 450, status: "In Session (Escrow Active)" },
-      { name: "Ananya Patel", emoji: "🎨", activity: "Gallery & Museum Walk", rate: 450, status: "Available Now" }
+      { name: "Falguni Baddi", emoji: "🏃", activity: "Weekday Morning 5K Track Loop", rate: 350, status: "In Session (Escrow Active)" },
+      { name: "Ananya Kapoor", emoji: "📸", activity: "Sunday Morning Heritage Photo Walk", rate: 450, status: "Available Now" }
     ]
   },
   {
     id: "spot-sunder",
-    name: "Sunder Nursery & Lodhi",
+    name: "Sunder Nursery Heritage Park",
     city: "Delhi",
     baseActive: 29,
     coords: { x: 76, y: 60 },
     lat: 28.5933,
     lng: 77.2433,
     address: "Sunder Nursery Heritage Park, Nizamuddin, New Delhi, Delhi 110013",
-    icon: "🥾",
-    category: "sports",
-    topActivities: ["Sunrise Photowalk", "Lakefront Chai", "Botanical Trails"],
+    icon: "📸",
+    category: "culture",
+    topActivities: ["Photo Walk (Sunday AM)", "Weekend Hike Prep"],
     activeCompanions: [
-      { name: "Jyoti Nandal", emoji: "🥾", activity: "Heritage Botanical Trails", rate: 500, status: "In Session (Escrow Active)" },
-      { name: "Meera Reddy", emoji: "📸", activity: "Nature Photowalk", rate: 400, status: "Meeting in 15m" }
+      { name: "Jyoti Nandal", emoji: "📸", activity: "Sunday Morning Arch Photo Walk", rate: 500, status: "In Session (Escrow Active)" },
+      { name: "Sonika Sharma", emoji: "🥾", activity: "Saturday Morning Trail Hike", rate: 450, status: "Meeting in 15m" }
     ]
   },
   {
@@ -173,27 +172,27 @@ const BASE_HOTSPOTS: Omit<RadarHotspot, "currentActive" | "isRecentlyUpdated">[]
     address: "Siri Fort Sports Complex, August Kranti Marg, New Delhi, Delhi 110049",
     icon: "🏸",
     category: "sports",
-    topActivities: ["Badminton Matches", "Tennis Drills", "Swimming"],
+    topActivities: ["Pickleball or Badminton", "Weekday Evenings"],
     activeCompanions: [
-      { name: "Aarav Mehta", emoji: "🏸", activity: "Advanced Badminton Rallies", rate: 350, status: "In Session (Escrow Active)" },
-      { name: "Karan Prasad", emoji: "🏃", activity: "Sprint & Track Conditioning", rate: 400, status: "Available Now" }
+      { name: "Aarav Mehta", emoji: "🏸", activity: "Pickleball & Badminton Doubles", rate: 350, status: "In Session (Escrow Active)" },
+      { name: "Ujjwal Poonia", emoji: "🏸", activity: "Weekday Evening Smash Rallies", rate: 400, status: "Available Now" }
     ]
   },
   {
     id: "spot-noida",
-    name: "Sector 18 & Advant",
-    city: "Noida",
+    name: "Aravalli & Mangar Bani Ridge",
+    city: "Gurugram",
     baseActive: 16,
     coords: { x: 86, y: 52 },
-    lat: 28.5029,
-    lng: 77.4093,
-    address: "Advant Navis Business Park, Sector 142 / Sector 18, Noida, Uttar Pradesh 201305",
-    icon: "⚡",
-    category: "cafe",
-    topActivities: ["Evening Board Games", "Boba Tea", "Badminton Arena"],
+    lat: 28.3976,
+    lng: 77.1774,
+    address: "Aravalli Biodiversity & Mangar Bani Trailhead, Gurugram",
+    icon: "🥾",
+    category: "culture",
+    topActivities: ["Weekend Hike (Saturday AM)", "Sunrise Trail Walk"],
     activeCompanions: [
-      { name: "Ananya Kapoor", emoji: "☕", activity: "Book Reading & Cinema Talk", rate: 400, status: "Available Now" },
-      { name: "Karan Prasad", emoji: "🏸", activity: "Badminton Doubles", rate: 400, status: "In Session (Escrow Active)" }
+      { name: "Kabir Sen", emoji: "🥾", activity: "Saturday Morning Ridge Hike", rate: 600, status: "Available Now" },
+      { name: "Sonika Sharma", emoji: "🥾", activity: "Forest Trail & Thermos Chai", rate: 450, status: "In Session (Escrow Active)" }
     ]
   }
 ];
@@ -229,60 +228,46 @@ function generateInitialHotspots(): RadarHotspot[] {
 // Recent activities pool to cycle through genuinely
 const ACTIVITY_FEED_TEMPLATES = [
   {
+    icon: "🏃",
+    hotspotName: "Tau Devi Lal Park",
+    city: "Gurugram",
+    text: "Dev Malhotra & guest finished weekday morning 5K running loop",
+    escrowAmount: 250
+  },
+  {
     icon: "🏸",
     hotspotName: "Sector 29 Arena",
     city: "Gurugram",
-    text: "Ujjwal Poonia & guest just began 1hr badminton singles rally",
+    text: "Ujjwal Poonia & partner began weekday evening badminton & pickleball rally",
     escrowAmount: 400
-  },
-  {
-    icon: "☕",
-    hotspotName: "DLF CyberHub",
-    city: "Gurugram",
-    text: "Sonika Sharma checked in at Blue Tokai for pour-over startup talk",
-    escrowAmount: 450
   },
   {
     icon: "🥾",
-    hotspotName: "Sunder Nursery",
-    city: "Delhi",
-    text: "Jyoti Nandal verified meetup with 2 companions at Lakefront Pavilion",
-    escrowAmount: 1000
-  },
-  {
-    icon: "🎸",
-    hotspotName: "Khan Market",
-    city: "Delhi",
-    text: "Falguni Baddi started acoustic indie jam session at cafe patio",
-    escrowAmount: 450
-  },
-  {
-    icon: "🏸",
-    hotspotName: "Siri Fort Sports Complex",
-    city: "Delhi",
-    text: "Escrow payment locked for 2hr court rally with verified companion",
-    escrowAmount: 700
+    hotspotName: "Aravalli Trail",
+    city: "Gurugram",
+    text: "Kabir Sen & companion checked in for Saturday morning weekend hike",
+    escrowAmount: 600
   },
   {
     icon: "♟️",
-    hotspotName: "Connaught Place (CP)",
+    hotspotName: "Khan Market Café",
     city: "Delhi",
-    text: "Rohan Verma unlocked strategy board games session at Wenger's Deli",
-    escrowAmount: 350
-  },
-  {
-    icon: "🏙️",
-    hotspotName: "Golf Course Road (Horizon)",
-    city: "Gurugram",
-    text: "Sana Farooqui matched for English & French conversation exchange",
-    escrowAmount: 450
-  },
-  {
-    icon: "⚡",
-    hotspotName: "Sector 18 & Advant",
-    city: "Noida",
-    text: "Ananya Kapoor confirmed cafe reading session with newly verified guest",
+    text: "Meera Reddy & guest started Saturday evening chess match over iced lattes",
     escrowAmount: 400
+  },
+  {
+    icon: "📸",
+    hotspotName: "Sunder Nursery",
+    city: "Delhi",
+    text: "Jyoti Nandal & companion launched Sunday morning heritage photo walk",
+    escrowAmount: 500
+  },
+  {
+    icon: "🎲",
+    hotspotName: "32nd Avenue Café",
+    city: "Gurugram",
+    text: "Rohan Verma unlocked Saturday evening board games & chai table",
+    escrowAmount: 300
   }
 ];
 
@@ -309,33 +294,33 @@ export default function LiveHangoutsRadar({
       id: "ev-1",
       timestamp: "Just now",
       timeAgoSec: 6,
-      icon: "🏸",
-      hotspotName: "Sector 29 Arena",
-      city: "Gurugram",
-      text: "Ujjwal Poonia & guest locked 1hr badminton session via Escrow",
-      escrowAmount: 400,
+      icon: "🏃",
+      hotspotName: "Lodhi Garden Track",
+      city: "Delhi",
+      text: "Falguni Baddi & guest matched for Weekday Morning 5K Running Buddy",
+      escrowAmount: 350,
       verified: true
     },
     {
       id: "ev-2",
       timestamp: "28s ago",
       timeAgoSec: 28,
-      icon: "☕",
-      hotspotName: "DLF CyberHub",
+      icon: "🏸",
+      hotspotName: "Sector 29 Arena",
       city: "Gurugram",
-      text: "Sonika Sharma verified meetup at Blue Tokai (Cafe Chat)",
-      escrowAmount: 450,
+      text: "Ujjwal Poonia verified Weekday Evening Pickleball/Badminton match",
+      escrowAmount: 400,
       verified: true
     },
     {
       id: "ev-3",
       timestamp: "1m ago",
       timeAgoSec: 68,
-      icon: "🥾",
+      icon: "📸",
       hotspotName: "Sunder Nursery",
       city: "Delhi",
-      text: "Jyoti Nandal started botanical heritage trail with 2 companions",
-      escrowAmount: 1000,
+      text: "Jyoti Nandal scheduled Sunday Morning Photo Walk at Mughal Arches",
+      escrowAmount: 500,
       verified: true
     },
     {
@@ -963,7 +948,7 @@ export default function LiveHangoutsRadar({
                     }}
                     className="btn b w-full py-3 text-sm shadow-[3px_3px_0_#0b1f5c] text-center"
                   >
-                    ⚡ Book Free Companion at {selectedHotspot.name}
+                    ⚡ Book Free Experience at {selectedHotspot.name}
                   </a>
                 </div>
 

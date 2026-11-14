@@ -572,6 +572,9 @@ export default function AnimatedCharacterStorySection({
   onApplyHostClick,
   onExploreSafetyClick
 }: AnimatedCharacterStorySectionProps) {
+  // Hidden by default: only visible when user clicks on "Living Delhi NCR Stories"
+  const [storiesRevealed, setStoriesRevealed] = useState<boolean>(false);
+
   // Episode & Scene State
   const [selectedEpisodeIdx, setSelectedEpisodeIdx] = useState<number>(0);
   const [currentSceneIdx, setCurrentSceneIdx] = useState<number>(0);
@@ -778,7 +781,7 @@ export default function AnimatedCharacterStorySection({
   };
 
   return (
-    <section id="videos" className="py-16 sm:py-24 bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c] relative overflow-hidden">
+    <section id="videos" className="py-12 sm:py-20 bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c] relative overflow-hidden">
       
       {/* Decorative Neo-Brutalist Grid Dots */}
       <div 
@@ -790,7 +793,42 @@ export default function AnimatedCharacterStorySection({
       />
 
       <div className="wrap relative z-10">
-        
+        {!storiesRevealed ? (
+          <motion.button
+            type="button"
+            onClick={() => {
+              audio.playClick();
+              setStoriesRevealed(true);
+            }}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.99 }}
+            className="w-full text-left bg-white hover:bg-[#fcfdff] border-2 border-[#0A2EB8]/20 hover:border-[#0A2EB8] rounded-3xl p-5 sm:p-8 shadow-md transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+          >
+            <div className="space-y-2 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider bg-[#0A2EB8]/10 text-[#0A2EB8] px-3 py-1 rounded-full">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Living Delhi NCR Stories
+                </span>
+                <span className="bg-[#FFC83D] text-[#0B1230] text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
+                  Tap to View
+                </span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B1230] tracking-tight leading-snug">
+                Living Delhi NCR Stories
+              </h2>
+              <p className="text-xs sm:text-sm text-[#0B1230]/70 font-normal max-w-xl">
+                Hidden by default for a clean browse — click here anytime to open 5 interactive NCR weekend episodes.
+              </p>
+            </div>
+
+            <span className="inline-flex items-center justify-center gap-2 bg-[#FFC83D] group-hover:bg-[#ffbe26] text-[#0B1230] font-extrabold text-xs sm:text-sm py-3 px-5 rounded-full shadow-sm shrink-0 min-h-[44px]">
+              <span>Open Living Delhi NCR Stories</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </motion.button>
+        ) : (
+        <>
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
@@ -801,7 +839,7 @@ export default function AnimatedCharacterStorySection({
         >
           <div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="tag">Interactive Character Theatre</span>
+              <span className="tag">Interactive Story Theatre</span>
               <span className="bg-[#ffc933] text-[#0b1f5c] text-xs font-black px-2.5 py-1 rounded-full border border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c]">
                 🎁 First 3 Hangouts Free
               </span>
@@ -810,7 +848,7 @@ export default function AnimatedCharacterStorySection({
               </span>
             </div>
             <h2 className="text-[32px] sm:text-[48px] font-extrabold tracking-tight text-[#0b1f5c] leading-tight">
-              Akele kyu? Real NCR Stories Brought to Life!
+              Akele kyu? Living Delhi NCR Stories
             </h2>
             <p className="text-[#4a5a8a] font-medium text-base sm:text-lg max-w-2xl mt-1">
               Watch Muba, Ujjwal, Sonika, Jyoti, and Falguni act out real weekend dilemmas: cancelled plans, solo cafe boredom, and how genuine Delhi NCR companions meet safely.
@@ -866,6 +904,19 @@ export default function AnimatedCharacterStorySection({
                   <span>Auto-Play Story</span>
                 </>
               )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                stopSpeech();
+                setAutoPlay(false);
+                setStoriesRevealed(false);
+              }}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-[2px] border-[#0b1f5c] bg-white hover:bg-slate-100 text-[#0b1f5c] font-display font-extrabold text-xs shadow-[2px_2px_0_#0b1f5c] cursor-pointer"
+            >
+              <span>Hide Stories</span>
             </button>
           </div>
         </motion.div>
@@ -1426,7 +1477,7 @@ export default function AnimatedCharacterStorySection({
               }}
               className="inline-flex items-center justify-center gap-2 bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-sm sm:text-base py-3.5 px-6 rounded-full shadow-[0_4px_16px_rgba(255,200,61,0.4)] hover:shadow-[0_6px_22px_rgba(255,200,61,0.55)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer select-none min-h-[48px]"
             >
-              <span>⚡ Book Free Partner</span>
+              <span>⚡ Explore Experiences</span>
               <ArrowRight className="w-4 h-4" />
             </a>
 
@@ -1443,6 +1494,8 @@ export default function AnimatedCharacterStorySection({
             </a>
           </div>
         </div>
+        </>
+        )}
 
       </div>
 

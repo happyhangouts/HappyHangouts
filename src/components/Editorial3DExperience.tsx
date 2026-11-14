@@ -28,6 +28,9 @@ import {
 } from "lucide-react";
 import { audio } from "../utils/audio";
 import { CompanionPartner, COMPANION_PARTNERS } from "../data/companions";
+import hubSportsRallyImg from "../assets/images/hub_sports_rally_1792650858523.jpg";
+import hubCafeCoffeeImg from "../assets/images/hub_cafe_coffee_1792650858578.jpg";
+import heroDelhiHangoutImg from "../assets/images/hero_delhi_hangout_1792650857994.jpg";
 
 export interface JacketItem {
   id: string;
@@ -81,7 +84,7 @@ export const JACKET_COLLECTION: JacketItem[] = [
       temperature: "14°C to 26°C",
       nfcTech: "Encrypted Companion Identity Chip"
     },
-    lookbookImage: "/src/assets/images/hub_sports_rally_1792650858523.jpg",
+    lookbookImage: hubSportsRallyImg,
     lookbookLocation: "Siri Fort Sports Complex, South Delhi",
     lookbookActivity: "Badminton Warm-up & Recovery Chat"
   },
@@ -108,7 +111,7 @@ export const JACKET_COLLECTION: JacketItem[] = [
       temperature: "18°C to 30°C",
       nfcTech: "Verified Hub Automated Check-In"
     },
-    lookbookImage: "/src/assets/images/hub_cafe_coffee_1792650858578.jpg",
+    lookbookImage: hubCafeCoffeeImg,
     lookbookLocation: "Blue Tokai Coffee, Khan Market",
     lookbookActivity: "Product Strategy & Pour-Over Tasting"
   },
@@ -135,7 +138,7 @@ export const JACKET_COLLECTION: JacketItem[] = [
       temperature: "10°C to 24°C",
       nfcTech: "Geo-Verified Street Trail Pass"
     },
-    lookbookImage: "/src/assets/images/hero_delhi_hangout_1792650857994.jpg",
+    lookbookImage: heroDelhiHangoutImg,
     lookbookLocation: "32nd Avenue & CyberHub Promenade",
     lookbookActivity: "Street Photography & Night Stroll"
   },
@@ -162,7 +165,7 @@ export const JACKET_COLLECTION: JacketItem[] = [
       temperature: "5°C to 20°C",
       nfcTech: "Acoustic Session Pass Token"
     },
-    lookbookImage: "/src/assets/images/hub_cafe_coffee_1792650858578.jpg",
+    lookbookImage: hubCafeCoffeeImg,
     lookbookLocation: "Lodhi Art District & Cafe Lawn",
     lookbookActivity: "Acoustic Jamming & Storytelling"
   },
@@ -189,7 +192,7 @@ export const JACKET_COLLECTION: JacketItem[] = [
       temperature: "All-Season Layering",
       nfcTech: "Boardgame Master Badge"
     },
-    lookbookImage: "/src/assets/images/hub_sports_rally_1792650858523.jpg",
+    lookbookImage: hubSportsRallyImg,
     lookbookLocation: "Hauz Khas Social & Boardgame Lounge",
     lookbookActivity: "Catan Tournament & Coffee Chat"
   },
@@ -216,7 +219,7 @@ export const JACKET_COLLECTION: JacketItem[] = [
       temperature: "8°C to 22°C",
       nfcTech: "VIP Night Ride Companion Gate"
     },
-    lookbookImage: "/src/assets/images/hero_delhi_hangout_1792650857994.jpg",
+    lookbookImage: heroDelhiHangoutImg,
     lookbookLocation: "Aerocity Pedestrian Promenade, New Delhi",
     lookbookActivity: "Midnight Cycling & Gelato Hangout"
   }

@@ -12,8 +12,9 @@ export default function LifestyleHangoutGallery({ onExploreVibes }: LifestyleHan
       title: "Artisan Coffee & Honest Conversations",
       category: "Café Social",
       location: "DLF CyberHub & Khan Market",
-      description: "Meet warm companions who love quiet coffee corners, indie books, and genuine conversations over pour-overs.",
-      image: "/src/assets/images/hero_hangout_cafe_1794391402838.jpg",
+      description: "Stroll bright coffee promenades, swap book recs, and share easygoing conversations over iced lattes.",
+      image: "/src/assets/images/cyberhub_terrace_coffee_1794643257959.jpg",
+      alt: "Two Indian friends walking outside a sunlit glass coffee bar at DLF CyberHub with iced lattes",
       aspect: "col-span-1 md:col-span-2 lg:col-span-2"
     },
     {
@@ -21,7 +22,8 @@ export default function LifestyleHangoutGallery({ onExploreVibes }: LifestyleHan
       category: "Sports & Fitness",
       location: "Siri Fort Complex & Sector 29",
       description: "Never miss a court rally again. Team up with enthusiastic badminton buddies for friendly or competitive sets.",
-      image: "/src/assets/images/hangout_sports_badminton_1794391403027.jpg",
+      image: "/src/assets/images/siri_fort_badminton_1794643259030.jpg",
+      alt: "Two Indian badminton players mid-rally across the net inside a bright wooden-floor Siri Fort indoor court",
       aspect: "col-span-1 md:col-span-1 lg:col-span-1"
     },
     {
@@ -30,14 +32,16 @@ export default function LifestyleHangoutGallery({ onExploreVibes }: LifestyleHan
       location: "Sunder Nursery & Lodhi Gardens",
       description: "Breathe in Delhi's lush botanical gardens, historical arches, and tranquil morning photography walks.",
       image: "/src/assets/images/hangout_park_walk_1794391404397.jpg",
+      alt: "Two women strolling and chatting along a stone garden path in front of Mughal heritage arches",
       aspect: "col-span-1 md:col-span-1 lg:col-span-1"
     },
     {
       title: "Board Games, Chai & Evening Banter",
       category: "Games & Social",
       location: "32nd Avenue & Connaught Place",
-      description: "Gather around rustic tables for Catan, chess, or casual laughter. Real companionship in warm neighborhood spaces.",
-      image: "/src/assets/images/hangout_boardgames_social_1794391404490.jpg",
+      description: "Gather around sunlit terrazzo courtyard tables for board games, kulhad chai, and relaxed weekend laughter.",
+      image: "/src/assets/images/courtyard_boardgames_chai_1794643259092.jpg",
+      alt: "Four friends playing a colorful strategy board game with kulhad chai cups at a sunlit bougainvillea courtyard table",
       aspect: "col-span-1 md:col-span-2 lg:col-span-2"
     }
   ];
@@ -79,22 +83,23 @@ export default function LifestyleHangoutGallery({ onExploreVibes }: LifestyleHan
               <div className="relative aspect-[16/10] sm:aspect-[16/11] overflow-hidden bg-[#F3F7FF]">
                 <img
                   src={item.image}
-                  alt={item.title}
+                  alt={item.alt}
                   loading="lazy"
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#011C92]/80 via-transparent to-transparent opacity-90" />
-                <div className="absolute bottom-4 left-5 right-5 text-white">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-white/90">
-                    <span className="bg-[#3DAAFC] text-[#0B1230] px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">{item.category}</span>
+                <div className="absolute bottom-3.5 left-4 right-4 sm:bottom-4 sm:left-5 sm:right-5 text-white">
+                  <div className="flex items-center flex-wrap gap-1.5 sm:gap-2 text-xs font-semibold text-white/90">
+                    <span className="bg-[#3DAAFC] text-[#0B1230] px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0">{item.category}</span>
                     <span aria-hidden="true">·</span>
-                    <span>{item.location}</span>
+                    <span className="truncate">{item.location}</span>
                   </div>
                 </div>
               </div>
 
               {/* Editorial Card Body */}
-              <div className="p-6 sm:p-7 flex flex-col justify-between flex-1">
+              <div className="p-5 sm:p-7 flex flex-col justify-between flex-1">
                 <div>
                   <h3 className="text-xl sm:text-2xl text-[#0B1230] font-bold leading-snug mb-2 group-hover:text-[#0A2EB8] transition-colors">
                     {item.title}
@@ -104,15 +109,15 @@ export default function LifestyleHangoutGallery({ onExploreVibes }: LifestyleHan
                   </p>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-[#F3F7FF] flex items-center justify-between text-xs">
-                  <span className="font-bold text-[#0A2EB8] flex items-center gap-1.5">
+                <div className="mt-5 pt-4 border-t border-[#F3F7FF] flex items-center flex-wrap justify-between gap-3 text-xs">
+                  <span className="font-bold text-[#0A2EB8] flex items-center gap-1.5 shrink-0">
                     <span className="w-2 h-2 rounded-full bg-[#19C37D]"></span>
                     <span>1st 3 Hangouts Free</span>
                   </span>
                   <button
                     type="button"
                     onClick={onExploreVibes}
-                    className="inline-flex items-center gap-1.5 bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-xs py-2 px-4 rounded-full shadow-xs hover:shadow-md transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-xs py-2.5 px-4 rounded-full shadow-xs hover:shadow-md transition-all transform hover:-translate-y-0.5 cursor-pointer min-h-[40px] shrink-0"
                   >
                     <span>View partners</span>
                     <span aria-hidden="true">→</span>

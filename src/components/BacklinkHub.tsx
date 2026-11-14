@@ -168,11 +168,11 @@ export default function BacklinkHub({ triggerBoom }: BacklinkHubProps) {
           </div>
 
           {/* Quick Share Link CTA */}
-          <div className="shrink-0">
+          <div className="shrink-0 w-full sm:w-auto">
             <button
               type="button"
               onClick={handleCopyShareLink}
-              className="px-4 py-2.5 bg-[#f3f8ff] hover:bg-[#eaf3ff] border-[2px] border-[#0b1f5c] rounded-2xl text-xs font-black text-[#0b1f5c] flex items-center gap-2 shadow-[2px_2px_0_#0b1f5c] cursor-pointer transition-all active:translate-y-0.5"
+              className="w-full sm:w-auto justify-center px-4 py-2.5 bg-[#f3f8ff] hover:bg-[#eaf3ff] border-[2px] border-[#0b1f5c] rounded-2xl text-xs font-black text-[#0b1f5c] flex items-center gap-2 shadow-[2px_2px_0_#0b1f5c] cursor-pointer transition-all active:translate-y-0.5 min-h-[42px]"
             >
               <Share2 className="w-4 h-4 text-[#1f4ee0]" />
               <span>{copiedShareLink ? "Link Copied! ✓" : "Copy Official Referral Link"}</span>
@@ -308,7 +308,7 @@ export default function BacklinkHub({ triggerBoom }: BacklinkHubProps) {
                 return (
                   <div
                     key={badge.id}
-                    className="bg-white border-[2.5px] border-[#0b1f5c] rounded-2xl p-5 shadow-[5px_5px_0_#0b1f5c] flex flex-col justify-between"
+                    className="bg-white border-[2.5px] border-[#0b1f5c] rounded-2xl p-4 sm:p-5 shadow-[5px_5px_0_#0b1f5c] flex flex-col justify-between min-w-0"
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-2">

@@ -107,7 +107,7 @@ export default function GoogleHangoutsMap({
   }
 
   return (
-    <div className="relative w-full h-[420px] sm:h-[500px] rounded-[24px] overflow-hidden border-[3px] border-[#0b1f5c] shadow-[6px_6px_0_#0b1f5c] bg-[#eaf3ff]">
+    <div className="relative w-full h-[360px] sm:h-[440px] lg:h-[500px] rounded-2xl sm:rounded-[24px] overflow-hidden border-[3px] border-[#0b1f5c] shadow-[5px_5px_0_#0b1f5c] sm:shadow-[6px_6px_0_#0b1f5c] bg-[#eaf3ff]">
       <APIProvider apiKey={apiKey} libraries={["marker"]}>
         <Map
           defaultCenter={{ lat: defaultCenter.lat, lng: defaultCenter.lng }}
@@ -267,22 +267,22 @@ export default function GoogleHangoutsMap({
       </APIProvider>
 
       {/* Floating Map Legend & Control Overlay */}
-      <div className="absolute top-3 left-3 z-10 pointer-events-none sm:pointer-events-auto">
-        <div className="bg-white/95 backdrop-blur-md border-[2px] border-[#0b1f5c] rounded-xl px-3 py-2 shadow-[3px_3px_0_#0b1f5c] flex items-center gap-2 text-xs font-black text-[#0b1f5c]">
-          <div className="flex items-center gap-1 text-[11px]">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1f4ee0] inline-block"></span> Gurugram
+      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10 pointer-events-none sm:pointer-events-auto">
+        <div className="bg-white/95 backdrop-blur-md border-[2px] border-[#0b1f5c] rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-[2px_2px_0_#0b1f5c] sm:shadow-[3px_3px_0_#0b1f5c] flex items-center gap-2 text-[10px] sm:text-xs font-black text-[#0b1f5c]">
+          <div className="flex items-center gap-1">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1f4ee0] inline-block"></span> Gurugram
           </div>
-          <div className="flex items-center gap-1 text-[11px]">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff6b4a] inline-block"></span> Delhi
+          <div className="flex items-center gap-1">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#ff6b4a] inline-block"></span> Delhi
           </div>
-          <div className="flex items-center gap-1 text-[11px]">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#0b1f5c] inline-block"></span> Noida
+          <div className="flex items-center gap-1">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#0b1f5c] inline-block"></span> Noida
           </div>
         </div>
       </div>
 
       {/* Verified Safety Badge Overlay */}
-      <div className="absolute bottom-3 right-3 z-10 pointer-events-none">
+      <div className="hidden sm:block absolute bottom-3 right-3 z-10 pointer-events-none">
         <div className="bg-[#0b1f5c]/90 text-white backdrop-blur-md border-[2px] border-white/30 rounded-xl px-3 py-1.5 shadow-md flex items-center gap-2 text-[11px] font-bold">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>100% Verified Public Zones</span>

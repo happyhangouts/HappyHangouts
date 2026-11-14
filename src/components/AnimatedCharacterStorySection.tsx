@@ -884,7 +884,7 @@ export default function AnimatedCharacterStorySection({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          <div className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
             {RELATABLE_SITUATIONS.map((sit) => {
               const isActive = selectedEpisodeIdx === sit.targetEpisodeIdx && currentSceneIdx === sit.targetSceneIdx;
               return (
@@ -892,7 +892,7 @@ export default function AnimatedCharacterStorySection({
                   key={sit.id}
                   type="button"
                   onClick={() => handleSelectSituation(sit)}
-                  className={`text-left p-2.5 rounded-xl border-[2px] transition-all cursor-pointer flex flex-col justify-between ${
+                  className={`text-left p-2.5 rounded-xl border-[2px] transition-all cursor-pointer flex flex-col justify-between min-w-0 ${
                     isActive
                       ? "bg-[#ffc933] border-[#0b1f5c] shadow-[2.5px_2.5px_0_#0b1f5c] scale-[1.02]"
                       : "bg-[#f3f8ff] border-[#0b1f5c]/40 hover:border-[#0b1f5c] hover:bg-white"
@@ -917,10 +917,10 @@ export default function AnimatedCharacterStorySection({
         </div>
 
         {/* 2. THE LIVING THEATRE STAGE BOX */}
-        <div className="border-[3px] border-[#0b1f5c] rounded-[32px] bg-white p-4 sm:p-7 shadow-[8px_8px_0_#0b1f5c] relative mb-6">
+        <div className="border-[3px] border-[#0b1f5c] rounded-2xl sm:rounded-[32px] bg-white p-3.5 sm:p-7 shadow-[6px_6px_0_#0b1f5c] sm:shadow-[8px_8px_0_#0b1f5c] relative mb-6">
           
           {/* Episode Tabs (Top Strip) */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-5 border-b-[2px] border-[#0b1f5c]/20 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 sm:mb-5 border-b-[2px] border-[#0b1f5c]/20 scrollbar-none">
             {STORY_EPISODES.map((ep, idx) => {
               const isSelected = selectedEpisodeIdx === idx;
               return (
@@ -945,7 +945,7 @@ export default function AnimatedCharacterStorySection({
           </div>
 
           {/* STAGE ARENA: Interactive Set */}
-          <div className="bg-[#f8fbff] border-[2.5px] border-[#0b1f5c] rounded-[24px] p-5 sm:p-8 relative overflow-hidden min-h-[460px] flex flex-col justify-between shadow-inner">
+          <div className="bg-[#f8fbff] border-[2.5px] border-[#0b1f5c] rounded-2xl sm:rounded-[24px] p-4 sm:p-8 relative overflow-hidden min-h-[380px] sm:min-h-[460px] flex flex-col justify-between shadow-inner">
             
             {/* Top Stage Badges & Backdrop Watermark */}
             <div className="flex items-center justify-between flex-wrap gap-2 relative z-10 mb-3">
@@ -1221,11 +1221,11 @@ export default function AnimatedCharacterStorySection({
                   </div>
 
                   {/* The Dialogue Text (Large & Expressive) */}
-                  <p className="font-display font-bold text-lg sm:text-2xl text-[#0b1f5c] leading-snug sm:leading-relaxed mb-3">
+                  <p className="font-display font-bold text-base sm:text-xl lg:text-2xl text-[#0b1f5c] leading-relaxed mb-3">
                     "{currentScene.dialogue}"
                   </p>
 
-                  <p className="text-xs sm:text-sm text-[#4a5a8a] font-medium italic border-l-3 border-[#ffc933] pl-3 py-1 bg-amber-50/50 rounded-r-lg">
+                  <p className="text-xs sm:text-sm text-[#4a5a8a] font-medium italic border-l-3 border-[#ffc933] pl-3 py-1.5 bg-amber-50/50 rounded-r-lg">
                     💡 <span className="font-bold text-[#0b1f5c]">Relatable Truth:</span> {currentScene.speechSubtext}
                   </p>
 
@@ -1241,7 +1241,7 @@ export default function AnimatedCharacterStorySection({
 
                   {/* Direct 1-Click Booking Action for this Companion */}
                   {currentScene.companionAction && (
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                       <button
                         type="button"
                         onClick={() => {
@@ -1253,14 +1253,14 @@ export default function AnimatedCharacterStorySection({
                             );
                           }
                         }}
-                        className="btn b text-xs sm:text-sm py-2.5 px-4 shadow-[3px_3px_0_#0b1f5c] cursor-pointer flex items-center gap-2"
+                        className="btn b text-xs sm:text-sm py-2.5 px-4 shadow-[3px_3px_0_#0b1f5c] cursor-pointer flex items-center justify-center flex-wrap gap-2 w-full sm:w-auto"
                       >
-                        <Zap className="w-4 h-4 fill-current text-white" />
+                        <Zap className="w-4 h-4 fill-current text-white shrink-0" />
                         <span>{currentScene.companionAction.buttonLabel}</span>
                         <span className="text-[10px] bg-white text-[#1f4ee0] px-2 py-0.5 rounded-full font-black">₹0 Free</span>
                       </button>
 
-                      <span className="text-[11px] font-bold text-[#4a5a8a]">
+                      <span className="text-[11px] font-bold text-[#4a5a8a] text-center sm:text-right">
                         Meet at {currentScene.companionAction.location}
                       </span>
                     </div>
@@ -1272,9 +1272,9 @@ export default function AnimatedCharacterStorySection({
                       <button
                         type="button"
                         onClick={handleTriggerAction}
-                        className="px-4 py-2 bg-[#f3f8ff] hover:bg-[#eaf3ff] border-[2px] border-[#0b1f5c] rounded-xl text-xs font-black text-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] cursor-pointer flex items-center gap-1.5 transition-all active:translate-y-0.5"
+                        className="px-4 py-2.5 bg-[#f3f8ff] hover:bg-[#eaf3ff] border-[2px] border-[#0b1f5c] rounded-xl text-xs font-black text-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c] cursor-pointer flex items-center justify-center gap-1.5 transition-all active:translate-y-0.5 w-full sm:w-auto min-h-[42px]"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-[#1f4ee0]" />
+                        <Sparkles className="w-3.5 h-3.5 text-[#1f4ee0] shrink-0" />
                         <span>{currentScene.interactiveAction.label}</span>
                       </button>
 
@@ -1416,7 +1416,7 @@ export default function AnimatedCharacterStorySection({
             </p>
           </div>
 
-          <div className="flex items-center gap-3.5 flex-wrap shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
             {/* Real, unmistakable Sunshine Primary Button */}
             <a
               href="#match"
@@ -1424,7 +1424,7 @@ export default function AnimatedCharacterStorySection({
                 audio.playClick();
                 if (onOpenBookingClick) onOpenBookingClick();
               }}
-              className="inline-flex items-center justify-center gap-2 bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-sm sm:text-base py-3.5 px-6 rounded-full shadow-[0_4px_16px_rgba(255,200,61,0.4)] hover:shadow-[0_6px_22px_rgba(255,200,61,0.55)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer select-none"
+              className="inline-flex items-center justify-center gap-2 bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-sm sm:text-base py-3.5 px-6 rounded-full shadow-[0_4px_16px_rgba(255,200,61,0.4)] hover:shadow-[0_6px_22px_rgba(255,200,61,0.55)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer select-none min-h-[48px]"
             >
               <span>⚡ Book Free Partner</span>
               <ArrowRight className="w-4 h-4" />
@@ -1437,7 +1437,7 @@ export default function AnimatedCharacterStorySection({
                 audio.playClick();
                 if (onApplyHostClick) onApplyHostClick();
               }}
-              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-[#011C92] font-bold text-sm sm:text-base py-3.5 px-6 rounded-full border-2 border-white/80 hover:border-white shadow-md transform hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer select-none"
+              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-[#011C92] font-bold text-sm sm:text-base py-3.5 px-6 rounded-full border-2 border-white/80 hover:border-white shadow-md transform hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer select-none min-h-[48px]"
             >
               <span>🎟️ Get Hangout Pass</span>
             </a>

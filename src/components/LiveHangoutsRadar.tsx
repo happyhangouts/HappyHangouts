@@ -586,7 +586,7 @@ export default function LiveHangoutsRadar({
         </div>
 
         {/* 3. DYNAMIC HOTSPOT METRIC CARDS (Top 4 Featured Hubs) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
           {filteredHotspots.slice(0, 4).map((spot) => (
             <motion.div 
               key={spot.id}
@@ -595,22 +595,22 @@ export default function LiveHangoutsRadar({
                 audio.playClick();
                 setSelectedHotspot(spot);
               }}
-              className={`border-[2px] rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between transition-all cursor-pointer ${
+              className={`border-[2px] rounded-2xl p-3.5 flex flex-col justify-between transition-all cursor-pointer min-w-0 ${
                 spot.isRecentlyUpdated
                   ? "bg-[#eaf3ff] border-[#1f4ee0] shadow-[3px_3px_0_#1f4ee0]"
                   : "bg-[#f3f8ff] border-[#0b1f5c] shadow-[3px_3px_0_#0b1f5c] hover:border-[#1f4ee0]"
               }`}
             >
-              <div className="flex items-start justify-between gap-1 mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl p-1 bg-white rounded-lg border border-[#0b1f5c]/30 shadow-xs">
+              <div className="flex items-start justify-between gap-2 mb-2 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <span className="text-xl p-1.5 bg-white rounded-lg border border-[#0b1f5c]/30 shadow-xs shrink-0">
                     {spot.icon}
                   </span>
-                  <div className="leading-tight">
-                    <p className="text-xs sm:text-sm font-extrabold text-[#0b1f5c] truncate max-w-[100px] sm:max-w-[120px]">
+                  <div className="leading-tight min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-extrabold text-[#0b1f5c] truncate">
                       {spot.name}
                     </p>
-                    <p className="text-[10px] text-[#4a5a8a] font-bold">
+                    <p className="text-[11px] text-[#4a5a8a] font-bold">
                       {spot.city}
                     </p>
                   </div>
@@ -622,18 +622,18 @@ export default function LiveHangoutsRadar({
                     key={spot.currentActive}
                     initial={{ scale: 1.3, color: "#1f4ee0" }}
                     animate={{ scale: 1, color: "#0b1f5c" }}
-                    className="text-xs font-black"
+                    className="text-xs font-black tabular-nums"
                   >
                     {spot.currentActive}
                   </motion.span>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-[#0b1f5c]/10 flex items-center justify-between text-[10px] text-[#1f4ee0] font-bold">
-                <span className="truncate max-w-[110px] text-[#4a5a8a]">
+              <div className="pt-2 border-t border-[#0b1f5c]/10 flex items-center justify-between gap-2 text-[11px] text-[#1f4ee0] font-bold">
+                <span className="truncate text-[#4a5a8a] min-w-0">
                   {spot.topActivities[0]}
                 </span>
-                <span className="flex items-center">
+                <span className="flex items-center shrink-0">
                   Inspect <ChevronRight className="w-3 h-3 ml-0.5" />
                 </span>
               </div>
@@ -841,15 +841,15 @@ export default function LiveHangoutsRadar({
       {/* 6. HOTSPOT DETAIL MODAL / INSPECTOR (Triggered on Node Click) */}
       <AnimatePresence>
         {selectedHotspot && (
-          <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
+          <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.92, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
-              className="bg-white border-[3px] border-[#0b1f5c] rounded-[28px] max-w-lg w-full shadow-[10px_10px_0_#0b1f5c] overflow-hidden"
+              className="bg-white border-[3px] border-[#0b1f5c] rounded-3xl sm:rounded-[28px] max-w-lg w-full shadow-[8px_8px_0_#0b1f5c] overflow-y-auto max-h-[92vh] my-auto"
             >
               {/* Modal Header */}
-              <div className="bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c] p-4 sm:p-5 flex items-center justify-between">
+              <div className="bg-[#f3f8ff] border-b-[2.5px] border-[#0b1f5c] p-4 sm:p-5 flex items-center justify-between gap-3 sticky top-0 z-10">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl p-2 bg-white rounded-xl border border-[#0b1f5c]">
                     {selectedHotspot.icon}

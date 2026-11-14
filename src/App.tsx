@@ -21,8 +21,10 @@ import {
   Compass,
   Zap,
   Lock,
+  Unlock,
   Flame,
-  Award
+  Award,
+  Menu
 } from "lucide-react";
 import { 
   motion, 
@@ -42,7 +44,7 @@ import HangoutRequestDispatcher from "./components/HangoutRequestDispatcher";
 import CircledHighlight from "./components/CircledHighlight";
 import LifestyleHangoutGallery from "./components/LifestyleHangoutGallery";
 
-// Verified Companion Model for Gurgaon & Delhi
+// Verified Companion Model for Gurgaon & Delhi (Interest-First Privacy)
 export interface CompanionProfile {
   id: string;
   name: string;
@@ -55,6 +57,12 @@ export interface CompanionProfile {
   city: "Gurugram" | "Delhi";
   location: string;
   vibeText: string;
+  goals: string;
+  hobbies: string[];
+  interestPhoto: string;
+  interestPhotoAlt: string;
+  partnerPhoto: string;
+  partnerPhotoAlt: string;
   bgColor: string;
   badge?: string;
 }
@@ -72,6 +80,12 @@ const COMPANIONS: CompanionProfile[] = [
     city: "Gurugram",
     location: "Sector 29 & DLF Phase 4, Gurugram",
     vibeText: "Competitive rallies, doubles matches, and high-energy court drills.",
+    goals: "Play 3 morning doubles sessions every week & build court stamina",
+    hobbies: ["Badminton doubles", "Footwork drills", "Post-match electrolytes"],
+    interestPhoto: "/src/assets/images/interest_badminton_court_1794643859671.jpg",
+    interestPhotoAlt: "Two cobalt badminton rackets and shuttlecocks on an indoor wooden court",
+    partnerPhoto: "/src/assets/images/partner_ujjwal_1794643864904.jpg",
+    partnerPhotoAlt: "Verified portrait of Ujjwal Poonia at an indoor badminton lounge",
     bgColor: "#7cc4ff",
     badge: "Featured Host"
   },
@@ -87,6 +101,12 @@ const COMPANIONS: CompanionProfile[] = [
     city: "Gurugram",
     location: "DLF CyberHub & 32nd Avenue, Gurugram",
     vibeText: "Specialty brew explorer, honest startup talks, and cozy cafe vibes.",
+    goals: "Swap founder ideas & journal over single-origin pour-overs",
+    hobbies: ["V60 pour-overs", "Startup brainstorming", "Cafe journaling"],
+    interestPhoto: "/src/assets/images/interest_pourover_coffee_1794643860512.jpg",
+    interestPhotoAlt: "Minimalist glass V60 pour-over coffee carafe, iced latte, and leather journal",
+    partnerPhoto: "/src/assets/images/partner_sonika_1794643865588.jpg",
+    partnerPhotoAlt: "Verified portrait of Sonika Sharma at a sunlit CyberHub terrace cafe",
     bgColor: "#ffc933",
     badge: "Top Rated"
   },
@@ -95,13 +115,19 @@ const COMPANIONS: CompanionProfile[] = [
     name: "Jyoti Nandal",
     emoji: "🥾",
     act: "trek",
-    categoryLabel: "Trekking",
+    categoryLabel: "Heritage Walks",
     rate: 500,
     rating: 5.0,
     times: ["morning", "weekend"],
     city: "Delhi",
     location: "Sunder Nursery & Lodhi Garden, Delhi",
     vibeText: "Heritage photography walks, sunrise botanical trails & morning chai.",
+    goals: "Document Delhi Mughal arches on weekend sunrise photowalks",
+    hobbies: ["35mm photography", "Heritage walks", "Morning masala chai"],
+    interestPhoto: "/src/assets/images/interest_sunder_trail_1794643861853.jpg",
+    interestPhotoAlt: "Vintage camera, tote bag, and chai cup along a heritage garden cobblestone path",
+    partnerPhoto: "/src/assets/images/partner_jyoti_1794643866173.jpg",
+    partnerPhotoAlt: "Verified portrait of Jyoti Nandal in leafy Delhi morning sunlight",
     bgColor: "#a8f0c6",
     badge: "Super Host"
   },
@@ -117,6 +143,12 @@ const COMPANIONS: CompanionProfile[] = [
     city: "Delhi",
     location: "Khan Market & Connaught Place (CP), Delhi",
     vibeText: "Acoustic jamming, indie playlist sharing & creative conversations.",
+    goals: "Co-write two acoustic indie tracks & host unplugged jam evenings",
+    hobbies: ["Acoustic guitar", "Lyric songwriting", "Indie open mics"],
+    interestPhoto: "/src/assets/images/interest_acoustic_guitar_1794643864040.jpg",
+    interestPhotoAlt: "Sunburst acoustic guitar resting beside a lyric notebook under cafe string lights",
+    partnerPhoto: "/src/assets/images/partner_falguni_1794643867369.jpg",
+    partnerPhotoAlt: "Verified portrait of Falguni Baddi with guitar strap at a garden cafe patio",
     bgColor: "#ff6b4a",
     badge: "Musician"
   },
@@ -132,6 +164,12 @@ const COMPANIONS: CompanionProfile[] = [
     city: "Gurugram",
     location: "Sector 29, Gurugram",
     vibeText: "Smash rallies, doubles matches, all skill levels welcome.",
+    goals: "Lock consistent 60-minute rally cardio without last-minute flakes",
+    hobbies: ["Feather shuttle rallies", "Net play", "Weekend badminton"],
+    interestPhoto: "/src/assets/images/interest_badminton_net_1794643859941.jpg",
+    interestPhotoAlt: "White feathered shuttlecock beside a badminton net on a green court",
+    partnerPhoto: "/src/assets/images/partner_aarav_1794643885821.jpg",
+    partnerPhotoAlt: "Verified portrait of Aarav Mehta outdoors by green court trees",
     bgColor: "#7cc4ff",
     badge: "Fast Responder"
   },
@@ -147,6 +185,12 @@ const COMPANIONS: CompanionProfile[] = [
     city: "Gurugram",
     location: "DLF CyberHub, Gurugram",
     vibeText: "Pour-over coffees, indie books, and honest real talks.",
+    goals: "Finish 2 fiction books a month & trade honest chapter notes",
+    hobbies: ["Indie novels", "Latte art spots", "Quiet window reading"],
+    interestPhoto: "/src/assets/images/interest_book_latte_window_1794643861326.jpg",
+    interestPhotoAlt: "Latte art cappuccino and open hardcover book beside a sunlit cafe window",
+    partnerPhoto: "/src/assets/images/partner_meera_1794643868002.jpg",
+    partnerPhotoAlt: "Verified portrait of Meera Reddy beside a sunny leafy cafe window",
     bgColor: "#ffc933",
     badge: "Top Rated"
   },
@@ -155,29 +199,41 @@ const COMPANIONS: CompanionProfile[] = [
     name: "Kabir Sen",
     emoji: "🥾",
     act: "trek",
-    categoryLabel: "Trekking",
+    categoryLabel: "Heritage Walks",
     rate: 600,
     rating: 4.9,
     times: ["morning", "weekend"],
     city: "Gurugram",
     location: "Aravalli Biodiversity, Gurugram",
     vibeText: "Sunrise wilderness trails, hidden scenic spots & birdwatching.",
+    goals: "Explore every sunrise ridge loop in the Aravalli park by winter",
+    hobbies: ["Ridge hiking", "Birdwatching", "Sunrise flask coffee"],
+    interestPhoto: "/src/assets/images/interest_aravalli_trek_1794643864039.jpg",
+    interestPhotoAlt: "Trail hiking shoes, steel flask, and brass compass overlooking sunlit Aravalli hills",
+    partnerPhoto: "/src/assets/images/partner_kabir_1794643868632.jpg",
+    partnerPhotoAlt: "Verified portrait of Kabir Sen on a golden sunrise nature trail",
     bgColor: "#ff6b4a",
     badge: "Trail Expert"
   },
   {
-    id: "p-4",
-    name: "Sana Farooqui",
+    id: "p-11",
+    name: "Ananya Kapoor",
     emoji: "🗣️",
     act: "language",
     categoryLabel: "Language",
     rate: 450,
-    rating: 4.7,
-    times: ["morning", "evening"],
-    city: "Gurugram",
-    location: "DLF Phase 2, Gurugram",
-    vibeText: "French conversation drills & English public speaking confidence.",
-    bgColor: "#a8f0c6"
+    rating: 4.8,
+    times: ["evening", "weekend"],
+    city: "Delhi",
+    location: "Khan Market, Delhi",
+    vibeText: "Literature coffee debates, French & Italian phrases & creative writing.",
+    goals: "Practice conversational French & Italian weekly over espresso",
+    hobbies: ["French & Italian chat", "Creative writing", "Bookstore cafés"],
+    interestPhoto: "/src/assets/images/interest_language_bistro_1794643863007.jpg",
+    interestPhotoAlt: "Open language practice notebook, fountain pen, espresso, and croissant on a bistro table",
+    partnerPhoto: "/src/assets/images/partner_ananya_1794643868202.jpg",
+    partnerPhotoAlt: "Verified portrait of Ananya Kapoor outside a Khan Market bookshop cafe",
+    bgColor: "#ffc933"
   },
   {
     id: "p-5",
@@ -189,24 +245,15 @@ const COMPANIONS: CompanionProfile[] = [
     rating: 4.6,
     times: ["evening", "weekend"],
     city: "Gurugram",
-    location: "Golf Course Rd, Gurugram",
+    location: "Golf Course Rd & 32nd Ave, Gurugram",
     vibeText: "Catan tournaments, blitz chess, and strategy board games.",
+    goals: "Host screen-free weekend strategy game tables with kulhad chai",
+    hobbies: ["Hex board games", "Blitz chess", "Kulhad chai banter"],
+    interestPhoto: "/src/assets/images/interest_boardgames_chai_1794643864116.jpg",
+    interestPhotoAlt: "Colorful wooden hex strategy board game with dice and terracotta chai cups",
+    partnerPhoto: "/src/assets/images/partner_rohan_1794643868750.jpg",
+    partnerPhotoAlt: "Verified portrait of Rohan Verma at an outdoor courtyard cafe table",
     bgColor: "#7cc4ff"
-  },
-  {
-    id: "p-6",
-    name: "Ishita Roy",
-    emoji: "🎸",
-    act: "music",
-    categoryLabel: "Jam session",
-    rate: 550,
-    rating: 4.8,
-    times: ["evening"],
-    city: "Gurugram",
-    location: "Sector 56 & 32nd Ave, Gurugram",
-    vibeText: "Acoustic guitar jamming, songwriting & indie open mics.",
-    bgColor: "#ffc933",
-    badge: "Musician"
   },
   {
     id: "p-7",
@@ -220,79 +267,13 @@ const COMPANIONS: CompanionProfile[] = [
     city: "Gurugram",
     location: "Sector 52 & Tau Devi Lal, Gurugram",
     vibeText: "5K & 10K pacing, morning endurance loops, sprint drills.",
+    goals: "Stay accountable for sub-25 min 5K morning park runs",
+    hobbies: ["5K track pacing", "Dawn park loops", "Endurance conditioning"],
+    interestPhoto: "/src/assets/images/interest_running_track_1794643865023.jpg",
+    interestPhotoAlt: "White and blue running shoes, sports watch, and water bottle on a sunrise track",
+    partnerPhoto: "/src/assets/images/partner_dev_1794643869685.jpg",
+    partnerPhotoAlt: "Verified portrait of Dev Malhotra after a morning park run",
     bgColor: "#a8f0c6"
-  },
-  {
-    id: "p-8",
-    name: "Tara Khanna",
-    emoji: "☕",
-    act: "cafe",
-    categoryLabel: "Café chat",
-    rate: 500,
-    rating: 4.9,
-    times: ["morning", "weekend"],
-    city: "Delhi",
-    location: "Connaught Place (CP), Delhi",
-    vibeText: "Weekend brunch companion & central Delhi heritage lover.",
-    bgColor: "#ff6b4a",
-    badge: "Top Rated"
-  },
-  {
-    id: "p-9",
-    name: "Neil Bakshi",
-    emoji: "🏸",
-    act: "badminton",
-    categoryLabel: "Badminton",
-    rate: 500,
-    rating: 4.7,
-    times: ["morning", "evening"],
-    city: "Delhi",
-    location: "Siri Fort Complex, Delhi",
-    vibeText: "Coach-level tactical doubles player & fitness enthusiast.",
-    bgColor: "#7cc4ff"
-  },
-  {
-    id: "p-10",
-    name: "Zoya Haque",
-    emoji: "🥾",
-    act: "trek",
-    categoryLabel: "Trekking",
-    rate: 550,
-    rating: 5.0,
-    times: ["morning", "weekend"],
-    city: "Delhi",
-    location: "Sunder Nursery & Lodhi, Delhi",
-    vibeText: "UNESCO park sunrise walks, photography trails & chai stops.",
-    bgColor: "#a8f0c6",
-    badge: "Super Host"
-  },
-  {
-    id: "p-11",
-    name: "Ananya Kapoor",
-    emoji: "🗣️",
-    act: "language",
-    categoryLabel: "Language",
-    rate: 450,
-    rating: 4.8,
-    times: ["evening", "weekend"],
-    city: "Delhi",
-    location: "Khan Market, Delhi",
-    vibeText: "Literature coffee debates, Italian phrases & creative writing.",
-    bgColor: "#ffc933"
-  },
-  {
-    id: "p-12",
-    name: "Vikram Singhania",
-    emoji: "🎲",
-    act: "games",
-    categoryLabel: "Board games",
-    rate: 350,
-    rating: 4.9,
-    times: ["evening", "weekend"],
-    city: "Delhi",
-    location: "Hauz Khas Village, Delhi",
-    vibeText: "FIDE rated 1800 blitz chess player & strategic game host.",
-    bgColor: "#ff6b4a"
   }
 ];
 
@@ -418,6 +399,7 @@ function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; p
 export default function App() {
   // Sound system state
   const [isMuted, setIsMuted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Rotating hero verb
   const [wordIndex, setWordIndex] = useState(0);
@@ -472,6 +454,9 @@ export default function App() {
   const [bookingLocation, setBookingLocation] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [isDispatching, setIsDispatching] = useState(false);
+  // Interest-First Photo Privacy: partner real photos unlock ONLY after partner accepts request
+  const [unlockedPartnerIds, setUnlockedPartnerIds] = useState<string[]>([]);
+  const [showHobbyMap, setShowHobbyMap] = useState<Record<string, boolean>>({});
 
   // Global Audio listener initialization
   useEffect(() => {
@@ -686,7 +671,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-body selection:bg-[#3DAAFC]/30 selection:text-[#011C92] pb-16 md:pb-0 relative bg-[#F3F7FF] text-[#0B1230]">
+    <div className="min-h-screen flex flex-col font-body selection:bg-[#3DAAFC]/30 selection:text-[#011C92] relative bg-[#F3F7FF] text-[#0B1230] overflow-x-hidden">
       
       {/* 0. GLOBAL SCROLL PROGRESS INDICATOR (BRAND PALETTE) */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none h-1.5 bg-[#011C92]/30">
@@ -748,13 +733,13 @@ export default function App() {
       </AnimatePresence>
 
       {/* 0.3 LAUNCH PRIVILEGE ANNOUNCEMENT BANNER (Deep Midnight & Sunshine) */}
-      <div className="bg-[#011C92] text-white px-4 py-2.5 text-center text-xs sm:text-sm font-medium flex items-center justify-center gap-2 relative z-40 border-b border-white/10">
-        <span className="font-semibold text-[#FFC83D]">Launch Trust Initiative:</span>
-        <span>Your first 3 hangouts are <strong className="font-bold underline decoration-[#FFC83D]">100% FREE</strong> to build mutual trust & 5-star reviews on both sides.</span>
+      <div className="bg-[#011C92] text-white px-3 sm:px-4 py-2 text-center text-[11px] sm:text-sm font-medium flex items-center justify-center gap-1.5 sm:gap-2 relative z-40 border-b border-white/10 leading-snug">
+        <span className="font-semibold text-[#FFC83D] shrink-0">Launch Offer:</span>
+        <span>First 3 hangouts are <strong className="font-bold underline decoration-[#FFC83D]">100% FREE</strong> to build mutual trust.</span>
         <a 
           href="#match" 
           onClick={() => audio.playClick()} 
-          className="hidden sm:inline-flex items-center gap-1 font-semibold text-[#3DAAFC] hover:text-white ml-2 underline"
+          className="hidden sm:inline-flex items-center gap-1 font-semibold text-[#3DAAFC] hover:text-white ml-2 underline whitespace-nowrap"
         >
           Explore Partners →
         </a>
@@ -762,76 +747,82 @@ export default function App() {
 
       {/* 1. TOP NAVBAR (Light, airy Cloud & White with Hangout Blue branding) */}
       <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#0A2EB8]/10 transition-colors text-[#0B1230]">
-        <div className="wrap flex items-center justify-between h-18">
+        <div className="wrap flex items-center justify-between h-14 sm:h-16 gap-3">
           
           {/* Logo with official image emblem & Roman brand wordmark */}
           <a 
             href="#top" 
-            onClick={() => audio.playClick()}
-            className="flex items-center gap-3 no-underline group"
+            onClick={() => {
+              audio.playClick();
+              setMobileMenuOpen(false);
+            }}
+            className="flex items-center gap-2.5 sm:gap-3 no-underline group min-w-0 shrink-0"
           >
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-[#0A2EB8]/20 shadow-sm shrink-0 bg-white">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden border border-[#0A2EB8]/20 shadow-sm shrink-0 bg-white">
               <img 
                 src="/assets/aistudio/Happy_Hangouts_Logo_1d102f6e.jpg" 
                 alt="Happy Hangouts Logo" 
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex flex-col text-left">
-              <span className="font-serif text-[22px] tracking-tight text-[#0A2EB8] leading-none font-bold">
+            <div className="flex flex-col text-left min-w-0">
+              <span className="font-serif text-lg sm:text-[22px] tracking-tight text-[#0A2EB8] leading-none font-bold whitespace-nowrap">
                 Happy Hangouts
               </span>
-              <span className="text-[11px] font-medium text-[#0B1230]/70 mt-1 tracking-tight flex items-center gap-1">
+              <span className="hidden sm:flex text-[11px] font-medium text-[#0B1230]/70 mt-1 tracking-tight items-center gap-1 whitespace-nowrap">
                 <span>Akele kyu?</span>
                 <span className="text-[#0A2EB8] font-bold">Happy Hangouts Hai na!!</span>
               </span>
             </div>
           </a>
 
-          {/* Nav links and actions */}
-          <div className="flex items-center gap-4 sm:gap-6">
+          {/* Nav links (visible cleanly on tablet md+ and desktop lg+) */}
+          <div className="hidden md:flex items-center gap-4 lg:gap-6">
             <a 
               href="#match" 
               onClick={() => audio.playClick()}
-              className="hidden md:inline-block text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors"
+              className="text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors whitespace-nowrap"
             >
               Partners
             </a>
             <a 
               href="#experiences" 
               onClick={() => audio.playClick()}
-              className="hidden md:inline-block text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors"
+              className="text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors whitespace-nowrap"
             >
               Experiences
             </a>
             <a 
               href="#videos" 
               onClick={() => audio.playClick()}
-              className="hidden md:inline-block text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors"
+              className="text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors whitespace-nowrap"
             >
-              Story Studio
+              Stories
             </a>
             <a 
               href="#radar" 
               onClick={() => audio.playClick()}
-              className="hidden lg:inline-block text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors"
+              className="text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors whitespace-nowrap"
             >
               Live Radar
             </a>
             <a 
               href="#safe" 
               onClick={() => audio.playClick()}
-              className="hidden lg:inline-block text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors"
+              className="text-sm font-semibold text-[#0B1230]/80 hover:text-[#0A2EB8] transition-colors whitespace-nowrap"
             >
               Safety
             </a>
+          </div>
 
-            {/* Audio Toggle Button with subtle styling */}
+          {/* Right Actions */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Audio Toggle Button */}
             <button
               type="button"
               onClick={handleToggleSound}
               aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-              className={`p-2 rounded-full border transition-all ${
+              className={`min-w-[40px] min-h-[40px] p-2 rounded-full border transition-all flex items-center justify-center cursor-pointer ${
                 isMuted ? "bg-[#0A2EB8]/5 text-[#0B1230]/60 border-[#0A2EB8]/15 hover:bg-[#0A2EB8]/10" : "bg-[#FFC83D] text-[#0B1230] border-[#FFC83D] shadow-sm"
               }`}
               title={isMuted ? "Click to enable sound" : "Sound enabled"}
@@ -839,42 +830,94 @@ export default function App() {
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
 
-            {/* Join Waitlist / Find Partner CTA (Sunshine #FFC83D) */}
+            {/* Primary CTA on Tablet/Desktop */}
             <a 
               href="#match" 
               onClick={() => audio.playClick()}
-              className="bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-extrabold text-sm py-2 px-5 rounded-full shadow-[0_3px_10px_rgba(255,200,61,0.4)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+              className="hidden sm:inline-flex items-center justify-center bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-extrabold text-xs sm:text-sm py-2 px-4 sm:px-5 rounded-full shadow-[0_3px_10px_rgba(255,200,61,0.4)] transition-all hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
             >
               Find a partner
             </a>
+
+            {/* Mobile Menu Button (< md) */}
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                setMobileMenuOpen((prev) => !prev);
+              }}
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileMenuOpen}
+              className="md:hidden min-w-[42px] min-h-[42px] p-2 rounded-xl border border-[#0A2EB8]/20 bg-[#F3F7FF] text-[#0A2EB8] flex items-center justify-center cursor-pointer"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
 
         </div>
+
+        {/* Mobile Slide-Down Navigation Drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden border-t border-[#0A2EB8]/10 bg-white overflow-hidden shadow-lg"
+            >
+              <div className="wrap py-3 flex flex-col gap-1">
+                {[
+                  { label: "Partners Directory", href: "#match" },
+                  { label: "NCR Experiences", href: "#experiences" },
+                  { label: "Character Story Theatre", href: "#videos" },
+                  { label: "Live Hangouts Radar", href: "#radar" },
+                  { label: "4-Pillar Safety", href: "#safe" },
+                  { label: "Earn as Partner", href: "#earn" },
+                  { label: "Get Hangout Pass", href: "#join" }
+                ].map((navItem) => (
+                  <a
+                    key={navItem.href}
+                    href={navItem.href}
+                    onClick={() => {
+                      audio.playClick();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="py-2.5 px-3 rounded-xl text-sm font-semibold text-[#0B1230] hover:bg-[#F3F7FF] hover:text-[#0A2EB8] transition-colors flex items-center justify-between"
+                  >
+                    <span>{navItem.label}</span>
+                    <ArrowRight className="w-4 h-4 text-[#0A2EB8]/60" />
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* 2. EXPANSIVE BRAND HERO SECTION (Light Cloud & White surface, Hangout Blue & Ink typography) */}
       <header 
         id="top" 
-        className="relative py-14 sm:py-20 lg:py-24 overflow-hidden bg-gradient-to-b from-[#F3F7FF] via-white to-[#F3F7FF] text-[#0B1230] border-b border-[#0A2EB8]/10"
+        className="relative py-10 sm:py-16 lg:py-24 overflow-hidden bg-gradient-to-b from-[#F3F7FF] via-white to-[#F3F7FF] text-[#0B1230] border-b border-[#0A2EB8]/10"
       >
         <div className="wrap">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-center">
             
             {/* Left Column: Brand Mock Structure */}
-            <div className="lg:col-span-7 flex flex-col items-start text-left">
+            <div className="lg:col-span-7 flex flex-col items-start text-left min-w-0">
               
               {/* Location & Launch Kicker */}
-              <div className="flex items-center gap-2.5 flex-wrap mb-5">
-                <span className="text-xs uppercase tracking-[0.2em] font-extrabold text-[#0A2EB8]">
+              <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap mb-4 sm:mb-5">
+                <span className="text-[11px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] font-extrabold text-[#0A2EB8]">
                   Gurugram & Delhi NCR
                 </span>
                 <span className="text-[#0B1230]/30">·</span>
-                <span className="text-xs font-bold text-[#0B1230]/80">
+                <span className="text-[11px] sm:text-xs font-bold text-[#0B1230]/80">
                   Verified Hangout Partners
                 </span>
                 <span className="text-[#0B1230]/30">·</span>
-                <span className="bg-[#FFC83D] text-[#0B1230] text-[11px] font-extrabold px-3 py-0.5 rounded-full shadow-sm">
+                <span className="bg-[#FFC83D] text-[#0B1230] text-[11px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm">
                   1st 3 Free
                 </span>
               </div>
@@ -884,10 +927,10 @@ export default function App() {
                 initial={{ opacity: 0, y: 22 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55 }}
-                className="font-serif text-[44px] sm:text-[62px] md:text-[74px] lg:text-[82px] text-[#0B1230] font-normal tracking-tight leading-[1.08] max-w-2xl"
+                className="font-serif text-[32px] min-[400px]:text-[36px] sm:text-[54px] md:text-[64px] lg:text-[74px] text-[#0B1230] font-normal tracking-tight leading-[1.12] max-w-2xl break-words"
               >
                 You bring the <br />
-                <CircledHighlight circleColor="#3DAAFC">
+                <CircledHighlight circleColor="#3DAAFC" className="my-1">
                   <span className="text-[#0A2EB8] font-bold">{ROTATING_WORDS[wordIndex]}.</span>
                 </CircledHighlight> <br />
                 We bring the people.
@@ -898,7 +941,7 @@ export default function App() {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.15 }}
-                className="text-base sm:text-lg lg:text-xl text-[#0B1230]/80 font-normal leading-relaxed mt-6 mb-8 max-w-xl"
+                className="text-sm sm:text-lg lg:text-xl text-[#0B1230]/80 font-normal leading-relaxed mt-5 sm:mt-6 mb-6 sm:mb-8 max-w-xl"
               >
                 Tired of friends cancelling on Sunday morning badminton? Want to explore cafes without sitting alone? 
                 Connect with verified partners across Gurgaon & Delhi. 
@@ -910,13 +953,13 @@ export default function App() {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.25 }}
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto"
               >
                 {/* Sunshine Primary Button */}
                 <a 
                   href="#match" 
                   onClick={() => audio.playClick()}
-                  className="bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-extrabold text-base py-3.5 px-8 rounded-full shadow-[0_6px_20px_rgba(255,200,61,0.45)] hover:shadow-[0_8px_24px_rgba(255,200,61,0.6)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2 cursor-pointer select-none"
+                  className="bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-extrabold text-sm sm:text-base py-3.5 px-7 sm:px-8 rounded-full shadow-[0_6px_20px_rgba(255,200,61,0.45)] hover:shadow-[0_8px_24px_rgba(255,200,61,0.6)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center justify-center gap-2 cursor-pointer select-none min-h-[48px]"
                 >
                   <span>Find a partner →</span>
                 </a>
@@ -928,7 +971,7 @@ export default function App() {
                     audio.playClick();
                     setWaitlistRole("partner");
                   }}
-                  className="border-2 border-[#0A2EB8] bg-white hover:bg-[#0A2EB8] text-[#0A2EB8] hover:text-white font-bold text-base py-3.5 px-8 rounded-full shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2 cursor-pointer select-none"
+                  className="border-2 border-[#0A2EB8] bg-white hover:bg-[#0A2EB8] text-[#0A2EB8] hover:text-white font-bold text-sm sm:text-base py-3.5 px-7 sm:px-8 rounded-full shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center justify-center gap-2 cursor-pointer select-none min-h-[48px]"
                 >
                   <span>Become a partner</span>
                 </a>
@@ -939,11 +982,11 @@ export default function App() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.35 }}
-                className="mt-6 inline-flex items-center gap-2.5 bg-white text-[#0B1230] px-4 py-2.5 rounded-xl shadow-md border border-[#0A2EB8]/15"
+                className="mt-5 sm:mt-6 inline-flex flex-wrap items-center gap-2 bg-white text-[#0B1230] px-3.5 sm:px-4 py-2.5 rounded-xl shadow-md border border-[#0A2EB8]/15"
               >
-                <span className="w-3 h-3 rounded-full bg-[#19C37D] shrink-0 shadow-sm"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#19C37D] shrink-0 shadow-sm"></span>
                 <span className="font-bold text-xs tracking-tight text-[#0B1230]">Verified partner</span>
-                <span className="text-xs text-[#0B1230]/65 ml-2 font-medium">Govt ID & In-Person Screened</span>
+                <span className="text-[11px] sm:text-xs text-[#0B1230]/65 sm:ml-1 font-medium">Govt ID & In-Person Screened</span>
               </motion.div>
 
             </div>
@@ -953,30 +996,31 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.65, delay: 0.2 }}
-              className="lg:col-span-5 relative"
+              className="lg:col-span-5 relative min-w-0"
             >
-              <div className="relative rounded-3xl overflow-hidden border-2 border-[#0A2EB8]/15 shadow-2xl bg-white aspect-[4/3] sm:aspect-[16/12]">
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#0A2EB8]/15 shadow-2xl bg-white aspect-[4/3] sm:aspect-[16/12]">
                 <img 
                   src="/src/assets/images/hero_hangout_cafe_1794391402838.jpg" 
                   alt="Friends enjoying coffee and honest conversation at Hazel and Oak Cafe in Delhi NCR"
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />
                 
                 {/* Subtle scrim & photo caption badge */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B1230]/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-serif text-sm font-semibold">Hazel & Oak Café · Khan Market</span>
-                    <span className="bg-[#19C37D] text-[#0B1230] px-2 py-0.5 rounded text-[11px] font-bold">Verified Hangout Spot</span>
+                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 text-white">
+                  <div className="flex items-center justify-between gap-2 flex-wrap text-xs">
+                    <span className="font-serif text-xs sm:text-sm font-semibold">Hazel & Oak Café · Khan Market</span>
+                    <span className="bg-[#19C37D] text-[#0B1230] px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold shrink-0">Verified Hangout Spot</span>
                   </div>
-                  <p className="text-[11px] text-white/95 mt-1 font-medium">
+                  <p className="text-[11px] text-white/95 mt-1 font-medium line-clamp-2">
                     Companions sharing coffee, book recommendations, and genuine conversation.
                   </p>
                 </div>
               </div>
 
               {/* Quiet editorial trust marker */}
-              <div className="mt-3 flex items-center justify-between text-xs text-[#0B1230]/75 px-1 font-semibold">
+              <div className="mt-3 flex items-center justify-between gap-2 flex-wrap text-[11px] sm:text-xs text-[#0B1230]/75 px-1 font-semibold">
                 <span>📍 Verified public venues across NCR</span>
                 <span>⭐ 4.9 Average community score</span>
               </div>
@@ -1053,23 +1097,29 @@ export default function App() {
             className="flex flex-col items-start mb-10"
           >
             <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#0A2EB8] block mb-2">
-              Browse Delhi NCR
+              Interest-First Matching · Zero Looks Bias
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl text-[#0B1230] font-normal tracking-tight">
               What’s your <CircledHighlight circleColor="#3DAAFC">vibe</CircledHighlight>?
             </h2>
             <p className="text-[#0B1230]/75 text-base sm:text-lg max-w-2xl mt-3 font-normal">
-              Select an activity, pick your city, and find verified partners ready for hangouts in Gurugram and Delhi.
+              Pick partners by shared interests, goals, and hobbies first. Their verified personal photo unlocks only after they accept your hangout request.
             </p>
+            <div className="mt-4 inline-flex items-center gap-2.5 bg-white border border-[#0A2EB8]/15 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#0B1230] shadow-xs">
+              <Lock className="w-3.5 h-3.5 text-[#0A2EB8] shrink-0" />
+              <span>
+                Photos shown below reflect <strong className="text-[#0A2EB8]">interests, goals & hobbies</strong> — face photos stay locked until accepted.
+              </span>
+            </div>
           </motion.div>
 
-          {/* Category Chips with Clean Typography (No Emoji Clutter) */}
+          {/* Category Chips with Horizontal Touch Scroller on Mobile */}
           <motion.div 
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45 }}
-            className="flex gap-2 flex-wrap mb-4"
+            className="flex sm:flex-wrap gap-2 overflow-x-auto pb-2.5 -mx-4 px-4 sm:mx-0 sm:px-0 mb-3 scrollbar-none"
           >
             {CATEGORIES.map((cat) => (
               <button
@@ -1093,7 +1143,7 @@ export default function App() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: 0.08 }}
-            className="flex items-center gap-2 mb-6"
+            className="flex items-center flex-wrap gap-2 mb-6"
           >
             <span className="text-xs font-semibold text-[#0B1230]/60 uppercase tracking-wider mr-1">
               City:
@@ -1190,10 +1240,16 @@ export default function App() {
             </label>
           </motion.div>
 
-          {/* Companion Cards Grid with Responsive Symmetrical Expansion */}
+          {/* Companion Cards Grid with Interest/Goal/Hobby Photo Privacy */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredCompanions.length > 0 ? (
-              filteredCompanions.map((comp, idx) => (
+              filteredCompanions.map((comp, idx) => {
+                const isUnlocked = unlockedPartnerIds.includes(comp.id);
+                const showingHobbyInstead = Boolean(showHobbyMap[comp.id]);
+                const activeSrc = isUnlocked && !showingHobbyInstead ? comp.partnerPhoto : comp.interestPhoto;
+                const activeAlt = isUnlocked && !showingHobbyInstead ? comp.partnerPhotoAlt : comp.interestPhotoAlt;
+
+                return (
                 <motion.div 
                   key={comp.id} 
                   initial={{ opacity: 0, y: 25 }}
@@ -1201,61 +1257,135 @@ export default function App() {
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.4, delay: (idx % 4) * 0.06 }}
                   whileHover={{ y: -4, transition: { duration: 0.18 } }}
-                  className="pc"
+                  className="bg-white border border-[#0A2EB8]/15 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-[#3DAAFC]/60 transition-all flex flex-col justify-between"
                 >
-                  {/* Clean Monogram Header & Category Tag */}
-                  <div className="flex items-start justify-between">
-                    <div className="w-12 h-12 rounded-full border border-[#0A2EB8]/20 bg-[#F3F7FF] flex items-center justify-center font-serif font-semibold text-base text-[#0A2EB8]">
-                      {comp.name.split(" ").map(n => n[0]).join("")}
-                    </div>
-                    <span className="text-[11px] font-semibold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/25 px-2.5 py-0.5 rounded-full">
-                      {comp.categoryLabel}
-                    </span>
-                  </div>
-
-                  {/* Name & Location */}
                   <div>
-                    <h3 className="font-serif text-xl font-medium text-[#0B1230] leading-snug">{comp.name}</h3>
-                    <p className="text-xs text-[#0B1230]/65 mt-1 font-normal">
-                      {comp.location} · {comp.times.join(", ")}
-                    </p>
+                    {/* Interest / Goal / Hobby Photo (Unlocks Partner Portrait only after acceptance!) */}
+                    <div className="relative aspect-[16/10] overflow-hidden bg-[#F3F7FF]">
+                      <img
+                        src={activeSrc}
+                        alt={activeAlt}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        className={`w-full h-full object-cover transition-transform duration-500 ${
+                          isUnlocked && !showingHobbyInstead ? "object-top" : "object-center"
+                        }`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B1230]/75 via-transparent to-black/15" />
+
+                      {/* Top Category Tag */}
+                      <div className="absolute top-2.5 left-2.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#0A2EB8] px-2.5 py-1 rounded-md shadow-xs">
+                          {comp.categoryLabel}
+                        </span>
+                      </div>
+
+                      {/* Lock vs Unlocked Privacy Indicator */}
+                      <div className="absolute top-2.5 right-2.5">
+                        {isUnlocked ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              audio.playClick();
+                              setShowHobbyMap((prev) => ({ ...prev, [comp.id]: !prev[comp.id] }));
+                            }}
+                            className="inline-flex items-center gap-1 bg-[#19C37D] text-[#0B1230] px-2.5 py-1 rounded-md text-[10px] font-extrabold shadow-xs cursor-pointer"
+                            title="Click to toggle between Partner Photo & Hobby Photo"
+                          >
+                            <Unlock className="w-3 h-3" />
+                            <span>{showingHobbyInstead ? "Show Partner" : "Photo Unlocked"}</span>
+                          </button>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 bg-[#0B1230]/85 backdrop-blur-xs text-white px-2.5 py-1 rounded-md text-[10px] font-semibold">
+                            <Lock className="w-3 h-3 text-[#FFC83D]" />
+                            <span>Face locked until accept</span>
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Bottom Caption inside Photo */}
+                      <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between gap-2 text-white">
+                        <span className="text-[11px] font-semibold truncate">
+                          {isUnlocked && !showingHobbyInstead
+                            ? "Verified Partner Portrait"
+                            : "Interest & Hobby Preview"}
+                        </span>
+                        <span className="text-[11px] font-bold bg-black/45 px-2 py-0.5 rounded shrink-0">
+                          ⭐ {comp.rating}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Card Body */}
+                    <div className="p-4 sm:p-5 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <h3 className="font-serif text-xl font-semibold text-[#0B1230] leading-snug truncate">
+                            {comp.name}
+                          </h3>
+                          <p className="text-xs text-[#0B1230]/65 mt-0.5 font-normal truncate">
+                            {comp.location}
+                          </p>
+                        </div>
+                        <div className="w-9 h-9 rounded-lg border border-[#0A2EB8]/15 bg-[#F3F7FF] flex items-center justify-center font-serif font-bold text-xs text-[#0A2EB8] shrink-0">
+                          {comp.name.split(" ").map(n => n[0]).join("")}
+                        </div>
+                      </div>
+
+                      {/* Goal Highlight */}
+                      <div className="bg-[#F3F7FF] border border-[#0A2EB8]/10 rounded-xl p-2.5">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#0A2EB8] block mb-0.5">
+                          Hangout Goal
+                        </span>
+                        <p className="text-xs text-[#0B1230]/85 font-medium leading-snug">
+                          {comp.goals}
+                        </p>
+                      </div>
+
+                      {/* Hobbies & Interests Tags */}
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#0B1230]/50 block mb-1.5">
+                          Interests & Hobbies
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {comp.hobbies.map((hobby) => (
+                            <span
+                              key={hobby}
+                              className="text-[11px] font-semibold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/15 px-2 py-0.5 rounded-md"
+                            >
+                              {hobby}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Vibe Description */}
-                  <p className="text-sm text-[#0B1230]/80 font-normal leading-relaxed line-clamp-2">
-                    {comp.vibeText}
-                  </p>
-
-                  {/* Price & Rating (Highlighting 1st 3 Hangouts Free) */}
-                  <div className="pt-3 border-t border-[#F3F7FF]">
-                    <div className="flex items-center justify-between mb-1 text-xs">
+                  {/* Card Footer & CTA */}
+                  <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-2 border-t border-[#F3F7FF]">
+                    <div className="flex items-center justify-between text-xs mb-3">
                       <div className="flex items-center gap-1.5">
                         <span className="line-through text-[#0B1230]/40">₹{comp.rate}/hr</span>
                         <span className="font-bold text-[#19C37D] bg-[#19C37D]/10 px-1.5 py-0.5 rounded">
                           ₹0 FREE
                         </span>
                       </div>
-                      <span className="font-medium text-[#0B1230]">
-                        ⭐ {comp.rating}
+                      <span className="text-[11px] font-semibold text-[#0B1230]/60 capitalize">
+                        {comp.times.join(" · ")}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-[#0B1230]/60">
-                      <span>Launch Privilege</span>
-                      <span className="text-[#19C37D] font-bold">1st 3 Free</span>
-                    </div>
-                  </div>
 
-                  {/* Book / Hangout CTA (Sunshine #FFC83D) */}
-                  <button 
-                    type="button"
-                    onClick={() => handleOpenBooking(comp)}
-                    className="w-full py-3 px-4 text-xs sm:text-sm font-extrabold mt-1 cursor-pointer bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] rounded-full shadow-[0_3px_10px_rgba(255,200,61,0.35)] hover:shadow-[0_5px_15px_rgba(255,200,61,0.5)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5"
-                  >
-                    <span>⚡ Request Free Hangout</span>
-                    <span className="text-[10px] bg-[#0B1230]/10 px-2 py-0.5 rounded-full font-bold">1st 3 Free</span>
-                  </button>
+                    <button 
+                      type="button"
+                      onClick={() => handleOpenBooking(comp)}
+                      className="w-full py-3 px-4 text-xs sm:text-sm font-extrabold cursor-pointer bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] rounded-full shadow-[0_3px_10px_rgba(255,200,61,0.35)] hover:shadow-[0_5px_15px_rgba(255,200,61,0.5)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5"
+                    >
+                      <span>{isUnlocked ? "⚡ Book Hangout Again" : "⚡ Request to Connect"}</span>
+                    </button>
+                  </div>
                 </motion.div>
-              ))
+                );
+              })
             ) : (
               <div className="col-span-full text-center p-12 border border-dashed border-[#0A2EB8]/25 rounded-2xl bg-white">
                 <p className="font-serif text-xl text-[#0B1230] font-medium">
@@ -1334,9 +1464,9 @@ export default function App() {
               className="st relative"
             >
               <div className="font-serif text-4xl text-[#011C92] font-bold mb-3">02</div>
-              <h3 className="font-serif text-2xl text-[#0B1230] font-medium mb-2">Connect with a partner</h3>
+              <h3 className="font-serif text-2xl text-[#0B1230] font-medium mb-2">Connect & unlock photo</h3>
               <p className="text-[#0B1230]/75 text-sm leading-relaxed font-normal">
-                Review verified profiles and authentic community ratings. Send a request with a live 5-minute action window for quick confirmation.
+                Match on shared interests, goals & hobbies first. Once the partner accepts within the 5-minute window, their verified portrait unlocks for you.
               </p>
             </motion.div>
 
@@ -1496,7 +1626,7 @@ export default function App() {
       </section>
 
       {/* 8. "EARN BY SHARING YOUR PASSIONS" (EARNINGS CALCULATOR) */}
-      <section id="earn" className="py-20 sm:py-28 bg-[#F3F7FF] border-b border-[#0A2EB8]/10">
+      <section id="earn" className="py-16 sm:py-24 bg-[#F3F7FF] border-b border-[#0A2EB8]/10 overflow-hidden">
         <div className="wrap earn-container">
           
           <motion.div
@@ -1659,14 +1789,14 @@ export default function App() {
                 <label className="block text-xs font-bold text-[#0B1230] mb-1.5">
                   1. How would you like to participate?
                 </label>
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <button
                     type="button"
                     onClick={() => {
                       audio.playClick();
                       setWaitlistRole("seeker");
                     }}
-                    className={`p-3 rounded-xl border text-center font-bold text-sm transition-all cursor-pointer ${
+                    className={`p-3 rounded-xl border text-center font-bold text-sm transition-all cursor-pointer min-h-[46px] ${
                       waitlistRole === "seeker" 
                         ? "bg-[#0A2EB8] text-white border-[#0A2EB8] shadow-sm -translate-y-0.5" 
                         : "bg-white text-[#0B1230] border-[#0A2EB8]/30 hover:border-[#0A2EB8]"
@@ -1680,7 +1810,7 @@ export default function App() {
                       audio.playClick();
                       setWaitlistRole("partner");
                     }}
-                    className={`p-3 rounded-xl border text-center font-bold text-sm transition-all cursor-pointer ${
+                    className={`p-3 rounded-xl border text-center font-bold text-sm transition-all cursor-pointer min-h-[46px] ${
                       waitlistRole === "partner" 
                         ? "bg-[#0A2EB8] text-white border-[#0A2EB8] shadow-sm -translate-y-0.5" 
                         : "bg-white text-[#0B1230] border-[#0A2EB8]/30 hover:border-[#0A2EB8]"
@@ -1961,7 +2091,7 @@ export default function App() {
             </motion.form>
 
             {/* RIGHT COLUMN: STICKY LIVE INTERACTIVE "HANGOUT PASS" DIGITAL ID CARD */}
-            <div className="lg:col-span-5 w-full sticky top-24">
+            <div className="lg:col-span-5 w-full lg:sticky lg:top-24 min-w-0">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -2082,14 +2212,14 @@ export default function App() {
               </motion.div>
 
               {/* Direct WhatsApp Concierge Help Card */}
-              <div className="mt-4 p-4 bg-white border border-[#0A2EB8]/20 rounded-2xl shadow-sm flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-[#19C37D] text-white flex items-center justify-center font-bold text-lg">
+              <div className="mt-4 p-4 bg-white border border-[#0A2EB8]/20 rounded-2xl shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-full bg-[#19C37D] text-white flex items-center justify-center font-bold text-lg shrink-0">
                     💬
                   </div>
-                  <div className="leading-tight">
+                  <div className="leading-tight min-w-0">
                     <p className="text-xs font-bold text-[#0B1230]">Need manual booking help?</p>
-                    <p className="text-[11px] text-[#0B1230]/60 font-medium">Talk to Happy Hangouts Founder Team</p>
+                    <p className="text-[11px] text-[#0B1230]/60 font-medium truncate">Talk to Happy Hangouts Founder Team</p>
                   </div>
                 </div>
                 <a 
@@ -2097,7 +2227,7 @@ export default function App() {
                   target="_blank" 
                   rel="noopener noreferrer"
                   onClick={() => audio.playClick()}
-                  className="bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-xs py-2 px-3.5 rounded-full shrink-0 shadow-xs flex items-center gap-1"
+                  className="bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold text-xs py-2.5 px-4 rounded-full shrink-0 shadow-xs flex items-center justify-center gap-1.5 w-full sm:w-auto"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   Text Team
@@ -2132,6 +2262,12 @@ export default function App() {
             meetingLocation={bookingLocation}
             meetingDate={bookingDate}
             meetingTime={bookingTime}
+            isAlreadyUnlocked={unlockedPartnerIds.includes(bookingCompanion.id)}
+            onPartnerAccepted={(acceptedId) => {
+              setUnlockedPartnerIds((prev) =>
+                prev.includes(acceptedId) ? prev : [...prev, acceptedId]
+              );
+            }}
             onClose={() => {
               setIsDispatching(false);
               setBookingCompanion(null);
@@ -2146,12 +2282,12 @@ export default function App() {
         )}
 
         {bookingCompanion && !isDispatching && (
-          <div className="fixed inset-0 z-50 bg-[#011C92]/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-[#011C92]/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
             <motion.div 
               initial={{ opacity: 0, scale: 0.94, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 16 }}
-              className="bg-white border border-[#0A2EB8]/20 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative"
+              className="bg-white border border-[#0A2EB8]/20 rounded-3xl p-5 sm:p-8 max-w-lg w-full shadow-2xl relative max-h-[92vh] overflow-y-auto my-auto"
             >
               
               {/* Close Button */}
@@ -2161,24 +2297,44 @@ export default function App() {
                   audio.playClick();
                   setBookingCompanion(null);
                 }}
-                className="absolute top-4 right-4 p-2 rounded-full border border-slate-200 hover:bg-[#F3F7FF] transition-colors cursor-pointer text-[#0B1230]/60"
+                aria-label="Close modal"
+                className="absolute top-3.5 right-3.5 p-2.5 rounded-full border border-slate-200 hover:bg-[#F3F7FF] transition-colors cursor-pointer text-[#0B1230]/60 min-w-[40px] min-h-[40px] flex items-center justify-center z-10 bg-white"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              {/* Companion Header in Modal */}
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full border border-[#0A2EB8]/20 bg-[#F3F7FF] flex items-center justify-center font-serif text-xl font-bold text-[#0A2EB8] shrink-0">
-                  {bookingCompanion.name.split(" ").map(n => n[0]).join("")}
+              {/* Companion Header in Modal (Respects Photo Lock Privacy) */}
+              <div className="flex items-center gap-3.5 sm:gap-4 mb-5 pr-8">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border border-[#0A2EB8]/20 bg-[#F3F7FF] shrink-0">
+                  {unlockedPartnerIds.includes(bookingCompanion.id) ? (
+                    <img
+                      src={bookingCompanion.partnerPhoto}
+                      alt={bookingCompanion.partnerPhotoAlt}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover object-top"
+                    />
+                  ) : (
+                    <>
+                      <img
+                        src={bookingCompanion.interestPhoto}
+                        alt={bookingCompanion.interestPhotoAlt}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-1 right-1 bg-[#0B1230]/85 text-[#FFC83D] rounded p-0.5" title="Face photo unlocks after accept">
+                        <Lock className="w-3 h-3" />
+                      </span>
+                    </>
+                  )}
                 </div>
-                <div>
-                  <span className="text-xs uppercase tracking-wider text-[#0A2EB8] font-bold block">
+                <div className="min-w-0">
+                  <span className="text-[11px] sm:text-xs uppercase tracking-wider text-[#0A2EB8] font-bold block">
                     {bookingCompanion.categoryLabel} · Verified Partner
                   </span>
-                  <h3 className="font-serif text-2xl font-bold text-[#0B1230]">
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0B1230] truncate">
                     {bookingCompanion.name}
                   </h3>
-                  <p className="text-xs text-[#0B1230]/65 mt-0.5">
+                  <p className="text-xs text-[#0B1230]/65 mt-0.5 truncate">
                     {bookingCompanion.location} · ⭐ {bookingCompanion.rating}
                   </p>
                 </div>
@@ -2205,16 +2361,34 @@ export default function App() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-[#0B1230]/70 uppercase tracking-wider mb-1.5">
-                      Activity & Plan
-                    </label>
-                    <div className="bg-[#F3F7FF] border border-[#0A2EB8]/15 rounded-xl p-3.5 text-sm text-[#0B1230] font-normal">
-                      {bookingCompanion.vibeText}
+                  <div className="bg-[#F3F7FF] border border-[#0A2EB8]/15 rounded-xl p-3.5 space-y-2">
+                    <div>
+                      <span className="block text-[10px] font-bold text-[#0A2EB8] uppercase tracking-wider">
+                        Goal & Shared Interests
+                      </span>
+                      <p className="text-sm text-[#0B1230] font-semibold mt-0.5">
+                        {bookingCompanion.goals}
+                      </p>
                     </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {bookingCompanion.hobbies.map((hobby) => (
+                        <span
+                          key={hobby}
+                          className="text-[11px] font-semibold text-[#0A2EB8] bg-white border border-[#0A2EB8]/15 px-2 py-0.5 rounded-md"
+                        >
+                          {hobby}
+                        </span>
+                      ))}
+                    </div>
+                    {!unlockedPartnerIds.includes(bookingCompanion.id) && (
+                      <p className="text-[11px] text-[#0B1230]/70 flex items-center gap-1.5 pt-1 border-t border-[#0A2EB8]/10">
+                        <Lock className="w-3.5 h-3.5 text-[#0A2EB8] shrink-0" />
+                        <span>{bookingCompanion.name}'s personal photo stays hidden until they accept this request.</span>
+                      </p>
+                    )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-[#0B1230]/70 uppercase tracking-wider mb-1.5">
                         Day
@@ -2315,14 +2489,14 @@ export default function App() {
       </AnimatePresence>
 
       {/* 11. FOOTER & SEO CITATION DIRECTORY (Deep Midnight #011C92) */}
-      <footer className="py-12 sm:py-16 text-white/80 bg-[#011C92] border-t border-white/10">
+      <footer className="pt-12 pb-24 md:py-16 text-white/80 bg-[#011C92] border-t border-white/10">
         <div className="wrap">
           {/* Top Grid of Backlink & Directory Citations */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-10 border-b border-white/10 text-left">
             
             {/* Brand Column */}
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-2 mb-3">
+            <div className="sm:col-span-2 lg:col-span-2">
+              <div className="flex items-center flex-wrap gap-2 mb-3">
                 <span className="font-serif font-bold text-2xl text-white">
                   Happy Hangouts
                 </span>
@@ -2463,15 +2637,15 @@ export default function App() {
               </p>
             </div>
 
-            <div className="flex items-center gap-4 text-xs font-bold text-[#3DAAFC]">
+            <div className="flex items-center flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-bold text-[#3DAAFC]">
               <a href="#backlinks" onClick={() => scrollToSection("backlinks")} className="hover:underline">
                 Press Kit & Badges
               </a>
-              <span>·</span>
+              <span aria-hidden="true">·</span>
               <a href="#safe" onClick={() => scrollToSection("safe")} className="hover:underline">
                 Safety Charter
               </a>
-              <span>·</span>
+              <span aria-hidden="true">·</span>
               <a href="https://wa.me/918800843189" target="_blank" rel="noopener noreferrer" className="hover:underline text-[#FFC83D]">
                 WhatsApp Support
               </a>
@@ -2480,22 +2654,22 @@ export default function App() {
         </div>
       </footer>
 
-      {/* 12. MOBILE BOTTOM FLOATING ACTION BAR (Streamlined & Non-Congested) */}
-      <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-[#0A2EB8]/15 py-2.5 px-4 z-40 md:hidden flex items-center justify-between gap-3 shadow-[0_-4px_12px_rgba(10,46,184,0.08)]">
+      {/* 12. MOBILE BOTTOM FLOATING ACTION BAR (Compact & Touch-Ergonomic) */}
+      <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-[#0A2EB8]/15 py-2 px-3 z-40 md:hidden flex items-center justify-between gap-2.5 shadow-[0_-4px_12px_rgba(10,46,184,0.08)]">
         <a 
           href="#join" 
           onClick={() => {
             audio.playClick();
             setWaitlistRole("partner");
           }}
-          className="flex-1 text-center py-2.5 px-3 rounded-full border border-[#0A2EB8] text-[#0A2EB8] font-bold text-xs"
+          className="flex-1 text-center py-2.5 px-3 rounded-full border border-[#0A2EB8] text-[#0A2EB8] font-bold text-xs min-h-[42px] flex items-center justify-center whitespace-nowrap"
         >
           Become a Partner
         </a>
         <a 
           href="#match" 
           onClick={() => audio.playClick()}
-          className="flex-1 text-center py-2.5 px-3 rounded-full bg-[#FFC83D] text-[#0B1230] font-bold text-xs shadow-sm"
+          className="flex-1 text-center py-2.5 px-3 rounded-full bg-[#FFC83D] text-[#0B1230] font-extrabold text-xs shadow-sm min-h-[42px] flex items-center justify-center whitespace-nowrap"
         >
           Find a Partner
         </a>

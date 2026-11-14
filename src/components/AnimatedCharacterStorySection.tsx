@@ -195,12 +195,12 @@ export const STORY_EPISODES: StoryEpisode[] = [
         },
         interactiveAction: {
           label: "🏸 Pass the Shuttlecock to Ujjwal",
-          actionOutcome: "SMASH! Ujjwal accepts match: First 3 Hangouts Free (₹0 fee applied)!"
+          actionOutcome: "SMASH! Ujjwal accepts match: 1st Hangout Free (₹0 fee applied)!"
         },
         keyTakeaways: [
           "Never waste a pre-booked sports court again",
           "Coached drills, doubles rallies, and fitness partners on demand",
-          "First 3 hangouts are 100% FREE to build trust and mutual reviews"
+          "Your 1st hangout is 100% FREE to build trust and mutual reviews"
         ]
       },
       {
@@ -307,21 +307,21 @@ export const STORY_EPISODES: StoryEpisode[] = [
       },
       {
         id: "dvs-3",
-        stageTitle: "Launch Privilege: First 3 Hangouts are 100% FREE",
+        stageTitle: "Launch Privilege: Your 1st Hangout is 100% FREE",
         locationBadge: "Trust Vault & Free Pass",
         characterMood: "celebrating",
-        dialogue: "To prove this is genuine and build mutual trust, your first 3 hangouts are 100% FREE! (₹0 fee). The host agrees, you agree, and after having a blast, you trade genuine 5-star reviews to build your community profile. Zero financial risk on both sides!",
+        dialogue: "To prove this is genuine and build mutual trust, your 1st hangout is 100% FREE! (₹0 fee). Your Hangout Partner agrees, you agree, and after having a blast, you trade genuine 5-star reviews to build your community profile. Zero financial risk!",
         speechSubtext: "Mutual trust is built when both parties experience the platform risk-free.",
         stageBackdrop: "earnings_vault",
-        relatableTag: "First 3 Free Privilege",
+        relatableTag: "1st Hangout Free",
         interactiveAction: {
-          label: "🎁 Claim 3 Free Hangouts Credit",
-          actionOutcome: "Pass Armed: ₹0 Fee applied for Sessions 1, 2, and 3!"
+          label: "🎁 Claim 1st Free Hangout Credit",
+          actionOutcome: "Pass Armed: ₹0 Fee applied for your 1st Hangout!"
         },
         keyTakeaways: [
-          "Sessions 1, 2, and 3 are completely free (₹0 platform & host fee)",
+          "Your 1st hangout is completely free (₹0 platform & booking fee)",
           "Designed to establish comfort, verified trust & 5-star feedback",
-          "Available for both new companions and activity hosts"
+          "Available for both new guests and Hangout Partners"
         ]
       }
     ]
@@ -365,7 +365,7 @@ export const STORY_EPISODES: StoryEpisode[] = [
         relatableTag: "Public Daylight Venues",
         interactiveAction: {
           label: "📍 View Verified Safe Hotspots",
-          actionOutcome: "8 Major NCR public meeting hubs mapped with Google Maps GPS!"
+          actionOutcome: "8 Major NCR public meeting hubs verified across Gurugram & Delhi!"
         },
         keyTakeaways: [
           "Public venues only: third-wave cafes, sports clubs & parks",
@@ -553,7 +553,7 @@ const RELATABLE_SITUATIONS = [
   {
     id: "sit-free",
     icon: "🎁",
-    title: "First 3 Hangouts Free: What's the deal?",
+    title: "1st Hangout Free: What's the deal?",
     subtitle: "Zero fee to build mutual trust & reviews",
     targetEpisodeIdx: 1,
     targetSceneIdx: 2,
@@ -766,7 +766,7 @@ export default function AnimatedCharacterStorySection({
 
     const quotes = [
       "Akele kyu? Happy Hangouts Hai na!! 🙌",
-      "Special launch perk: first 3 hangouts are 100% FREE! Zero risk to try. 🎁",
+      "Special launch perk: your 1st hangout is 100% FREE! Zero risk to try. 🎁",
       "Dost ne badminton plan cancel kiya? Ujjwal is ready in Sector 29!",
       "Pour-over coffee in CyberHub or photowalks in Sunder Nursery — let's go!",
       "Strictly public daylight places. 100% Aadhaar verified companions!",
@@ -841,7 +841,7 @@ export default function AnimatedCharacterStorySection({
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="tag">Interactive Story Theatre</span>
               <span className="bg-[#ffc933] text-[#0b1f5c] text-xs font-black px-2.5 py-1 rounded-full border border-[#0b1f5c] shadow-[2px_2px_0_#0b1f5c]">
-                🎁 First 3 Hangouts Free
+                🎁 1st Hangout Free
               </span>
               <span className="text-xs font-black text-[#1f4ee0] uppercase tracking-wider flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5" /> Living Delhi NCR Stories
@@ -1457,10 +1457,10 @@ export default function AnimatedCharacterStorySection({
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 bg-[#19C37D]/20 text-[#19C37D] border border-[#19C37D]/40 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2.5">
               <span className="w-2 h-2 rounded-full bg-[#19C37D] animate-pulse"></span>
-              <span>Zero Risk · First 3 Hangouts Free</span>
+              <span>Zero Risk · 1st Hangout Free</span>
             </div>
             <h4 className="font-serif text-2xl sm:text-3xl font-semibold text-white tracking-tight leading-snug">
-              First 3 hangouts are on us. Literally ₹0 fee.
+              Your 1st hangout is on us. Literally ₹0 fee.
             </h4>
             <p className="text-sm text-white/80 font-normal mt-2 leading-relaxed">
               Tired of friends flaking on weekend badminton or dreading another solo coffee run? Meet background-verified partners across CyberHub, CP, Khan Market & Siri Fort. No awkwardness. Just genuine people.

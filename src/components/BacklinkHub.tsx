@@ -47,8 +47,8 @@ export default function BacklinkHub({ triggerBoom }: BacklinkHubProps) {
     },
     {
       source: "YourStory Startup Spotlight",
-      title: "Happy Hangouts Launches 'First 3 Hangouts Free' to Build Verified Peer Trust in NCR",
-      snippet: "“By offering the first 3 sessions free, the marketplace eliminates user hesitation and builds authentic, reciprocal 5-star reviews.”",
+      title: "Happy Hangouts Launches '1st Hangout Free' to Build Verified Peer Trust in NCR",
+      snippet: "“By offering the 1st session free, the marketplace eliminates user hesitation and builds authentic, reciprocal 5-star reviews.”",
       url: "https://yourstory.com/companies/happy-hangouts",
       tag: "Startup & Innovation",
       authority: "DA 84"
@@ -117,12 +117,12 @@ export default function BacklinkHub({ triggerBoom }: BacklinkHubProps) {
     },
     {
       id: "free-pass-badge",
-      title: "First 3 Hangouts Free Embed",
+      title: "1st Hangout Free Embed",
       description: "For lifestyle bloggers, Delhi event guides & student community websites.",
-      previewText: "🎁 First 3 Hangouts 100% Free · Happy Hangouts",
+      previewText: "🎁 1st Hangout 100% Free · Happy Hangouts",
       bgClass: "bg-emerald-600 text-white",
       icon: "🎁",
-      htmlCode: `<a href="https://happyhangouts.in?ref=partner_pass" target="_blank" rel="noopener" title="Get First 3 Hangouts Free on Happy Hangouts NCR">\n  <span style="display:inline-block;padding:8px 16px;background:#10b981;color:#ffffff;font-family:sans-serif;font-weight:900;font-size:13px;border-radius:12px;border:2px solid #064e3b;box-shadow:3px 3px 0 #064e3b;">\n    🎁 Claim 3 Free Hangouts (Delhi NCR)\n  </span>\n</a>`
+      htmlCode: `<a href="https://happyhangouts.in?ref=partner_pass" target="_blank" rel="noopener" title="Get 1st Hangout Free on Happy Hangouts NCR">\n  <span style="display:inline-block;padding:8px 16px;background:#10b981;color:#ffffff;font-family:sans-serif;font-weight:900;font-size:13px;border-radius:12px;border:2px solid #064e3b;box-shadow:3px 3px 0 #064e3b;">\n    🎁 Claim 1st Free Hangout (Delhi NCR)\n  </span>\n</a>`
     }
   ];
 

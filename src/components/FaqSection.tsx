@@ -33,9 +33,9 @@ const FAQ_DATA: FaqItem[] = [
     category: "security",
     categoryLabel: "Security & Privacy",
     icon: ShieldCheck,
-    question: "How are experience hosts, captains, and attendees verified?",
+    question: "How are Hangout Partners and attendees verified?",
     answer:
-      "Every local captain and community member passes Government ID verification (Aadhaar/PAN) along with a live selfie match before hosting or joining any session. Experiences only run at screened public daylight or floodlit venues across Gurugram and Delhi.",
+      "Every Hangout Partner and community member passes Government ID verification (Aadhaar/PAN) along with a live selfie match before hosting or joining any session. Experiences only run at screened public daylight or floodlit venues across Gurugram and Delhi.",
     highlights: [
       "Govt ID (Aadhaar/PAN) verified",
       "Public parks, courts & cafés only",
@@ -47,12 +47,12 @@ const FAQ_DATA: FaqItem[] = [
     category: "security",
     categoryLabel: "Security & Privacy",
     icon: Users,
-    question: "How does the Women-Only booking option work?",
+    question: "Who can book the Women-Only option and how does it work?",
     answer:
-      "You can switch on the 'Women-Only Booking' toggle directly inside the experience lineup or booking modal. When selected, your booking is strictly routed to a verified Woman Captain and an all-women cohort at safe, bustling public hubs like Lodhi Garden, Khan Market, 32nd Avenue, or Sunder Nursery.",
+      "Women-Only booking is strictly reserved for women only. When a woman selects the 'Women-Only Booking' option inside the lineup or booking modal, her request routes exclusively to a verified Female Hangout Partner and an all-women cohort at safe public hubs like Lodhi Garden, Khan Market, 32nd Avenue, or Sunder Nursery.",
     highlights: [
-      "Verified Woman Captain assigned",
-      "100% female-only participant cohort",
+      "Strictly for women guests only",
+      "Verified Female Hangout Partner",
       "Available across all 5 experiences"
     ]
   },
@@ -63,11 +63,11 @@ const FAQ_DATA: FaqItem[] = [
     icon: Lock,
     question: "Are my personal photos, phone number, and details kept private?",
     answer:
-      "Yes. Your phone number and email are never publicly visible on any card or directory. We lead with experiences, schedules, and venues—not personal profiles. Host captain details and WhatsApp check-in coordination are shared privately only after your spot is confirmed.",
+      "Yes. Your phone number and email are never publicly visible on any card or directory. We lead with experiences, schedules, and venues—not personal profiles. Hangout Partner details and WhatsApp check-in coordination are shared privately only after your spot is confirmed.",
     highlights: [
       "No public profile or number exposure",
       "Experience-first matching",
-      "Captain details unlock post-confirm"
+      "Partner details unlock post-confirm"
     ]
   },
 
@@ -77,11 +77,11 @@ const FAQ_DATA: FaqItem[] = [
     category: "payment",
     categoryLabel: "Payment",
     icon: Sparkles,
-    question: "Are my first 3 hangouts really 100% free?",
+    question: "Is only my 1st hangout really 100% free?",
     answer:
-      "Yes! Under our Launch Offer, your first 3 curated experiences carry a ₹0 booking and platform fee so you can build genuine trust first-hand before paying a rupee. Note that personal café orders (coffee/snacks) or shared court rentals at public venues remain pay-as-you-go.",
+      "Yes! Under our Launch Offer, your 1st curated hangout carries a ₹0 booking and platform fee so you can build genuine trust first-hand before paying a rupee. Personal café orders (coffee/snacks) or shared court rentals at public venues remain pay-as-you-go.",
     highlights: [
-      "First 3 experiences at ₹0 fee",
+      "1st hangout at ₹0 booking fee",
       "No hidden subscription lock-in",
       "Pay personal café bills directly"
     ]
@@ -91,9 +91,9 @@ const FAQ_DATA: FaqItem[] = [
     category: "payment",
     categoryLabel: "Payment",
     icon: CreditCard,
-    question: "How do payments work after my 3 free experiences?",
+    question: "How do payments work from my 2nd hangout onwards?",
     answer:
-      "From your 4th experience onward, standard session fees (typically ₹250–₹600 depending on activity and venue) are paid seamlessly via UPI or cards. Funds are held safely in digital escrow and only released after both sides check in at the public venue.",
+      "After your 1st free hangout, standard session fees (typically ₹250–₹600 depending on activity and venue) apply from your 2nd experience onwards and are paid via UPI or cards. Funds are held safely in digital escrow and released after both sides check in at the public venue.",
     highlights: [
       "UPI & card digital escrow protection",
       "Transparent ₹250–₹600 session pricing",
@@ -101,17 +101,17 @@ const FAQ_DATA: FaqItem[] = [
     ]
   },
   {
-    id: "pay-pending-window",
+    id: "pay-advance-window",
     category: "payment",
     categoryLabel: "Payment",
     icon: Lock,
-    question: "Am I charged if a booking isn't confirmed within the 5-minute window?",
+    question: "How early do I need to send a hangout request, and when am I charged?",
     answer:
-      "Never. During the 5-minute confirmation countdown, ₹0 is settled to any host. If the slot fills up or isn't confirmed within 5 minutes, the request auto-expires immediately with ₹0 charged.",
+      "You must send your request a minimum of 2 hours before the hangout start time—for example, if you want to attend a hangout at 5:00 PM, send your request by 3:00 PM at the latest. During confirmation, ₹0 is settled until your Hangout Partner accepts; unresponded requests auto-expire with ₹0 charge.",
     highlights: [
-      "Zero charge until spot is confirmed",
-      "Automatic 5-minute expiry",
-      "Switch to another slot instantly"
+      "Send request 2+ hours prior (5 PM → by 3 PM)",
+      "Zero charge until partner confirms",
+      "Auto-expires with ₹0 fee if unfilled"
     ]
   },
 
@@ -121,13 +121,13 @@ const FAQ_DATA: FaqItem[] = [
     category: "cancellation",
     categoryLabel: "Cancellation & Refund",
     icon: RotateCcw,
-    question: "What is your Cancellation & Refund policy if my plans change?",
+    question: "What is your Cancellation & Refund policy? Can I cancel in the last hour?",
     answer:
-      "Cancel at least 4 hours before the experience start time to receive a 100% instant refund to your original UPI ID or card—no deductions. If something comes up within 4 hours of start time, you get 1 free reschedule to any upcoming weekly slot.",
+      "No—you cannot cancel in the last hour before your hangout start time. Last-hour cancellations (within 1 hour of start time) are strictly non-refundable to respect your Hangout Partner's committed schedule. Cancel more than 1 hour before start time (ideally 2+ hours prior) to receive a 100% refund or free reschedule.",
     highlights: [
-      "100% refund if cancelled 4+ hrs prior",
-      "Instant automated UPI/card reversal",
-      "1 free reschedule under 4 hours"
+      "No cancellations in the last 1 hour",
+      "100% refund if cancelled >1 hr prior",
+      "Protects Hangout Partner's time"
     ]
   },
   {
@@ -135,11 +135,11 @@ const FAQ_DATA: FaqItem[] = [
     category: "cancellation",
     categoryLabel: "Cancellation & Refund",
     icon: ShieldCheck,
-    question: "What happens if a captain cancels or the experience doesn't run?",
+    question: "What happens if a Hangout Partner cancels or the experience doesn't run?",
     answer:
-      "We enforce a strict zero-ghosting policy. If a captain cancels, weather disrupts an outdoor run/hike, or a venue closes unexpectedly, you receive an immediate 100% full refund plus a complimentary priority spot for your next session.",
+      "We enforce a strict zero-ghosting policy. If a Hangout Partner cancels, weather disrupts an outdoor run/hike, or a venue closes unexpectedly, you receive an immediate 100% full refund plus a complimentary priority spot for your next session.",
     highlights: [
-      "100% instant refund on host cancel",
+      "100% instant refund on partner cancel",
       "Weather & venue disruption coverage",
       "Complimentary priority rebooking"
     ]
@@ -149,9 +149,9 @@ const FAQ_DATA: FaqItem[] = [
     category: "cancellation",
     categoryLabel: "Cancellation & Refund",
     icon: CreditCard,
-    question: "How fast do refunds reflect in my bank account or UPI app?",
+    question: "How fast do eligible refunds reflect in my bank account or UPI app?",
     answer:
-      "UPI refunds are triggered immediately upon cancellation and typically settle within 15–30 minutes (maximum 24 hours). Card refunds process within 3–5 business days depending on your issuing bank, with real-time confirmation sent via WhatsApp and email.",
+      "Eligible UPI refunds (cancelled outside the 1-hour no-cancel window) are triggered immediately and typically settle within 15–30 minutes (maximum 24 hours). Card refunds process within 3–5 business days with real-time confirmation via WhatsApp and email.",
     highlights: [
       "UPI refunds settle in mins (max 24h)",
       "Cards settle in 3–5 business days",
@@ -192,13 +192,13 @@ export default function FaqSection({ onJoinWaitlist }: FaqSectionProps) {
         <div className="text-left sm:text-center space-y-2.5 max-w-2xl sm:mx-auto">
           <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] font-bold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/15 px-3 py-1 rounded-full">
             <ShieldCheck className="w-3.5 h-3.5 text-[#19C37D]" />
-            FAQ · Trust & Transparency
+            FAQ · Trust &amp; Transparency
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl font-normal text-[#0B1230] tracking-tight">
-            Security, Payment & Refund FAQs
+            Security, Payment &amp; Refund FAQs
           </h2>
           <p className="text-[#0B1230]/75 text-sm sm:text-base font-normal leading-relaxed">
-            Clear answers on ID verification, Women-Only booking privacy, ₹0 launch payments, and instant cancellations.
+            Clear answers on ID verification, Women-Only eligibility, 2-hour advance booking, 1st free hangout, and no last-hour cancellations.
           </p>
         </div>
 
@@ -235,7 +235,7 @@ export default function FaqSection({ onJoinWaitlist }: FaqSectionProps) {
           <div className="relative w-full md:w-64 shrink-0">
             <input
               type="text"
-              placeholder="Search security, refund, UPI..."
+              placeholder="Search security, refund, 2-hr rule..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#0A2EB8]/20 rounded-xl focus:outline-none focus:border-[#0A2EB8] text-[#0B1230] placeholder:text-[#0B1230]/45 font-medium"
@@ -353,10 +353,10 @@ export default function FaqSection({ onJoinWaitlist }: FaqSectionProps) {
               Still have a question?
             </span>
             <h4 className="font-serif text-xl sm:text-2xl font-bold text-white">
-              Try your first 3 NCR experiences with ₹0 risk.
+              Try your 1st NCR experience with ₹0 risk.
             </h4>
             <p className="text-white/75 text-xs sm:text-sm max-w-lg">
-              Choose Open or Women-Only booking across Gurugram & Delhi with verified hosts and instant cancellation protection.
+              Choose Open or Women-Only booking (women only) across Gurugram &amp; Delhi with verified Hangout Partners—send requests at least 2 hours prior.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full sm:w-auto">

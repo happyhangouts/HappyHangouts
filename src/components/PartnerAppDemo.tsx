@@ -70,7 +70,7 @@ export default function PartnerAppDemo() {
       location: "Blue Tokai, CP (Delhi)",
       verifiedBadge: "Aadhaar + Selfie Verified",
       type: "free_trust",
-      rateText: "First 3 Free Hangout (#1)",
+      rateText: "1st Hangout Free (₹0)",
       status: "pending",
       receivedAgo: "4 mins ago"
     },
@@ -95,8 +95,8 @@ export default function PartnerAppDemo() {
       timeSlot: "Saturday @ 8:00 AM",
       location: "Siri Fort Sports Complex",
       verifiedBadge: "Biometric Vetted",
-      type: "free_trust",
-      rateText: "First 3 Free Hangout (#2)",
+      type: "paid_hourly",
+      rateText: "₹450 / hour",
       status: "pending",
       receivedAgo: "1 hour ago"
     }
@@ -175,7 +175,7 @@ export default function PartnerAppDemo() {
         location: "Blue Tokai, CP (Delhi)",
         verifiedBadge: "Aadhaar + Selfie Verified",
         type: "free_trust",
-        rateText: "First 3 Free Hangout (#1)",
+        rateText: "1st Hangout Free (₹0)",
         status: "pending",
         receivedAgo: "Just Now"
       },
@@ -200,8 +200,8 @@ export default function PartnerAppDemo() {
         timeSlot: "Saturday @ 8:00 AM",
         location: "Siri Fort Sports Complex",
         verifiedBadge: "Biometric Vetted",
-        type: "free_trust",
-        rateText: "First 3 Free Hangout (#2)",
+        type: "paid_hourly",
+        rateText: "₹450 / hour",
         status: "pending",
         receivedAgo: "22 mins ago"
       }
@@ -420,7 +420,7 @@ export default function PartnerAppDemo() {
 
                     {req.type === "free_trust" ? (
                       <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">
-                        ⭐ 3 FREE TRUST HANGOUT
+                        ⭐ 1ST HANGOUT FREE
                       </span>
                     ) : (
                       <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">

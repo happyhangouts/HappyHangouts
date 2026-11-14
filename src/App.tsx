@@ -122,7 +122,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestRunningTrackImg,
     interestPhotoAlt: "White and blue running shoes, sports watch, and water bottle on a sunrise track",
     partnerPhoto: partnerDevImg,
-    partnerPhotoAlt: "Verified captain Dev Malhotra after a morning park run",
+    partnerPhotoAlt: "Verified Hangout Partner Dev Malhotra after a morning park run",
     bgColor: "#a8f0c6",
     badge: "Weekday AM"
   },
@@ -147,7 +147,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestLodhiJogImg,
     interestPhotoAlt: "Dawn running shoes, fitness watch, and water bottle on a sunlit leafy New Delhi jogging path",
     partnerPhoto: partnerFalguniImg,
-    partnerPhotoAlt: "Verified captain Falguni Baddi in bright garden sunlight",
+    partnerPhotoAlt: "Verified Hangout Partner Falguni Baddi in bright garden sunlight",
     bgColor: "#a8f0c6",
     badge: "Weekday AM"
   },
@@ -174,7 +174,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestBadmintonCourtImg,
     interestPhotoAlt: "Two cobalt badminton rackets and shuttlecocks on an indoor wooden court",
     partnerPhoto: partnerUjjwalImg,
-    partnerPhotoAlt: "Verified captain Ujjwal Poonia at an indoor badminton lounge",
+    partnerPhotoAlt: "Verified Hangout Partner Ujjwal Poonia at an indoor badminton lounge",
     bgColor: "#7cc4ff",
     badge: "Weekday PM"
   },
@@ -199,7 +199,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestPickleballCourtImg,
     interestPhotoAlt: "Two cobalt and yellow pickleball paddles and ball beside a net under evening court floodlights",
     partnerPhoto: partnerAaravImg,
-    partnerPhotoAlt: "Verified captain Aarav Mehta outdoors by green court trees",
+    partnerPhotoAlt: "Verified Hangout Partner Aarav Mehta outdoors by green court trees",
     bgColor: "#7cc4ff",
     badge: "Fast Confirm"
   },
@@ -226,7 +226,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestAravalliTrekImg,
     interestPhotoAlt: "Trail hiking shoes, steel flask, and brass compass overlooking sunlit Aravalli hills",
     partnerPhoto: partnerKabirImg,
-    partnerPhotoAlt: "Verified captain Kabir Sen on a golden sunrise nature trail",
+    partnerPhotoAlt: "Verified Hangout Partner Kabir Sen on a golden sunrise nature trail",
     bgColor: "#ff6b4a",
     badge: "Saturday AM"
   },
@@ -251,7 +251,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestWeekendHikeImg,
     interestPhotoAlt: "Hiking daypack, steel thermos flask, and trail hat overlooking Aravalli green hills",
     partnerPhoto: partnerSonikaImg,
-    partnerPhotoAlt: "Verified captain Sonika Sharma outdoors in morning sunlight",
+    partnerPhotoAlt: "Verified Hangout Partner Sonika Sharma outdoors in morning sunlight",
     bgColor: "#ffc933",
     badge: "Saturday AM"
   },
@@ -278,7 +278,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestBoardgamesChaiImg,
     interestPhotoAlt: "Colorful wooden hex strategy board game with dice and terracotta chai cups",
     partnerPhoto: partnerRohanImg,
-    partnerPhotoAlt: "Verified captain Rohan Verma at an outdoor courtyard cafe table",
+    partnerPhotoAlt: "Verified Hangout Partner Rohan Verma at an outdoor courtyard cafe table",
     bgColor: "#7cc4ff",
     badge: "Saturday PM"
   },
@@ -303,7 +303,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestChessCafeImg,
     interestPhotoAlt: "Classic wooden chess board beside two iced lattes on a warm Saturday evening café table",
     partnerPhoto: partnerMeeraImg,
-    partnerPhotoAlt: "Verified captain Meera Reddy beside a sunny leafy cafe window",
+    partnerPhotoAlt: "Verified Hangout Partner Meera Reddy beside a sunny leafy cafe window",
     bgColor: "#ffc933",
     badge: "Saturday PM"
   },
@@ -330,7 +330,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestSunderTrailImg,
     interestPhotoAlt: "Vintage camera, tote bag, and chai cup along a heritage garden cobblestone path",
     partnerPhoto: partnerJyotiImg,
-    partnerPhotoAlt: "Verified captain Jyoti Nandal in leafy Delhi morning sunlight",
+    partnerPhotoAlt: "Verified Hangout Partner Jyoti Nandal in leafy Delhi morning sunlight",
     bgColor: "#a8f0c6",
     badge: "Sunday AM"
   },
@@ -355,7 +355,7 @@ const COMPANIONS: CompanionProfile[] = [
     interestPhoto: interestSundayPhotowalkImg,
     interestPhotoAlt: "Classic silver camera, spare lens, and notebook near sunlit New Delhi Mughal garden arches",
     partnerPhoto: partnerAnanyaImg,
-    partnerPhotoAlt: "Verified captain Ananya Kapoor outside a sunlit Delhi garden cafe",
+    partnerPhotoAlt: "Verified Hangout Partner Ananya Kapoor outside a sunlit Delhi garden cafe",
     bgColor: "#ffc933",
     badge: "Sunday AM"
   }
@@ -370,7 +370,7 @@ const ROTATING_WORDS = [
 ];
 
 const MARQUEE_ITEMS = [
-  "First 3 Hangouts 100% Free",
+  "1st Hangout 100% Free",
   "Weekday Mornings: Running Buddy",
   "Weekday Evenings: Pickleball or Badminton",
   "Saturday Morning: Weekend Hike",
@@ -542,8 +542,11 @@ export default function App() {
   const [bookingCompanion, setBookingCompanion] = useState<CompanionProfile | null>(null);
   const [bookingDate, setBookingDate] = useState("Next matching day");
   const [bookingTime, setBookingTime] = useState("Weekday evenings");
+  const [bookingStartHour, setBookingStartHour] = useState("5:00 PM");
   const [bookingLocation, setBookingLocation] = useState("");
   const [bookingWomenOnly, setBookingWomenOnly] = useState(false);
+  const [womenOnlyConfirmed, setWomenOnlyConfirmed] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [isDispatching, setIsDispatching] = useState(false);
   // Interest-First Photo Privacy: partner real photos unlock ONLY after partner accepts request
@@ -748,13 +751,34 @@ export default function App() {
     setWaitlistStatus(`🎉 Pass Activated (${passCode})! Coordinator will coordinate on WhatsApp +91 ${cleanPhone.slice(-10)} and email ${waitlistEmail}.`);
   };
 
+  // Helper: compute minimum 2 hours prior request cutoff label
+  const getAdvanceCutoffLabel = (startLabel: string) => {
+    const map: Record<string, string> = {
+      "6:30 AM": "4:30 AM (or night before)",
+      "7:30 AM": "5:30 AM (or night before)",
+      "5:00 PM": "3:00 PM latest",
+      "6:30 PM": "4:30 PM latest",
+      "7:30 PM": "5:30 PM latest"
+    };
+    return map[startLabel] || "at least 2 hours before";
+  };
+
   // Open booking modal
   const handleOpenBooking = (companion: CompanionProfile) => {
     audio.playClick();
     setBookingCompanion(companion);
     setBookingLocation(companion.location);
     setBookingTime(companion.slotLabel);
+    setBookingStartHour(
+      companion.slotKey === "weekday_mornings" || companion.slotKey === "sunday_morning"
+        ? "7:30 AM"
+        : companion.slotKey === "saturday_morning"
+        ? "6:30 AM"
+        : "5:00 PM"
+    );
     setBookingWomenOnly(womenOnlyFilter);
+    setWomenOnlyConfirmed(false);
+    setBookingError(null);
     setBookingDate(
       companion.slotKey === "saturday_morning" || companion.slotKey === "saturday_evening"
         ? "This Saturday"
@@ -768,9 +792,15 @@ export default function App() {
     analytics.trackBookingClick(companion.name, companion.location, companion.rate);
   };
 
-  // Confirm booking & trigger live 5-minute Uber/Ola-style dispatch
+  // Confirm booking & trigger live dispatch
   const handleConfirmBooking = () => {
     if (!bookingCompanion) return;
+    if (bookingWomenOnly && !womenOnlyConfirmed) {
+      audio.playToggle();
+      setBookingError("⚠️ Women-Only Booking is strictly for women only. Please tick the confirmation box below to continue.");
+      return;
+    }
+    setBookingError(null);
     audio.playClick();
     audio.playSuccess();
     setIsDispatching(true);
@@ -868,7 +898,7 @@ export default function App() {
           Launch Offer
         </span>
         <span className="font-bold text-[#0B1230]">
-          First 3 hangouts are{" "}
+          Your 1st hangout is{" "}
           <span className="bg-[#0A2EB8] text-white px-2 py-0.5 rounded font-extrabold tracking-tight mx-0.5">
             100% FREE
           </span>{" "}
@@ -879,7 +909,7 @@ export default function App() {
           onClick={() => audio.playClick()} 
           className="inline-flex items-center gap-1 font-extrabold text-[#011C92] hover:text-[#0A2EB8] underline decoration-2 underline-offset-2 whitespace-nowrap ml-1"
         >
-          Book Free Experience →
+          Book 1st Free Hangout →
         </a>
       </div>
 
@@ -1064,7 +1094,7 @@ export default function App() {
                 </span>
                 <span className="text-[#0B1230]/30">·</span>
                 <span className="bg-[#FFC83D] text-[#0B1230] text-[11px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm">
-                  1st 3 Free
+                  1st Hangout Free
                 </span>
               </div>
 
@@ -1089,7 +1119,7 @@ export default function App() {
                 transition={{ duration: 0.55, delay: 0.15 }}
                 className="text-sm sm:text-lg lg:text-xl text-[#0B1230]/80 font-normal leading-relaxed mt-5 sm:mt-6 mb-4 sm:mb-5 max-w-xl"
               >
-                Skip awkward profile browsing. Pick one of 5 curated offline experiences in Gurgaon & Delhi — weekday morning runs, evening pickleball or badminton, Saturday hikes, Saturday evening café chess & board games, or Sunday photo walks.
+                Skip awkward profile browsing. Pick one of 5 curated offline experiences in Gurgaon &amp; Delhi with verified Hangout Partners — request at least 2 hours prior.
               </motion.p>
 
               {/* Highlighted Launch Offer Callout Card */}
@@ -1104,7 +1134,7 @@ export default function App() {
                     Launch Offer
                   </span>
                   <p className="text-xs sm:text-sm font-bold text-[#0B1230] leading-snug">
-                    First 3 hangouts are{" "}
+                    Your 1st hangout is{" "}
                     <span className="bg-[#FFC83D] text-[#0B1230] px-1.5 py-0.5 rounded font-extrabold">
                       100% FREE
                     </span>{" "}
@@ -1186,7 +1216,7 @@ export default function App() {
                       <span>Verified Public Venues</span>
                     </span>
                     <span className="inline-flex items-center bg-[#FFC83D] text-[#0B1230] px-2.5 py-1 rounded-full text-[11px] font-extrabold shadow-sm">
-                      1st 3 Hangouts FREE
+                      1st Hangout FREE
                     </span>
                   </div>
 
@@ -1200,11 +1230,11 @@ export default function App() {
                     <ul className="space-y-1.5 text-xs sm:text-[13px] font-semibold text-white/95 bg-[#0B1230]/60 backdrop-blur-xs border border-white/15 rounded-xl p-3">
                       <li className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-[#19C37D] shrink-0" />
-                        <span>5 curated weekly time slots · Zero profile browsing</span>
+                        <span>5 curated weekly slots · Min. 2 hrs prior request</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-[#FFC83D] shrink-0" />
-                        <span>Govt-ID verified captains · Women-Only option</span>
+                        <span>Govt-ID verified Hangout Partners · Women-Only (for women)</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Star className="w-3.5 h-3.5 text-[#FFC83D] fill-[#FFC83D] shrink-0" />
@@ -1301,12 +1331,12 @@ export default function App() {
               Pick an <CircledHighlight circleColor="#3DAAFC">experience</CircledHighlight>, not a profile.
             </h2>
             <p className="text-[#0B1230]/75 text-base sm:text-lg max-w-2xl mt-3 font-normal">
-              Choose by curated activity, weekly time slot, and public venue. A Govt-ID vetted local captain confirms within 5 minutes once your spot is reserved.
+              Choose by curated activity, weekly time slot, and public venue. Send your request at least 2 hours prior (e.g., by 3:00 PM for a 5:00 PM hangout) so a Govt-ID vetted Hangout Partner confirms cleanly.
             </p>
             <div className="mt-4 inline-flex items-center gap-2.5 bg-white border border-[#0A2EB8]/15 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#0B1230] shadow-xs">
               <CheckCircle2 className="w-4 h-4 text-[#19C37D] shrink-0" />
               <span>
-                Every card highlights the <strong className="text-[#0A2EB8]">real experience, venue & schedule</strong> — captain identity unlocks only once your spot is confirmed.
+                Every card highlights the <strong className="text-[#0A2EB8]">real experience, venue &amp; schedule</strong> — Hangout Partner details unlock once confirmed.
               </span>
             </div>
           </motion.div>
@@ -1397,7 +1427,7 @@ export default function App() {
               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                 womenOnlyFilter ? "bg-[#19C37D] text-[#0B1230]" : "bg-[#19C37D]/15 text-[#19C37D]"
               }`}>
-                {womenOnlyFilter ? "ON · Female Captain" : "Trust Option"}
+                {womenOnlyFilter ? "ON · Women Only" : "For Women Only"}
               </span>
             </button>
           </motion.div>
@@ -1407,7 +1437,7 @@ export default function App() {
               <div className="flex items-center gap-2.5 text-xs sm:text-sm font-semibold">
                 <ShieldCheck className="w-4 h-4 text-[#19C37D] shrink-0" />
                 <span>
-                  <strong className="text-[#FFC83D]">Women-Only Mode Active:</strong> Every experience below routes strictly to an Aadhaar-verified Woman Captain & female-only cohort.
+                  <strong className="text-[#FFC83D]">Women-Only Mode (Exclusively for Women):</strong> Available strictly for women attendees, matched only with an Aadhaar-verified Female Hangout Partner.
                 </span>
               </div>
               <button
@@ -1623,10 +1653,10 @@ export default function App() {
 
                       <p className="text-[11px] text-[#0B1230]/65 font-medium">
                         {isUnlocked
-                          ? `Captain assigned: ${womenOnlyFilter ? comp.womenCaptainName : comp.name} · ID Verified`
+                          ? `Hangout Partner assigned: ${womenOnlyFilter ? comp.womenCaptainName : comp.name} · ID Verified`
                           : womenOnlyFilter
-                          ? `👩 Woman Captain (${comp.womenCaptainName}) · Women-Only`
-                          : `Women-Only & Open options · ★ ${comp.rating}`}
+                          ? `👩 Female Hangout Partner (${comp.womenCaptainName}) · Women Only`
+                          : `Women-Only (women) & Open options · ★ ${comp.rating}`}
                       </p>
                     </div>
                   </div>
@@ -1740,9 +1770,9 @@ export default function App() {
               className="st relative"
             >
               <div className="font-serif text-4xl text-[#011C92] font-bold mb-3">02</div>
-              <h3 className="font-serif text-2xl text-[#0B1230] font-medium mb-2">Reserve your spot & lock venue</h3>
+              <h3 className="font-serif text-2xl text-[#0B1230] font-medium mb-2">Request 2+ hrs prior &amp; lock venue</h3>
               <p className="text-[#0B1230]/75 text-sm leading-relaxed font-normal">
-                Lock your preferred weekly slot and public park, court, or café. A Govt-ID vetted captain confirms within 5 minutes and unlocks check-in details.
+                Send your request at least 2 hours before start time (e.g., request by 3 PM for a 5 PM hangout). A Govt-ID vetted Hangout Partner confirms and unlocks check-in details. Note: no last-hour cancellations.
               </p>
             </motion.div>
 
@@ -1757,11 +1787,11 @@ export default function App() {
             >
               <div className="font-serif text-4xl text-[#0A2EB8] font-bold mb-3">03</div>
               <h3 className="font-serif text-2xl text-[#0B1230] font-medium mb-2 flex items-center justify-between">
-                <span>Show up & live the vibe</span>
-                <span className="text-xs bg-[#19C37D]/15 text-[#19C37D] px-2.5 py-0.5 rounded-full font-sans font-bold">1st 3 Free</span>
+                <span>Show up &amp; live the vibe</span>
+                <span className="text-xs bg-[#19C37D]/15 text-[#19C37D] px-2.5 py-0.5 rounded-full font-sans font-bold">1st Free</span>
               </h3>
               <p className="text-[#0B1230]/75 text-sm leading-relaxed font-normal">
-                Meet in vibrant cafés, courts, parks, or trails. Your first 3 experiences are 100% free (₹0 fee) to build mutual trust and 5-star community reviews.
+                Meet in vibrant cafés, courts, parks, or trails. Your 1st hangout is 100% free (₹0 fee) to build mutual trust and 5-star community reviews.
               </p>
             </motion.div>
           </div>
@@ -1854,7 +1884,7 @@ export default function App() {
             >
               <div className="font-serif text-2xl font-semibold text-[#FFC83D] mb-2">ID Verified</div>
               <p className="text-white/85 text-sm leading-relaxed font-normal">
-                Every experience captain and member is verified with Government ID (Aadhaar/PAN) before attending or leading.
+                Every Hangout Partner and attendee is verified with Government ID (Aadhaar/PAN) before leading or joining a session.
               </p>
             </motion.div>
             
@@ -1985,10 +2015,10 @@ export default function App() {
               Based on {calcHours} hrs/week at ₹{calcRate}/hr, after 20% platform hosting & escrow support.
             </p>
 
-            {/* Host Trust Period Notice */}
+            {/* Hangout Partner Trust Notice */}
             <div className="mt-5 p-4 bg-[#F3F7FF] rounded-xl border border-[#0A2EB8]/15 text-xs text-[#0B1230]/80 text-left">
-              <strong className="text-[#0B1230] block mb-1">Founding Host Trust Privilege:</strong>
-              Your first 3 experiences are held at ₹0 fee to build mutual trust and earn your initial 5-star reviews. Standard session payouts apply from hangout 4 onwards.
+              <strong className="text-[#0B1230] block mb-1">Hangout Partner Trust Privilege:</strong>
+              Your 1st session is held at ₹0 fee to build mutual trust and earn your initial 5-star review. Standard session payouts apply from hangout 2 onwards.
             </div>
 
             <a 
@@ -1999,7 +2029,7 @@ export default function App() {
               }}
               className="bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold mt-6 text-sm py-3 px-6 w-full rounded-full inline-block text-center shadow-md transition-transform hover:-translate-y-0.5"
             >
-              Host Weekly Experiences →
+              Become a Hangout Partner →
             </a>
           </motion.div>
 
@@ -2017,7 +2047,7 @@ export default function App() {
             className={submittedPass ? "" : "max-w-2xl mx-auto text-left sm:text-center"}
           >
             <span className="tag" style={{ background: "#ffffff", color: "#0A2EB8", border: "1px solid #0A2EB8" }}>
-              Gurugram & Delhi NCR · 1st 3 Free
+              Gurugram &amp; Delhi NCR · 1st Hangout Free
             </span>
             <h2 className="font-serif text-[32px] sm:text-[50px] font-normal tracking-tight mt-3 mb-2 text-[#0B1230]">
               Unlock Your <CircledHighlight circleColor="#3DAAFC">Hangout Pass</CircledHighlight>
@@ -2099,7 +2129,7 @@ export default function App() {
                     <span className="text-xl shrink-0">🙋</span>
                     <div className="min-w-0">
                       <span className="block text-sm font-extrabold leading-tight">Join Experiences</span>
-                      <span className={`block text-[11px] ${waitlistRole === "seeker" ? "text-white/80" : "text-[#0B1230]/60"}`}>First 3 sessions 100% Free</span>
+                      <span className={`block text-[11px] ${waitlistRole === "seeker" ? "text-white/80" : "text-[#0B1230]/60"}`}>1st hangout 100% Free</span>
                     </div>
                   </button>
                   <button
@@ -2116,8 +2146,8 @@ export default function App() {
                   >
                     <span className="text-xl shrink-0">💪</span>
                     <div className="min-w-0">
-                      <span className="block text-sm font-extrabold leading-tight">Lead Experiences</span>
-                      <span className={`block text-[11px] ${waitlistRole === "partner" ? "text-white/80" : "text-[#0B1230]/60"}`}>Host activities & earn monthly</span>
+                      <span className="block text-sm font-extrabold leading-tight">Become Hangout Partner</span>
+                      <span className={`block text-[11px] ${waitlistRole === "partner" ? "text-white/80" : "text-[#0B1230]/60"}`}>Lead activities &amp; earn monthly</span>
                     </div>
                   </button>
                 </div>
@@ -2359,9 +2389,9 @@ export default function App() {
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-base shrink-0">👩</span>
                     <div className="min-w-0">
-                      <span className="block text-xs font-extrabold">Prefer Women-Only Booking Option</span>
+                      <span className="block text-xs font-extrabold">Women-Only Booking Option (For Women Only)</span>
                       <span className={`block text-[10px] ${waitlistWomenOnly ? "text-white/80" : "text-[#0B1230]/65"}`}>
-                        Match strictly with verified Woman Captains & female cohorts
+                        Exclusively for women seekers · Matched only with Female Hangout Partners
                       </span>
                     </div>
                   </div>
@@ -2490,18 +2520,18 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* 3 Free Hangouts Credit on Pass */}
+                  {/* 1st Free Hangout Credit on Pass */}
                   <div className="p-3 bg-[#19C37D]/10 rounded-xl border border-[#19C37D]/30 flex items-center justify-between">
                     <div>
                       <div className="text-[10px] font-bold uppercase tracking-wider text-[#19C37D]">
                         Launch Trust Privilege
                       </div>
                       <div className="text-xs font-bold text-[#0B1230] mt-0.5 flex items-center gap-1">
-                        <span>🎁 3 Free Experiences Included</span>
+                        <span>🎁 1st Free Experience Included</span>
                       </div>
                     </div>
                     <span className="text-[10px] font-bold bg-[#19C37D] text-white px-2.5 py-1 rounded-full shadow-xs">
-                      ₹0 (First 3 Free)
+                      ₹0 (1st Hangout Free)
                     </span>
                   </div>
 
@@ -2618,7 +2648,7 @@ export default function App() {
             companion={bookingCompanion}
             meetingLocation={bookingLocation}
             meetingDate={bookingDate}
-            meetingTime={bookingTime}
+            meetingTime={`${bookingTime} · ${bookingStartHour}`}
             womenOnly={bookingWomenOnly}
             isAlreadyUnlocked={unlockedPartnerIds.includes(bookingCompanion.id)}
             onPartnerAccepted={(acceptedId) => {
@@ -2730,7 +2760,7 @@ export default function App() {
                     <p className="text-[11px] text-[#0B1230]/70 flex items-center gap-1.5 pt-1 border-t border-[#0A2EB8]/10">
                       <CheckCircle2 className="w-3.5 h-3.5 text-[#19C37D] shrink-0" />
                       <span>
-                        A Govt-ID vetted {bookingWomenOnly ? "Woman Captain" : "local captain"} ({bookingWomenOnly ? bookingCompanion.womenCaptainName : bookingCompanion.name}) is assigned once confirmed.
+                        A Govt-ID vetted {bookingWomenOnly ? "Female Hangout Partner" : "Hangout Partner"} ({bookingWomenOnly ? bookingCompanion.womenCaptainName : bookingCompanion.name}) is assigned once confirmed.
                       </span>
                     </p>
                   </div>
@@ -2746,6 +2776,8 @@ export default function App() {
                         onClick={() => {
                           audio.playClick();
                           setBookingWomenOnly(false);
+                          setWomenOnlyConfirmed(false);
+                          setBookingError(null);
                         }}
                         className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
                           !bookingWomenOnly
@@ -2764,6 +2796,7 @@ export default function App() {
                         onClick={() => {
                           audio.playClick();
                           setBookingWomenOnly(true);
+                          setBookingError(null);
                         }}
                         className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
                           bookingWomenOnly
@@ -2772,14 +2805,31 @@ export default function App() {
                         }`}
                       >
                         <span className="block text-xs font-extrabold flex items-center justify-between">
-                          <span>👩 Women-Only</span>
+                          <span>👩 Women-Only (Women Only)</span>
                           {bookingWomenOnly && <Check className="w-3.5 h-3.5 text-[#FFC83D]" />}
                         </span>
                         <span className={`block text-[10px] ${bookingWomenOnly ? "text-[#FFC83D]" : "text-[#0B1230]/60"}`}>
-                          Woman Captain & Female Group
+                          Female Hangout Partner · Strictly for women
                         </span>
                       </button>
                     </div>
+
+                    {bookingWomenOnly && (
+                      <label className="mt-2.5 p-3 bg-[#011C92]/5 border border-[#011C92]/25 rounded-xl flex items-start gap-2.5 text-xs text-[#0B1230] cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={womenOnlyConfirmed}
+                          onChange={(e) => {
+                            setWomenOnlyConfirmed(e.target.checked);
+                            if (e.target.checked) setBookingError(null);
+                          }}
+                          className="mt-0.5 w-4 h-4 accent-[#0A2EB8] shrink-0 cursor-pointer"
+                        />
+                        <span className="font-semibold leading-snug">
+                          I confirm I am a woman — Women-Only booking is strictly for women only (with Female Hangout Partners).
+                        </span>
+                      </label>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2801,19 +2851,33 @@ export default function App() {
 
                     <div>
                       <label className="block text-xs font-bold text-[#0B1230]/70 uppercase tracking-wider mb-1.5">
-                        Weekly Slot
+                        Hangout Start Time (2-Hr Rule)
                       </label>
                       <select 
-                        value={bookingTime}
-                        onChange={(e) => setBookingTime(e.target.value)}
+                        value={bookingStartHour}
+                        onChange={(e) => setBookingStartHour(e.target.value)}
                         className="w-full text-sm bg-white border border-[#0A2EB8]/20 rounded-lg p-2 font-medium text-[#0B1230]"
                       >
-                        <option>Weekday mornings</option>
-                        <option>Weekday evenings</option>
-                        <option>Saturday morning</option>
-                        <option>Saturday evening</option>
-                        <option>Sunday morning</option>
+                        <option value="6:30 AM">6:30 AM (Request by 4:30 AM)</option>
+                        <option value="7:30 AM">7:30 AM (Request by 5:30 AM)</option>
+                        <option value="5:00 PM">5:00 PM (Request by 3:00 PM)</option>
+                        <option value="6:30 PM">6:30 PM (Request by 4:30 PM)</option>
+                        <option value="7:30 PM">7:30 PM (Request by 5:30 PM)</option>
                       </select>
+                    </div>
+                  </div>
+
+                  {/* Minimum 2-Hour Advance Booking Window */}
+                  <div className="p-3 bg-[#F3F7FF] border border-[#0A2EB8]/20 rounded-xl text-xs text-[#0B1230] flex items-start gap-2.5">
+                    <Clock className="w-4 h-4 text-[#0A2EB8] shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-[#0A2EB8] block">
+                        Minimum 2-Hour Advance Request Rule
+                      </strong>
+                      <span className="text-[11px] text-[#0B1230]/80 leading-snug block mt-0.5">
+                        Selected start time: <strong>{bookingStartHour}</strong> → Please send your request by{" "}
+                        <strong className="text-[#0A2EB8]">{getAdvanceCutoffLabel(bookingStartHour)}</strong> (e.g., request by 3:00 PM for a 5:00 PM hangout).
+                      </span>
                     </div>
                   </div>
 
@@ -2830,38 +2894,42 @@ export default function App() {
                     />
                   </div>
 
-                  {/* First 3 Hangouts Free Trust Callout */}
+                  {/* 1st Hangout Free Trust Callout */}
                   <div className="p-4 bg-[#19C37D]/10 border border-[#19C37D]/30 rounded-2xl">
                     <div className="flex items-center justify-between text-xs font-bold text-[#19C37D] mb-1">
-                      <span>Launch Trust Privilege:</span>
+                      <span>Launch Offer:</span>
                       <span className="bg-[#19C37D] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        ₹0 (1st of 3 Free)
+                        ₹0 (1st Hangout Free)
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-[#0B1230]/60 pt-1 border-t border-[#19C37D]/20">
-                      <span>Regular Experience Fee:</span>
+                      <span>Regular Experience Fee (from 2nd hangout):</span>
                       <span className="line-through">₹{bookingCompanion.rate}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm font-bold text-[#0B1230] mt-1">
                       <span>Your Cost Today:</span>
-                      <span className="font-serif text-base text-[#19C37D] font-bold">₹0 Free</span>
+                      <span className="font-serif text-base text-[#19C37D] font-bold">₹0 (1st Hangout Free)</span>
                     </div>
                   </div>
 
-                  {/* 5-Minute Spot Confirmation Explainer Notice */}
-                  <div className="p-3.5 bg-[#F3F7FF] border border-[#0A2EB8]/15 rounded-2xl flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#0A2EB8] text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
-                      5m
-                    </div>
+                  {/* Cancellation & 5-Min Confirmation Policy */}
+                  <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-2xl flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-[#0B1230] flex items-center gap-1.5">
-                        <span>5-Minute Experience Confirmation</span>
+                      <p className="text-xs font-extrabold text-[#0B1230]">
+                        Cancellation Policy: You can&apos;t cancel last hour
                       </p>
-                      <p className="text-[11px] text-[#0B1230]/75 font-normal mt-0.5 leading-relaxed">
-                        Once reserved, our local captain confirms your spot within 5 minutes and unlocks WhatsApp check-in details. If unresponded, it auto-cancels with ₹0 charge.
+                      <p className="text-[11px] text-[#0B1230]/80 font-normal mt-0.5 leading-relaxed">
+                        No cancellations are allowed within 1 hour of your hangout start time. Our Hangout Partner confirms within 5 minutes and unlocks WhatsApp details; if unresponded, it auto-cancels with ₹0 fee.
                       </p>
                     </div>
                   </div>
+
+                  {bookingError && (
+                    <div className="p-3 rounded-xl bg-amber-50 border border-amber-500 text-amber-900 text-xs font-bold">
+                      {bookingError}
+                    </div>
+                  )}
 
                   <div className="pt-2">
                     <button
@@ -2869,10 +2937,10 @@ export default function App() {
                       onClick={handleConfirmBooking}
                       className="bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-bold w-full py-3.5 text-sm rounded-full shadow-md transition-transform hover:-translate-y-0.5 cursor-pointer"
                     >
-                      Reserve Spot for This Experience (5-Min Confirm)
+                      Send Request to Hangout Partner ({bookingStartHour})
                     </button>
                     <p className="text-[11px] text-center text-[#0B1230]/60 mt-2 font-normal">
-                      Strictly public venues. First 3 experiences ₹0 free. Free auto-cancel after 5 minutes.
+                      1st hangout ₹0 free · Request min. 2 hrs prior · No last-hour cancellations.
                     </p>
                   </div>
                 </div>
@@ -2908,7 +2976,7 @@ export default function App() {
               <div className="flex items-center gap-2 text-xs font-bold text-white bg-white/10 px-3 py-1.5 rounded-xl border border-white/15 w-fit">
                 <span>⭐ 4.9 / 5 Rating</span>
                 <span>·</span>
-                <span className="text-[#FFC83D]">First 3 Hangouts Free</span>
+                <span className="text-[#FFC83D]">1st Hangout Free</span>
               </div>
             </div>
 

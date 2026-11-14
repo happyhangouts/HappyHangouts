@@ -210,7 +210,7 @@ export default function HowItWorksHireGetHired({
       step: 2,
       title: "Transparent Hourly Booking",
       subtitle: "Safe Escrow & Zero Awkwardness",
-      desc: "Select your desired slot and duration. Transparent hourly rates (₹300 - ₹600/hr or 1st 3 hangouts free during launch). No awkward bill splits!",
+      desc: "Select your desired slot and duration. Transparent hourly rates (₹300 - ₹600/hr or your 1st hangout FREE during launch). Requests must be sent at least 2 hours in advance.",
       icon: <CreditCard className="w-5 h-5" />,
       badge: "Escrow Protection",
       highlight: "Payment is securely escrowed and only released after your hangout session successfully completes."
@@ -968,7 +968,7 @@ export default function HowItWorksHireGetHired({
                 </tr>
                 <tr>
                   <td className="p-4 sm:p-5 font-bold">Cost &amp; Earnings</td>
-                  <td className="p-4 sm:p-5">Pay ₹300 - ₹600/hr (1st 3 hangouts FREE during launch)</td>
+                  <td className="p-4 sm:p-5">Pay ₹300 - ₹600/hr (1st hangout FREE during launch)</td>
                   <td className="p-4 sm:p-5">Earn ₹400 - ₹800/hr directly to UPI (0% commission for first 50)</td>
                 </tr>
                 <tr>

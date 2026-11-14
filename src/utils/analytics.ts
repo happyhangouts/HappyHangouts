@@ -118,10 +118,10 @@ export const analytics = {
     });
   },
 
-  // Free 3 hangouts claim or offer view
+  // 1st hangout free perk view
   trackFreeHangoutsPerkView: () => {
-    trackEvent("view_promotion", "promotions", "First 3 Hangouts Free Offer", 0, {
-      promotion_name: "launch_free_3_hangouts",
+    trackEvent("view_promotion", "promotions", "1st Hangout Free Offer", 0, {
+      promotion_name: "launch_1st_hangout_free",
       discount: 100
     });
   },

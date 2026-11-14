@@ -19,8 +19,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { audio } from "../utils/audio";
-import { analytics } from "../utils/analytics";
-import GoogleHangoutsMap from "./GoogleHangoutsMap";
 
 export interface RadarHotspot {
   id: string;
@@ -283,7 +281,6 @@ export default function LiveHangoutsRadar({
   const [hotspots, setHotspots] = useState<RadarHotspot[]>(generateInitialHotspots);
   const [selectedCity, setSelectedCity] = useState<"all" | "Gurugram" | "Delhi" | "Noida">("all");
   const [selectedHotspot, setSelectedHotspot] = useState<RadarHotspot | null>(null);
-  const [viewMode, setViewMode] = useState<"map" | "radar">("map");
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [scanTimestamp, setScanTimestamp] = useState<string>("Just now");
   const [lastSyncSecondsAgo, setLastSyncSecondsAgo] = useState<number>(3);
@@ -523,10 +520,10 @@ export default function LiveHangoutsRadar({
         <div className="bg-[#011C92] border border-[#3DAAFC]/30 text-white rounded-2xl px-4 py-3 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
           <div className="flex items-center gap-2.5 text-xs font-semibold text-white/90">
             <span className="text-base">🎁</span>
-            <span>First 3 Hangouts are 100% FREE! Meet verified partners across any radar hub with ₹0 fee to build mutual comfort & reviews.</span>
+            <span>Your 1st Hangout is 100% FREE! Meet verified Hangout Partners across any radar hub with ₹0 booking fee to build mutual trust.</span>
           </div>
           <span className="text-[11px] font-bold uppercase tracking-wider bg-[#FFC83D] text-[#0B1230] px-3 py-1 rounded-full shrink-0 shadow-xs">
-            Sessions 1, 2, 3 = ₹0 Free
+            1st Hangout = ₹0 Free
           </span>
         </div>
 
@@ -626,62 +623,20 @@ export default function LiveHangoutsRadar({
           ))}
         </div>
 
-        {/* 4. VIEW MODE TOGGLE & LIVE MAP / RADAR DISPLAY */}
+        {/* 4. LIVE SONAR RADAR DISPLAY */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                audio.playClick();
-                setViewMode("map");
-                analytics.trackViewModeSwitch("map");
-              }}
-              className={`px-3.5 py-1.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 border-[2px] transition-all cursor-pointer ${
-                viewMode === "map"
-                  ? "bg-[#1f4ee0] text-white border-[#0b1f5c] shadow-[2.5px_2.5px_0_#0b1f5c]"
-                  : "bg-white text-[#0b1f5c] border-[#0b1f5c]/30 hover:border-[#0b1f5c]"
-              }`}
-            >
-              <MapPin className="w-3.5 h-3.5 text-[#ffc933]" />
-              <span>🗺️ Google Maps View</span>
-              <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-mono">Interactive</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                audio.playClick();
-                setViewMode("radar");
-                analytics.trackViewModeSwitch("radar");
-              }}
-              className={`px-3.5 py-1.5 rounded-xl font-extrabold text-xs flex items-center gap-1.5 border-[2px] transition-all cursor-pointer ${
-                viewMode === "radar"
-                  ? "bg-[#0b1f5c] text-white border-[#0b1f5c] shadow-[2.5px_2.5px_0_#0b1f5c]"
-                  : "bg-white text-[#0b1f5c] border-[#0b1f5c]/30 hover:border-[#0b1f5c]"
-              }`}
-            >
-              <Radio className="w-3.5 h-3.5 text-cyan-400" />
-              <span>🛰️ Sonar Radar View</span>
-            </button>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-extrabold text-xs bg-[#0b1f5c] text-white border-[2px] border-[#0b1f5c] shadow-[2.5px_2.5px_0_#0b1f5c] w-fit">
+            <Radio className="w-3.5 h-3.5 text-cyan-400" />
+            <span>🛰️ Live NCR Sonar Radar</span>
           </div>
 
           <div className="flex items-center gap-2 text-[11px] font-bold text-[#4a5a8a]">
             <Sparkles className="w-3.5 h-3.5 text-[#1f4ee0]" />
-            <span>Interactive Google Maps with live companion pins & directions</span>
+            <span>Real-time hub telemetry · Send requests at least 2 hours before start time</span>
           </div>
         </div>
 
-        {viewMode === "map" ? (
-          <GoogleHangoutsMap
-            hotspots={filteredHotspots}
-            selectedHotspot={selectedHotspot}
-            onSelectHotspot={(spot) => setSelectedHotspot(spot)}
-            onBookCompanion={(compName, loc) => onOpenBookingClick(compName, loc)}
-            triggerBoom={triggerBoom}
-            selectedCity={selectedCity}
-          />
-        ) : (
-          <div className="relative w-full h-72 sm:h-96 bg-[#071330] rounded-[24px] overflow-hidden border-[3px] border-[#0b1f5c] flex items-center justify-center p-4 shadow-inner">
+        <div className="relative w-full h-72 sm:h-96 bg-[#071330] rounded-[24px] overflow-hidden border-[3px] border-[#0b1f5c] flex items-center justify-center p-4 shadow-inner">
             {/* Stylized Delhi NCR Map Vector Grid / Trails */}
             <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -775,11 +730,10 @@ export default function LiveHangoutsRadar({
               <Wifi className="w-3.5 h-3.5 text-emerald-400" />
               <span>PING 24ms · 100% ID SECURE</span>
             </div>
-          </div>
-        )}
+        </div>
 
-        {/* 5. LIVE ACTIVITY FEED STREAM ("HAPPENING RIGHT NOW IN NCR") */}
-        <div className="mt-6 pt-5 border-t-[2px] border-[#0b1f5c]/20">
+        {/* 5. LIVE ACTIVITY FEED STREAM ("HAPPENING RIGHT NOW IN NCR") — Hidden on Mobile & Tablet */}
+        <div className="hidden lg:block mt-6 pt-5 border-t-[2px] border-[#0b1f5c]/20">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#0b1f5c] flex items-center gap-2">
               <Activity className="w-4 h-4 text-[#1f4ee0] animate-pulse" />
@@ -875,10 +829,10 @@ export default function LiveHangoutsRadar({
                   </div>
                 </div>
 
-                {/* Companions Online at this Spot */}
+                {/* Hangout Partners Online at this Spot */}
                 <div>
                   <h4 className="text-xs font-black uppercase tracking-wider text-[#4a5a8a] mb-2">
-                    Verified Hosts at {selectedHotspot.name}:
+                    Verified Hangout Partners at {selectedHotspot.name}:
                   </h4>
                   <div className="space-y-2">
                     {selectedHotspot.activeCompanions.map((comp, idx) => (

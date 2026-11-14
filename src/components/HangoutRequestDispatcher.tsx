@@ -4,7 +4,6 @@ import {
   RefreshCw, 
   ShieldCheck, 
   MessageCircle, 
-  Navigation, 
   Radio, 
   UserCheck,
   Lock,
@@ -156,9 +155,9 @@ export default function HangoutRequestDispatcher({
   const progressPercent = (secondsLeft / TOTAL_TIMEOUT_SECONDS) * 100;
 
   // WhatsApp chat message
-  const activeCaptainName = womenOnly ? companion.womenCaptainName : companion.name;
-  const bookingModeTag = womenOnly ? " [WOMEN-ONLY BOOKING — Verified Woman Captain]" : "";
-  const waMessage = `Hi! I reserved a FREE spot for "${companion.experienceTitle}" (${companion.categoryLabel})${bookingModeTag} at ${meetingLocation} on ${meetingDate} (${meetingTime}) via Happy Hangouts. Excited for the experience!`;
+  const activePartnerName = womenOnly ? companion.womenCaptainName : companion.name;
+  const bookingModeTag = womenOnly ? " [WOMEN-ONLY BOOKING — Exclusively for Women · Verified Female Hangout Partner]" : "";
+  const waMessage = `Hi! I reserved a FREE spot (1st Hangout Free) for "${companion.experienceTitle}" (${companion.categoryLabel})${bookingModeTag} at ${meetingLocation} on ${meetingDate} (${meetingTime}) via Happy Hangouts (submitted 2+ hrs in advance). Excited for the experience!`;
   const waUrl = `https://wa.me/918800843189?text=${encodeURIComponent(waMessage)}`;
 
   return (
@@ -192,7 +191,7 @@ export default function HangoutRequestDispatcher({
               <p className="text-[11px] text-[#0B1230]/65 font-medium truncate">
                 {status === "confirmed"
                   ? `${companion.experienceTitle} · Check-in Ready`
-                  : "5-minute captain check-in · Host details share on confirm"}
+                  : "5-minute Hangout Partner check-in · Details share on confirm"}
               </p>
             </div>
           </div>
@@ -212,10 +211,10 @@ export default function HangoutRequestDispatcher({
         <div className="bg-[#011C92] text-white px-4 py-2.5 flex items-center justify-between text-xs gap-2">
           <span className="text-[11px] text-white/95 leading-snug">
             {photoUnlocked
-              ? `✓ Confirmed! Meet ${womenOnly ? "Woman Captain" : "captain"} ${activeCaptainName} at ${meetingLocation}.`
+              ? `✓ Confirmed! Meet ${womenOnly ? "Female Hangout Partner" : "Hangout Partner"} ${activePartnerName} at ${meetingLocation}.`
               : womenOnly
-              ? "👩 Women-Only Booking: Verified Woman Captain & female-only cohort locked."
-              : "Experience-first matching: Captain identity stays private until your spot is confirmed."}
+              ? "👩 Women-Only Booking (For Women Only): Verified Female Hangout Partner locked."
+              : "Experience-first matching: Hangout Partner identity stays private until confirmed."}
           </span>
           <span className={`text-[10px] uppercase px-2 py-0.5 rounded font-bold shrink-0 ${
             photoUnlocked
@@ -224,7 +223,7 @@ export default function HangoutRequestDispatcher({
               ? "bg-[#FFC83D] text-[#0B1230]"
               : "bg-[#3DAAFC]/25 text-[#3DAAFC]"
           }`}>
-            {photoUnlocked ? "Spot Locked" : womenOnly ? "Women-Only" : "Experience First"}
+            {photoUnlocked ? "Spot Locked" : womenOnly ? "Women Only" : "Experience First"}
           </span>
         </div>
 
@@ -282,8 +281,8 @@ export default function HangoutRequestDispatcher({
                   <span className="w-2 h-2 rounded-full bg-[#3DAAFC] animate-ping"></span>
                   <span>
                     {womenOnly
-                      ? `Confirming Women-Only spot with ${activeCaptainName}...`
-                      : `Confirming spot with ${activeCaptainName}...`}
+                      ? `Confirming Women-Only spot with Female Hangout Partner ${activePartnerName}...`
+                      : `Confirming spot with Hangout Partner ${activePartnerName}...`}
                   </span>
                 </p>
               </div>
@@ -311,8 +310,8 @@ export default function HangoutRequestDispatcher({
                       <ShieldCheck className="w-3 h-3 shrink-0" />
                       <span className="truncate">
                         {womenOnly
-                          ? "👩 Women-Only · Verified Woman Captain"
-                          : "Govt-ID vetted captain · Reveals on confirm"}
+                          ? "👩 Women-Only · Female Hangout Partner"
+                          : "Govt-ID vetted Hangout Partner · Reveals on confirm"}
                       </span>
                     </p>
                   </div>
@@ -434,7 +433,7 @@ export default function HangoutRequestDispatcher({
                       <strong>{meetingLocation}</strong> · {meetingDate} ({meetingTime})
                     </p>
                     <p className="text-[11px] font-semibold text-[#0A2EB8] mt-1">
-                      {womenOnly ? "👩 Woman Captain assigned:" : "Captain assigned:"} {activeCaptainName} (ID Verified · ★ {companion.rating})
+                      {womenOnly ? "👩 Female Hangout Partner:" : "Hangout Partner assigned:"} {activePartnerName} (ID Verified · ★ {companion.rating})
                     </p>
                   </div>
                 </div>
@@ -443,22 +442,27 @@ export default function HangoutRequestDispatcher({
               {/* Free Launch Pass Summary Box */}
               <div className="bg-[#F3F7FF] border border-[#0A2EB8]/15 rounded-2xl p-3.5">
                 <div className="flex items-center justify-between text-xs font-bold text-[#0A2EB8] mb-1">
-                  <span>First 3 Hangouts Free:</span>
+                  <span>1st Hangout Free Offer:</span>
                   <span className="bg-[#19C37D] text-[#0B1230] text-[10px] px-2 py-0.5 rounded font-bold">
                     ₹0 Charged
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-[#0B1230]/65">
-                  <span>Partner Regular Fee:</span>
+                  <span>Hangout Partner Regular Fee:</span>
                   <span className="line-through">₹{companion.rate}/hr</span>
                 </div>
                 <div className="flex items-center justify-between text-sm font-bold text-[#0B1230] pt-1.5 border-t border-[#0A2EB8]/10 mt-1.5">
                   <span>Your Total Cost:</span>
-                  <span className="font-serif text-base text-[#19C37D]">₹0 Launch Credit</span>
+                  <span className="font-serif text-base text-[#19C37D]">₹0 (1st Hangout Free)</span>
                 </div>
               </div>
 
-              {/* Direct Actions: Open WhatsApp & Google Maps Directions */}
+              {/* Policy Reminder: 2hr Advance & No Last-Hour Cancellation */}
+              <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 text-[11px] text-[#0B1230] font-semibold leading-snug">
+                ⏰ <strong>Booking &amp; Cancellation Rule:</strong> Requests are accepted min. 2 hrs prior (e.g. by 3 PM for 5 PM). You cannot cancel in the last 1 hour before hangout start.
+              </div>
+
+              {/* Direct Actions: Open WhatsApp */}
               <div className="space-y-2 pt-1">
                 <a
                   href={waUrl}
@@ -468,20 +472,7 @@ export default function HangoutRequestDispatcher({
                   className="w-full py-3 px-5 rounded-full bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Chat with {companion.name} on WhatsApp</span>
-                </a>
-
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                    `${meetingLocation}, Delhi NCR, India`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => audio.playClick()}
-                  className="btn outline w-full py-2.5 text-xs flex items-center justify-center gap-1.5"
-                >
-                  <Navigation className="w-3.5 h-3.5 text-[#0A2EB8]" />
-                  <span>Get Directions to {meetingLocation} in Google Maps</span>
+                  <span>Chat with Hangout Partner {activePartnerName} on WhatsApp</span>
                 </a>
               </div>
 
@@ -522,7 +513,7 @@ export default function HangoutRequestDispatcher({
                   <span>Zero Fees Deducted · 100% Free Credits Intact</span>
                 </div>
                 <p className="text-[11px] text-[#0B1230]/70 leading-relaxed font-normal">
-                  Your "First 3 Hangouts Free" launch credit was not used. Re-ping {companion.name} or browse another partner by interests and goals.
+                  Your "1st Hangout Free" launch credit was not used. Re-ping Hangout Partner {activePartnerName} or browse another experience.
                 </p>
               </div>
 
@@ -607,7 +598,7 @@ export default function HangoutRequestDispatcher({
         {/* Safety Guarantee Footer Note */}
         <div className="bg-[#F3F7FF] border-t border-[#0A2EB8]/15 p-3 text-center text-[11px] text-[#0B1230]/75 flex items-center justify-center gap-1.5 font-medium">
           <ShieldCheck className="w-3.5 h-3.5 text-[#19C37D] shrink-0" />
-          <span>Public Venues Only · Interest-First Photo Privacy · 1st 3 Hangouts Free</span>
+          <span>Public Venues Only · Min 2-Hr Advance Request · No Last-Hour Cancel · 1st Hangout Free</span>
         </div>
 
       </motion.div>

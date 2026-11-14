@@ -1533,40 +1533,36 @@ export default function App() {
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.4, delay: (idx % 4) * 0.06 }}
                   whileHover={{ y: -4, transition: { duration: 0.18 } }}
-                  className="min-w-[82vw] sm:min-w-[330px] md:min-w-0 shrink-0 snap-start bg-white border border-[#0A2EB8]/15 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-[#3DAAFC]/60 transition-all flex flex-col justify-between"
+                  className="w-[290px] sm:w-[320px] md:w-auto shrink-0 snap-start bg-white border border-[#0A2EB8]/15 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-[#3DAAFC]/60 transition-all flex flex-col justify-between"
                 >
                   <div>
-                    {/* Experience Visual Showcase */}
-                    <div className="relative aspect-[16/10] overflow-hidden bg-[#F3F7FF]">
+                    {/* Experience Visual Showcase (Locked Height for Cross-Browser Mobile Stability) */}
+                    <div className="relative h-40 sm:h-48 w-full overflow-hidden bg-[#0B1230] shrink-0">
                       <img
                         src={comp.interestPhoto}
                         alt={comp.interestPhotoAlt}
                         referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B1230]/80 via-transparent to-black/15" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B1230]/85 via-[#0B1230]/20 to-black/25" />
 
-                      {/* Top Category Tag */}
-                      <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#0A2EB8] px-2.5 py-1 rounded-md shadow-xs">
+                      {/* Top Tags Bar */}
+                      <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#0A2EB8] px-2 py-0.5 rounded-md shadow-xs truncate max-w-[48%]">
                           {comp.categoryLabel}
                         </span>
-                      </div>
-
-                      {/* Experience Duration / Confirmation / Women-Only Pill */}
-                      <div className="absolute top-2.5 right-2.5">
                         {isUnlocked ? (
-                          <span className="inline-flex items-center gap-1 bg-[#19C37D] text-[#0B1230] px-2.5 py-1 rounded-md text-[10px] font-extrabold shadow-xs">
+                          <span className="inline-flex items-center gap-1 bg-[#19C37D] text-[#0B1230] px-2 py-0.5 rounded-md text-[10px] font-extrabold shadow-xs shrink-0">
                             <CheckCircle2 className="w-3 h-3" />
-                            <span>Spot Confirmed</span>
+                            <span>Confirmed</span>
                           </span>
                         ) : womenOnlyFilter ? (
-                          <span className="inline-flex items-center gap-1 bg-[#FFC83D] text-[#0B1230] px-2.5 py-1 rounded-md text-[10px] font-extrabold shadow-xs">
-                            <span>👩 Women-Only Available</span>
+                          <span className="inline-flex items-center gap-1 bg-[#FFC83D] text-[#0B1230] px-2 py-0.5 rounded-md text-[10px] font-extrabold shadow-xs shrink-0">
+                            <span>👩 Women-Only</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 bg-[#0B1230]/85 backdrop-blur-xs text-white px-2.5 py-1 rounded-md text-[10px] font-semibold">
-                            <span>{comp.experienceDuration} · Public Venue</span>
+                          <span className="inline-flex items-center gap-1 bg-[#0B1230]/85 backdrop-blur-xs text-white px-2 py-0.5 rounded-md text-[10px] font-semibold shrink-0">
+                            <span>{comp.experienceDuration}</span>
                           </span>
                         )}
                       </div>
@@ -1576,48 +1572,48 @@ export default function App() {
                         <span className="text-[11px] font-semibold truncate">
                           {comp.slotLabel}
                         </span>
-                        <span className="text-[11px] font-bold bg-black/50 px-2 py-0.5 rounded shrink-0">
+                        <span className="text-[11px] font-bold bg-black/60 px-2 py-0.5 rounded shrink-0">
                           ⭐ {comp.rating}
                         </span>
                       </div>
                     </div>
 
                     {/* Card Body */}
-                    <div className="p-4 sm:p-5 space-y-3">
+                    <div className="p-3.5 sm:p-5 space-y-2.5 sm:space-y-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <h3 className="font-serif text-lg sm:text-xl font-semibold text-[#0B1230] leading-snug line-clamp-2">
+                          <h3 className="font-serif text-base sm:text-xl font-semibold text-[#0B1230] leading-snug line-clamp-2">
                             {comp.experienceTitle}
                           </h3>
-                          <p className="text-xs text-[#0B1230]/65 mt-1 font-medium truncate">
+                          <p className="text-xs text-[#0B1230]/65 mt-0.5 sm:mt-1 font-medium truncate">
                             📍 {comp.location}
                           </p>
                         </div>
-                        <div className="w-9 h-9 rounded-lg border border-[#0A2EB8]/15 bg-[#F3F7FF] flex items-center justify-center text-base shrink-0">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-[#0A2EB8]/15 bg-[#F3F7FF] flex items-center justify-center text-base shrink-0">
                           {comp.emoji}
                         </div>
                       </div>
 
                       {/* What You'll Experience */}
-                      <div className="bg-[#F3F7FF] border border-[#0A2EB8]/10 rounded-xl p-2.5">
+                      <div className="bg-[#F3F7FF] border border-[#0A2EB8]/10 rounded-xl p-2 sm:p-2.5">
                         <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#0A2EB8] block mb-0.5">
                           What You'll Experience
                         </span>
-                        <p className="text-xs text-[#0B1230]/85 font-medium leading-snug">
+                        <p className="text-xs text-[#0B1230]/85 font-medium leading-snug line-clamp-2 sm:line-clamp-none">
                           {comp.vibeText}
                         </p>
                       </div>
 
                       {/* Experience Highlights */}
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#0B1230]/50 block mb-1.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#0B1230]/50 block mb-1">
                           Experience Highlights
                         </span>
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-1">
                           {comp.hobbies.map((hobby) => (
                             <span
                               key={hobby}
-                              className="text-[11px] font-semibold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/15 px-2 py-0.5 rounded-md"
+                              className="text-[10px] sm:text-[11px] font-semibold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/15 px-2 py-0.5 rounded-md"
                             >
                               {hobby}
                             </span>
@@ -1625,7 +1621,7 @@ export default function App() {
                         </div>
                       </div>
 
-                      <p className="text-[11px] text-[#0B1230]/65 font-medium pt-0.5">
+                      <p className="text-[11px] text-[#0B1230]/65 font-medium">
                         {isUnlocked
                           ? `Captain assigned: ${womenOnlyFilter ? comp.womenCaptainName : comp.name} · ID Verified`
                           : womenOnlyFilter
@@ -1636,7 +1632,7 @@ export default function App() {
                   </div>
 
                   {/* Card Footer & CTA */}
-                  <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-2 border-t border-[#F3F7FF]">
+                  <div className="px-3.5 sm:px-5 pb-3.5 sm:pb-5 pt-2 border-t border-[#F3F7FF]">
                     <div className="flex items-center justify-between text-xs mb-3 gap-2">
                       <div className="flex items-center gap-1.5 shrink-0">
                         <span className="line-through text-[#0B1230]/40">₹{comp.rate}</span>

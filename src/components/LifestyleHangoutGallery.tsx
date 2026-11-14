@@ -138,14 +138,14 @@ export default function LifestyleHangoutGallery({
                   key={item.actId}
                   type="button"
                   onClick={() => handleCardAction(item.actId)}
-                  className="min-w-[215px] sm:min-w-[235px] shrink-0 snap-start rounded-xl overflow-hidden border border-[#0A2EB8]/15 hover:border-[#3DAAFC] bg-[#0B1230] text-left transition-all group cursor-pointer relative shadow-xs"
+                  className="w-[225px] sm:w-[240px] shrink-0 snap-start rounded-xl overflow-hidden border border-[#0A2EB8]/15 hover:border-[#3DAAFC] bg-[#0B1230] text-left transition-all group cursor-pointer relative shadow-xs"
                 >
                   <div className="relative h-28 w-full overflow-hidden">
                     <img
                       src={item.image}
                       alt={item.alt}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#011C92]/95 via-[#0B1230]/65 to-[#0B1230]/40" />
                     <div className="absolute inset-0 p-3 flex flex-col justify-between text-white">

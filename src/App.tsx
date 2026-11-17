@@ -47,7 +47,7 @@ import CircledHighlight from "./components/CircledHighlight";
 import FaqSection from "./components/FaqSection";
 
 import heroHangoutCafeImg from "./assets/images/hero_hangout_cafe_1794391402838.jpg";
-import interestBadmintonCourtImg from "./assets/images/interest_badminton_court_1794643859671.jpg";
+import interestBadmintonCourtImg from "./assets/images/interest_badminton_rackets_1794904217019.jpg";
 import interestPickleballCourtImg from "./assets/images/interest_pickleball_court_1794650754588.jpg";
 import interestSunderTrailImg from "./assets/images/interest_sunder_trail_1794643861853.jpg";
 import interestSundayPhotowalkImg from "./assets/images/interest_sunday_photowalk_1794650756069.jpg";
@@ -181,7 +181,7 @@ const COMPANIONS: CompanionProfile[] = [
     goals: "Unplug after work with competitive indoor court sets and steady rallies.",
     hobbies: ["Badminton doubles", "Footwork drills", "Evening court rallies"],
     interestPhoto: interestBadmintonCourtImg,
-    interestPhotoAlt: "Two cobalt badminton rackets and shuttlecocks on an indoor wooden court",
+    interestPhotoAlt: "Two sleek badminton rackets and two white feather shuttlecocks on a sunlit indoor wooden court",
     partnerPhoto: partnerUjjwalImg,
     partnerPhotoAlt: "Verified Hangout Partner Ujjwal Poonia at an indoor badminton lounge",
     bgColor: "#7cc4ff",
@@ -364,11 +364,11 @@ const COMPANIONS: CompanionProfile[] = [
 ];
 
 const ROTATING_WORDS = [
-  "running buddies",
-  "pickleball or badminton",
-  "weekend hikes",
-  "chess & board games",
-  "Sunday photo walks"
+  "good energy",
+  "running shoes",
+  "badminton racket",
+  "weekend spirit",
+  "camera"
 ];
 
 const MARQUEE_ITEMS = [

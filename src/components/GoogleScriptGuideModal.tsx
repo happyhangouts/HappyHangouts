@@ -53,7 +53,7 @@ export default function GoogleScriptGuideModal({ isOpen, onClose }: GoogleScript
               Google Apps Script Integration
             </h2>
             <p className="text-blue-100 text-xs sm:text-sm font-light mt-1">
-              Form submissions (Contact, Waitlist, Partner/Seeker) automatically append rows to Google Sheets and dispatch instant email alerts to <strong className="text-white font-bold">mubaarqaan@gmail.com</strong>.
+              Form submissions (Contact, Waitlist, Partner/Seeker) automatically append rows to Google Sheets and dispatch instant email alerts to <strong className="text-white font-bold">happyhangouts.life@gmail.com</strong>.
             </p>
           </div>
 
@@ -158,7 +158,7 @@ export default function GoogleScriptGuideModal({ isOpen, onClose }: GoogleScript
               <div className="space-y-0.5 text-left">
                 <h5 className="font-bold text-emerald-900 text-xs">Email Alerts Configured</h5>
                 <p className="text-emerald-700 text-[11px] font-light leading-relaxed">
-                  Every form submission (Contact, Waitlist, Become a Partner) triggers an automated HTML email notification directly to <strong className="font-bold">mubaarqaan@gmail.com</strong>.
+                  Every form submission (Contact, Waitlist, Become a Partner) triggers an automated HTML email notification directly to <strong className="font-bold">happyhangouts.life@gmail.com</strong>.
                 </p>
               </div>
             </div>

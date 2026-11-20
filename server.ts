@@ -42,18 +42,30 @@ async function startServer() {
       const fullPayload = {
         ...payload,
         timestamp,
-        notification_email: "mubaarqaan@gmail.com"
+        notification_email: "happyhangouts.life@gmail.com",
+        notification_phone: "7217813236"
       };
 
       console.log("==========================================");
-      console.log("📬 NEW FORM SUBMISSION RECEIVED ON SERVER:");
-      console.log("Name:", fullPayload.name);
-      console.log("Email:", fullPayload.email);
-      console.log("Phone:", fullPayload.phone || "N/A");
-      console.log("City:", fullPayload.city || "Delhi NCR");
-      console.log("Role / Join As:", fullPayload.join_as || "N/A");
+      console.log("📬 NEW NOTIFICATION RECEIVED ON SERVER:");
+      console.log("Notify Target:", "happyhangouts.life@gmail.com | +91 72178 13236");
       console.log("Form Type:", fullPayload.form_type || "N/A");
-      console.log("Interests/Details:", fullPayload.interests || "N/A");
+      if (fullPayload.seeker_name && fullPayload.partner_name) {
+        console.log(
+          `🔔 MANUAL HIRE ALERT: ${fullPayload.seeker_name} (+91 ${fullPayload.phone || "N/A"}) wants to hire ${fullPayload.partner_name}`
+        );
+        console.log("   Activity:", fullPayload.activity || fullPayload.interests || "N/A");
+        console.log("   Time Period:", fullPayload.time_period || fullPayload.free_time || "N/A");
+        console.log("   Location:", fullPayload.location || fullPayload.location_area || "N/A");
+        console.log("   Pricing:", fullPayload.price_inr || "N/A");
+      } else {
+        console.log("Name:", fullPayload.name);
+        console.log("Email:", fullPayload.email);
+        console.log("Phone:", fullPayload.phone || "N/A");
+        console.log("City:", fullPayload.city || "Delhi NCR");
+        console.log("Role / Join As:", fullPayload.join_as || "N/A");
+        console.log("Interests/Details:", fullPayload.interests || "N/A");
+      }
       console.log("Timestamp:", timestamp);
       console.log("==========================================");
 

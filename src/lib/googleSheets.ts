@@ -1,7 +1,7 @@
 /**
  * Google Sheets & Apps Script Integration Module
  * Handles sending form submissions (Contact, Waitlist, Become a Partner / Seeker)
- * to a Google Sheet via Google Apps Script Web App and triggering email notifications to mubaarqaan@gmail.com
+ * to a Google Sheet via Google Apps Script Web App and triggering email notifications to happyhangouts.life@gmail.com
  */
 
 export interface FormSubmissionPayload {
@@ -17,10 +17,11 @@ export interface FormSubmissionPayload {
   timestamp?: string;
 }
 
-export const GAURAV_WHATSAPP_PHONE = "918800843189";
+export const OFFICIAL_WHATSAPP_PHONE = "917217813236";
+export const GAURAV_WHATSAPP_PHONE = OFFICIAL_WHATSAPP_PHONE;
 
 /**
- * Generates a pre-filled WhatsApp notification link to Gaurav (+91 8800843189)
+ * Generates a pre-filled WhatsApp notification link to Happy Hangouts Official (+91 7217813236)
  */
 export function generateWhatsAppLeadUrl(payload: {
   name: string;
@@ -86,7 +87,8 @@ export async function submitToGoogleSheets(payload: FormSubmissionPayload): Prom
   const fullPayload = {
     ...payload,
     timestamp,
-    notification_email: "mubaarqaan@gmail.com"
+    notification_email: "happyhangouts.life@gmail.com",
+    notification_phone: "7217813236"
   };
 
   // Log locally for debugging
@@ -140,7 +142,7 @@ export async function submitToGoogleSheets(payload: FormSubmissionPayload): Prom
 
       return {
         success: true,
-        message: "Data successfully sent to Google Sheet and email notification triggered to mubaarqaan@gmail.com!"
+        message: "Data successfully sent to Google Sheet and notification triggered to happyhangouts.life@gmail.com & +91 72178 13236!"
       };
     } catch (error) {
       console.error("Error posting to Google Apps Script endpoint:", error);
@@ -218,15 +220,15 @@ export const GOOGLE_APPS_SCRIPT_CODE = `function doPost(e) {
       joinAs
     ]);
 
-    // 2. Trigger instant Email Notification to mubaarqaan@gmail.com
-    var recipientEmail = "mubaarqaan@gmail.com";
+    // 2. Trigger instant Email Notification to happyhangouts.life@gmail.com
+    var recipientEmail = "happyhangouts.life@gmail.com";
     var subject = "🎉 New Happy Hangouts " + formType + ": " + name;
     
     var htmlBody = \`
       <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #f8fafc; color: #1e293b;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <h2 style="color: #2563eb; margin: 0; font-size: 22px;">🚀 Happy Hangouts Form Submission</h2>
-          <p style="color: #64748b; font-size: 13px; margin-top: 4px;">A new visitor has submitted details on your website!</p>
+          <h2 style="color: #2563eb; margin: 0; font-size: 22px;">🚀 Happy Hangouts Notification</h2>
+          <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Official Coordinator Number: +91 72178 13236</p>
         </div>
         
         <table style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
@@ -242,7 +244,7 @@ export const GOOGLE_APPS_SCRIPT_CODE = `function doPost(e) {
           <tr><td style="padding: 12px 16px; font-weight: bold; color: #475569;">Interests / Details:</td><td style="padding: 12px 16px; line-height: 1.5;">\${interests}</td></tr>
         </table>
         
-        <p style="color: #94a3b8; font-size: 11px; margin-top: 24px; text-align: center;">Automated notification via Happy Hangouts Apps Script | Submitted at \${timestamp} IST</p>
+        <p style="color: #94a3b8; font-size: 11px; margin-top: 24px; text-align: center;">Automated notification via Happy Hangouts | happyhangouts.life@gmail.com | +91 72178 13236 | \${timestamp} IST</p>
       </div>
     \`;
 
@@ -253,7 +255,7 @@ export const GOOGLE_APPS_SCRIPT_CODE = `function doPost(e) {
     });
 
     return ContentService
-      .createTextOutput(JSON.stringify({ result: "success", message: "Logged to Google Sheet & Email sent to mubaarqaan@gmail.com" }))
+      .createTextOutput(JSON.stringify({ result: "success", message: "Logged to Google Sheet & Email sent to happyhangouts.life@gmail.com" }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {

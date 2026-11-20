@@ -520,10 +520,10 @@ export default function LiveHangoutsRadar({
         <div className="bg-[#011C92] border border-[#3DAAFC]/30 text-white rounded-2xl px-4 py-3 mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
           <div className="flex items-center gap-2.5 text-xs font-semibold text-white/90">
             <span className="text-base">🎁</span>
-            <span>Your 1st Hangout is 100% FREE! Meet verified Hangout Partners across any radar hub with ₹0 booking fee to build mutual trust.</span>
+            <span>Your First 30-Minute Trial is FREE (₹0)! Then ₹299 for 1 hr or ₹499 for 2 hrs with verified Hangout Partners.</span>
           </div>
           <span className="text-[11px] font-bold uppercase tracking-wider bg-[#FFC83D] text-[#0B1230] px-3 py-1 rounded-full shrink-0 shadow-xs">
-            1st Hangout = ₹0 Free
+            First 30 Min = ₹0 Trial
           </span>
         </div>
 

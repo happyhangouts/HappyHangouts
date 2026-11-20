@@ -70,7 +70,7 @@ export default function PartnerAppDemo() {
       location: "Blue Tokai, CP (Delhi)",
       verifiedBadge: "Aadhaar + Selfie Verified",
       type: "free_trust",
-      rateText: "1st Hangout Free (₹0)",
+      rateText: "First 30m Trial Free (₹0)",
       status: "pending",
       receivedAgo: "4 mins ago"
     },
@@ -83,7 +83,7 @@ export default function PartnerAppDemo() {
       location: "CyberHub, Gurgaon",
       verifiedBadge: "Govt ID Verified",
       type: "paid_hourly",
-      rateText: "₹500 / hour",
+      rateText: "₹299 · 1 hr (You earn ₹239)",
       status: "pending",
       receivedAgo: "18 mins ago"
     },
@@ -96,7 +96,7 @@ export default function PartnerAppDemo() {
       location: "Siri Fort Sports Complex",
       verifiedBadge: "Biometric Vetted",
       type: "paid_hourly",
-      rateText: "₹450 / hour",
+      rateText: "₹499 · 2 hrs (You earn ₹399)",
       status: "pending",
       receivedAgo: "1 hour ago"
     }
@@ -175,7 +175,7 @@ export default function PartnerAppDemo() {
         location: "Blue Tokai, CP (Delhi)",
         verifiedBadge: "Aadhaar + Selfie Verified",
         type: "free_trust",
-        rateText: "1st Hangout Free (₹0)",
+        rateText: "First 30m Trial Free (₹0)",
         status: "pending",
         receivedAgo: "Just Now"
       },
@@ -188,7 +188,7 @@ export default function PartnerAppDemo() {
         location: "CyberHub, Gurgaon",
         verifiedBadge: "Govt ID Verified",
         type: "paid_hourly",
-        rateText: "₹500 / hour",
+        rateText: "₹299 · 1 hr (You earn ₹239)",
         status: "pending",
         receivedAgo: "5 mins ago"
       },
@@ -201,7 +201,7 @@ export default function PartnerAppDemo() {
         location: "Siri Fort Sports Complex",
         verifiedBadge: "Biometric Vetted",
         type: "paid_hourly",
-        rateText: "₹450 / hour",
+        rateText: "₹499 · 2 hrs (You earn ₹399)",
         status: "pending",
         receivedAgo: "22 mins ago"
       }

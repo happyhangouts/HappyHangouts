@@ -1,0 +1,422 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private authenticated user profile storing seeker or hangout partner identity and safety KYC metadata.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["seeker", "partner"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 5,
+          "maxLength": 120
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["female", "male", "other"]
+        },
+        "city": {
+          "type": "string",
+          "enum": ["Gurugram", "Delhi"]
+        },
+        "preferredHub": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "govtIdType": {
+          "type": "string",
+          "enum": ["Aadhaar", "PAN", "Passport", "Driving License"]
+        },
+        "govtIdLast4": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 4,
+          "pattern": "^[0-9]{4}$"
+        },
+        "emergencyContact": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "interests": {
+          "type": "array",
+          "description": "Up to 5 selected weekly experience categories"
+        },
+        "kycVerified": {
+          "type": "boolean"
+        },
+        "freeHangoutUsed": {
+          "type": "boolean"
+        },
+        "upiId": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "bio": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "suspended": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "role",
+        "name",
+        "email",
+        "phone",
+        "gender",
+        "city",
+        "preferredHub",
+        "govtIdType",
+        "govtIdLast4",
+        "emergencyContact",
+        "interests",
+        "kycVerified",
+        "freeHangoutUsed",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminMember": {
+      "title": "AdminMember",
+      "description": "Trusted administrator membership registry keyed by Firebase UID.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 120
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "addedAt"]
+    },
+    "HangoutPartner": {
+      "title": "HangoutPartner",
+      "description": "Non-PII Hangout Partner operational record for availability, activity hubs, and verification state.",
+      "type": "object",
+      "properties": {
+        "partnerId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "ownerUid": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["female", "male", "other"]
+        },
+        "city": {
+          "type": "string",
+          "enum": ["Gurugram", "Delhi"]
+        },
+        "hub": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "activityCategory": {
+          "type": "string",
+          "enum": ["running", "rackets", "hike", "games_cafe", "photowalk"]
+        },
+        "experienceTitle": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 140
+        },
+        "bio": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "rating": {
+          "type": "number"
+        },
+        "totalSessions": {
+          "type": "number"
+        },
+        "womenOnlyEligible": {
+          "type": "boolean"
+        },
+        "kycStatus": {
+          "type": "string",
+          "enum": ["pending", "verified", "suspended"]
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "availableSlots": {
+          "type": "array",
+          "description": "Up to 5 weekly time slots"
+        },
+        "upiHandleMasked": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "partnerId",
+        "ownerUid",
+        "displayName",
+        "gender",
+        "city",
+        "hub",
+        "activityCategory",
+        "experienceTitle",
+        "rating",
+        "totalSessions",
+        "womenOnlyEligible",
+        "kycStatus",
+        "active",
+        "availableSlots",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Experience booking request tracking seeker, partner, 30m/1h/2h pricing, Women-Only confirmation, 2-hour cutoff rule, Happy Key PIN, and lifecycle status.",
+      "type": "object",
+      "properties": {
+        "bookingId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "seekerUid": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "seekerName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "seekerPhone": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 20
+        },
+        "seekerEmail": {
+          "type": "string",
+          "format": "email",
+          "minLength": 5,
+          "maxLength": 120
+        },
+        "seekerGender": {
+          "type": "string",
+          "enum": ["female", "male", "other"]
+        },
+        "partnerId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "partnerUid": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "partnerName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "activityId": {
+          "type": "string",
+          "enum": ["running", "rackets", "hike", "games_cafe", "photowalk"]
+        },
+        "experienceTitle": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 140
+        },
+        "venue": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "dayLabel": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "startHour": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 30
+        },
+        "slotLabel": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 60
+        },
+        "durationKey": {
+          "type": "string",
+          "enum": ["30m", "1h", "2h"]
+        },
+        "durationLabel": {
+          "type": "string",
+          "enum": ["30 min", "1 hr", "2 hrs"]
+        },
+        "standardPriceInr": {
+          "type": "number"
+        },
+        "chargedPriceInr": {
+          "type": "number"
+        },
+        "isFirstFree": {
+          "type": "boolean"
+        },
+        "partnerPayoutInr": {
+          "type": "number"
+        },
+        "platformFeeInr": {
+          "type": "number"
+        },
+        "womenOnly": {
+          "type": "boolean"
+        },
+        "womenOnlyConfirmed": {
+          "type": "boolean"
+        },
+        "advanceRuleAck": {
+          "type": "boolean"
+        },
+        "happyKeyPin": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 12
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "accepted", "declined", "checked_in", "completed", "cancelled", "expired"]
+        },
+        "cancelReason": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "bookingId",
+        "seekerUid",
+        "seekerName",
+        "seekerPhone",
+        "seekerEmail",
+        "seekerGender",
+        "partnerId",
+        "partnerUid",
+        "partnerName",
+        "activityId",
+        "experienceTitle",
+        "venue",
+        "dayLabel",
+        "startHour",
+        "slotLabel",
+        "durationKey",
+        "durationLabel",
+        "standardPriceInr",
+        "chargedPriceInr",
+        "isFirstFree",
+        "partnerPayoutInr",
+        "platformFeeInr",
+        "womenOnly",
+        "womenOnlyConfirmed",
+        "advanceRuleAck",
+        "happyKeyPin",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private user identity, contact PII, KYC status, and 1st-hangout-free tracking."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminMember" },
+      "description": "Trusted admin access registry."
+    },
+    "/partners/{partnerId}": {
+      "schema": { "$ref": "#/entities/HangoutPartner" },
+      "description": "Verified Hangout Partner operational roster without PII."
+    },
+    "/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/Booking" },
+      "description": "Experience booking requests and session lifecycle state."
+    }
+  }
+}

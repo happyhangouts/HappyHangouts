@@ -45,9 +45,9 @@ Happy Hangouts ("we", "our", or "us") operates as a verified social experience p
 - Synchronized Meetups: Precise meeting spots are generated only when two verified members authenticate using a matching 6-digit Happy Key.
 
 4. USER RIGHTS & 1-CLICK PURGE
-You hold absolute rights to inspect, export, or permanently delete your account, waitlist entries, and verification records by emailing mubaarqaan@gmail.com.
+You hold absolute rights to inspect, export, or permanently delete your account, waitlist entries, and verification records by emailing happyhangouts.life@gmail.com or messaging +91 72178 13236.
 
-Contact: Data Protection Office, Happy Hangouts Inc. (support@happyhangouts.life | mubaarqaan@gmail.com)
+Contact: Data Protection Office, Happy Hangouts (happyhangouts.life@gmail.com | +91 72178 13236)
 `;
     const blob = new Blob([policyText], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -336,7 +336,8 @@ Contact: Data Protection Office, Happy Hangouts Inc. (support@happyhangouts.life
                   </p>
                   <div className="mt-2 p-3 bg-slate-100 rounded-xl font-mono text-[11px] text-slate-800">
                     <p><strong>Entity:</strong> Happy Hangouts Experience Network</p>
-                    <p><strong>Contact Email:</strong> mubaarqaan@gmail.com | support@happyhangouts.life</p>
+                    <p><strong>Contact Email:</strong> happyhangouts.life@gmail.com</p>
+                    <p><strong>Official Phone / WhatsApp:</strong> +91 72178 13236</p>
                     <p><strong>Operating Region:</strong> Delhi, Noida &amp; Gurgaon (Delhi NCR)</p>
                   </div>
                 </div>

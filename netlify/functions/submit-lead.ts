@@ -54,7 +54,8 @@ export const handler: Handler = async (event) => {
       join_as: payload.join_as || "seeker",
       form_type: payload.form_type || "Waitlist Application",
       timestamp,
-      notification_email: "mubaarqaan@gmail.com",
+      notification_email: "happyhangouts.life@gmail.com",
+      notification_phone: "7217813236",
     };
 
     console.log("==========================================");
@@ -68,6 +69,7 @@ export const handler: Handler = async (event) => {
     console.log("Form Type:", fullPayload.form_type);
     console.log("Role / Join As:", fullPayload.join_as);
     console.log("Notification Email:", fullPayload.notification_email);
+    console.log("Notification Phone:", fullPayload.notification_phone);
     console.log("Timestamp:", timestamp);
     console.log("==========================================");
 

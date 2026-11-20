@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  /* Official Happy Hangouts Brand Color Palette */
-  --hangout-blue: #0A2EB8;    /* Primary: hero and headers */
-  --deep-midnight: #011C92;   /* Gradient edge, footer */
-  --sky: #3DAAFC;             /* Accent: highlights, icons */
-  --sunshine: #FFC83D;        /* The one pop colour: buttons */
-  --verified-green: #19C37D;  /* Verified badge, success only */
-  --cloud: #F3F7FF;           /* Light section background */
-  --ink: #0B1230;             /* Body text on light */
+  /* Happy Hangouts Refined Brand Tokens */
+  --hangout-blue: #0A2EB8;
+  --deep-midnight: #011C92;
+  --sky: #3DAAFC;
+  --sunshine: #FFC83D;
+  --verified-green: #19C37D;
+  --cloud: #F8FAFC;
+  --ink: #0B1230;
+  --muted: #475569;
   --card: #FFFFFF;
-  
-  --bg: var(--cloud);
-  --line: rgba(11, 18, 48, 0.1);
-  --line-strong: rgba(11, 18, 48, 0.18);
+
+  --line: rgba(11, 18, 48, 0.08);
+  --line-strong: rgba(11, 18, 48, 0.16);
   --d: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --roman: 'Playfair Display', Georgia, serif;
   --b: 'Plus Jakarta Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -36,7 +36,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--cloud);
+  background: #FFFFFF;
   color: var(--ink);
   font: 400 16px/1.6 var(--b);
   overflow-x: hidden;
@@ -44,7 +44,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Hide scrollbars cleanly for horizontal touch carousels */
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -55,10 +54,10 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--d);
-  line-height: 1.15;
+  line-height: 1.14;
   margin: 0;
   color: inherit;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 a {
@@ -78,14 +77,14 @@ a {
   font-family: var(--b);
 }
 
-/* Fluid Expansive Container */
+/* Balanced Editorial Container */
 .wrap {
   width: 100%;
-  max-width: 1360px;
+  max-width: 1240px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
 @media (min-width: 640px) {
@@ -97,30 +96,12 @@ a {
 
 @media (min-width: 1024px) {
   .wrap {
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
 
-/* Editorial Tag Pill */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--b);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: #FFFFFF;
-  color: var(--hangout-blue);
-  border: 1.5px solid rgba(10, 46, 184, 0.25);
-  border-radius: 9999px;
-  padding: 5px 12px;
-  line-height: 1.2;
-}
-
-/* Official Happy Hangouts Brand Buttons */
+/* Primary Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -132,196 +113,59 @@ a {
   min-height: 44px;
   background: var(--sunshine);
   color: var(--ink);
-  border: 1.5px solid var(--sunshine);
+  border: 1px solid var(--sunshine);
   border-radius: 9999px;
-  padding: 11px 22px;
+  padding: 10px 22px;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease, box-shadow 0.18s ease;
   user-select: none;
-  text-align: center;
-}
-
-@media (min-width: 640px) {
-  .btn {
-    font-size: 15px;
-    padding: 12px 24px;
-  }
+  white-space: nowrap;
 }
 
 .btn:hover {
-  background: #f7be2e;
+  background: #f5bc2c;
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(255, 200, 61, 0.35);
+  box-shadow: 0 8px 20px -6px rgba(255, 200, 61, 0.45);
 }
 
 .btn:active {
   transform: translateY(0);
 }
 
-/* Secondary Button: Outlined on Light Surfaces */
 .btn.outline {
   background: #FFFFFF;
-  color: var(--hangout-blue);
-  border: 1.5px solid var(--hangout-blue);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
 }
 
 .btn.outline:hover {
   background: var(--cloud);
-  border-color: var(--deep-midnight);
-  color: var(--deep-midnight);
+  border-color: var(--hangout-blue);
+  color: var(--hangout-blue);
   box-shadow: none;
 }
 
-.btn.outline-dark {
-  background: transparent;
-  color: var(--ink);
-  border: 1.5px solid var(--line-strong);
-}
-
-.btn.outline-dark:hover {
-  background: #FFFFFF;
-  border-color: var(--hangout-blue);
-  color: var(--hangout-blue);
-}
-
-/* Primary Blue Button */
-.btn.blue,
-.btn.b {
-  background: var(--hangout-blue);
-  color: #FFFFFF;
-  border-color: var(--hangout-blue);
-}
-
-.btn.blue:hover,
-.btn.b:hover {
-  background: var(--deep-midnight);
-  box-shadow: 0 4px 14px rgba(10, 46, 184, 0.3);
-}
-
-/* Step Cards */
-.st {
-  background: var(--cloud);
-  border: 1px solid rgba(10, 46, 184, 0.14);
-  border-radius: 22px;
-  padding: 24px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-@media (min-width: 640px) {
-  .st {
-    padding: 28px;
-  }
-}
-
-.st:hover {
-  border-color: var(--sky);
-  box-shadow: 0 10px 24px -6px rgba(10, 46, 184, 0.1);
-}
-
-/* Running Marquee Banner - Strictly Horizontal Ticker */
-.mq {
-  background: var(--deep-midnight);
-  color: #FFFFFF;
-  border-block: 1px solid rgba(255, 255, 255, 0.12);
-  overflow: hidden;
-  padding: 12px 0;
-  width: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  user-select: none;
-}
-
-.mq-track {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center;
-  flex-wrap: nowrap !important;
-  white-space: nowrap !important;
-  flex-shrink: 0;
-  will-change: transform;
-  animation: mq-scroll 32s linear infinite;
-}
-
-.mq-item {
-  display: inline-flex !important;
-  align-items: center;
-  gap: 12px;
-  margin: 0 18px;
-  white-space: nowrap !important;
-  flex-shrink: 0;
-  font-family: var(--d);
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-}
-
-@media (min-width: 640px) {
-  .mq-item {
-    margin: 0 24px;
-    font-size: 14px;
-  }
-}
-
-@keyframes mq-scroll {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-/* Brand Verified Partner Badge */
-.verified-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #FFFFFF;
-  color: var(--ink);
-  padding: 6px 16px;
-  border-radius: 9999px;
-  box-shadow: 0 2px 8px rgba(11, 18, 48, 0.06);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.verified-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--verified-green);
-  display: inline-block;
-}
-
-/* Category Filter Chips */
+/* Clean Segmented Filter Tabs */
 .chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: 38px;
   font-family: var(--b);
   font-weight: 600;
   font-size: 13px;
   background: #FFFFFF;
-  color: var(--ink);
-  border: 1px solid var(--line);
+  color: var(--muted);
+  border: 1px solid var(--line-strong);
   border-radius: 9999px;
-  padding: 8px 16px;
+  padding: 7px 15px;
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-@media (min-width: 640px) {
-  .chip {
-    font-size: 14px;
-    padding: 8px 18px;
-  }
 }
 
 .chip:hover {
@@ -330,73 +174,16 @@ a {
 }
 
 .chip[aria-pressed="true"], .chip.active {
-  background: var(--hangout-blue);
+  background: var(--ink);
   color: #FFFFFF;
-  border-color: var(--hangout-blue);
-  box-shadow: 0 2px 8px rgba(10, 46, 184, 0.2);
+  border-color: var(--ink);
 }
 
-/* Control Card (Budget/Rating Sliders) */
-.ctl {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 24px;
-  background: #FFFFFF;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 2px 10px rgba(11, 18, 48, 0.03);
-}
-
-@media (min-width: 640px) {
-  .ctl {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: 18px 22px;
-    gap: 20px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .ctl {
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 28px;
-  }
-}
-
-.ctl label {
-  font-weight: 600;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  font-family: var(--b);
-  font-size: 14px;
-  color: var(--ink);
-  width: 100%;
-}
-
-.ctl output {
-  font-family: var(--b);
-  font-weight: 800;
-  font-size: 15px;
-  color: var(--hangout-blue);
-  min-width: 54px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-input[type="range"] {
-  accent-color: var(--hangout-blue);
-  flex: 1 1 120px;
-  min-width: 110px;
-  cursor: pointer;
-}
-
-select:not(.clean-input), input[type="text"]:not(.clean-input), input[type="email"]:not(.clean-input), input[type="tel"]:not(.clean-input) {
+/* Inputs */
+select:not(.clean-input),
+input[type="text"]:not(.clean-input),
+input[type="email"]:not(.clean-input),
+input[type="tel"]:not(.clean-input) {
   font-family: var(--b);
   font-weight: 500;
   font-size: 14px;
@@ -410,14 +197,12 @@ select:not(.clean-input), input[type="text"]:not(.clean-input), input[type="emai
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.ctl select {
-  flex: 1 1 auto;
-  min-width: 130px;
-}
-
-select:not(.clean-input):focus, input[type="text"]:not(.clean-input):focus, input[type="email"]:not(.clean-input):focus, input[type="tel"]:not(.clean-input):focus {
+select:not(.clean-input):focus,
+input[type="text"]:not(.clean-input):focus,
+input[type="email"]:not(.clean-input):focus,
+input[type="tel"]:not(.clean-input):focus {
   border-color: var(--hangout-blue);
-  box-shadow: 0 0 0 3px rgba(10, 46, 184, 0.15);
+  box-shadow: 0 0 0 3px rgba(10, 46, 184, 0.12);
 }
 
 .clean-input {
@@ -434,70 +219,28 @@ select:not(.clean-input):focus, input[type="text"]:not(.clean-input):focus, inpu
   outline: none !important;
 }
 
-/* Companion Card */
-.pc {
-  background: #FFFFFF;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  box-shadow: 0 2px 10px rgba(11, 18, 48, 0.04);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  min-width: 0;
+input[type="range"] {
+  accent-color: var(--hangout-blue);
+  cursor: pointer;
 }
 
-@media (min-width: 640px) {
-  .pc {
-    padding: 22px;
+/* Minimal Celebratory Confetti Helper */
+.fall {
+  position: fixed;
+  top: -40px;
+  font-size: 22px;
+  pointer-events: none;
+  z-index: 90;
+  animation: fall-down 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes fall-down {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
   }
-}
-
-.pc:hover {
-  transform: translateY(-3px);
-  border-color: var(--sky);
-  box-shadow: 0 12px 28px -4px rgba(10, 46, 184, 0.1);
-}
-
-/* Earnings Container */
-.earn-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 36px;
-  align-items: center;
-}
-
-@media (max-width: 900px) {
-  .earn-container {
-    grid-template-columns: 1fr;
-    gap: 24px;
+  100% {
+    transform: translateY(105vh) rotate(260deg);
+    opacity: 0;
   }
-}
-
-.big-card {
-  background: #FFFFFF;
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(11, 18, 48, 0.05);
-  text-align: center;
-}
-
-@media (min-width: 640px) {
-  .big-card {
-    padding: 34px;
-  }
-}
-
-.big-card b {
-  display: block;
-  font-family: var(--d);
-  font-weight: 800;
-  font-size: clamp(36px, 6vw, 72px);
-  line-height: 1.05;
-  margin: 12px 0;
-  color: var(--hangout-blue);
-  font-variant-numeric: tabular-nums;
 }

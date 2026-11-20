@@ -1,0 +1,328 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: deny everything by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connectivity check path used by boot testConnection()
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // --- GLOBAL PRIMITIVE HELPERS ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedEmail() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 2 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isVerifiedEmail() && (
+        request.auth.token.email in ['happyhangouts.life@gmail.com', 'mubaarqaan@gmail.com'] ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // --- ENTITY VALIDATION BLUEPRINTS ---
+    function isValidUserProfile(data) {
+      let reqKeys = [
+        'uid', 'role', 'name', 'email', 'phone', 'gender', 'city',
+        'preferredHub', 'govtIdType', 'govtIdLast4', 'emergencyContact',
+        'interests', 'kycVerified', 'freeHangoutUsed', 'createdAt', 'updatedAt'
+      ];
+      let optKeys = ['upiId', 'bio', 'suspended'];
+      return data.keys().hasAll(reqKeys)
+        && data.keys().hasOnly(reqKeys.concat(optKeys))
+        && isValidId(data.uid)
+        && data.role in ['seeker', 'partner']
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 100
+        && data.email is string && data.email.size() >= 5 && data.email.size() <= 120
+        && data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 20
+        && data.gender in ['female', 'male', 'other']
+        && data.city in ['Gurugram', 'Delhi']
+        && data.preferredHub is string && data.preferredHub.size() >= 2 && data.preferredHub.size() <= 120
+        && data.govtIdType in ['Aadhaar', 'PAN', 'Passport', 'Driving License']
+        && data.govtIdLast4 is string && data.govtIdLast4.size() == 4 && data.govtIdLast4.matches('^[0-9]{4}$')
+        && data.emergencyContact is string && data.emergencyContact.size() >= 10 && data.emergencyContact.size() <= 20
+        && data.interests is list && data.interests.size() >= 1 && data.interests.size() <= 5
+        && data.interests[0] is string && data.interests[0].size() <= 60
+        && data.kycVerified is bool
+        && data.freeHangoutUsed is bool
+        && (!('upiId' in data) || (data.upiId is string && data.upiId.size() <= 80))
+        && (!('bio' in data) || (data.bio is string && data.bio.size() <= 300))
+        && (!('suspended' in data) || (data.suspended is bool))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAdminMember(data) {
+      return data.keys().hasAll(['uid', 'email', 'addedAt'])
+        && data.keys().hasOnly(['uid', 'email', 'addedAt'])
+        && isValidId(data.uid)
+        && data.email is string && data.email.size() >= 5 && data.email.size() <= 120
+        && data.addedAt is timestamp;
+    }
+
+    function isValidHangoutPartner(data) {
+      let reqKeys = [
+        'partnerId', 'ownerUid', 'displayName', 'gender', 'city', 'hub',
+        'activityCategory', 'experienceTitle', 'rating', 'totalSessions',
+        'womenOnlyEligible', 'kycStatus', 'active', 'availableSlots',
+        'createdAt', 'updatedAt'
+      ];
+      let optKeys = ['bio', 'upiHandleMasked'];
+      return data.keys().hasAll(reqKeys)
+        && data.keys().hasOnly(reqKeys.concat(optKeys))
+        && isValidId(data.partnerId)
+        && isValidId(data.ownerUid)
+        && data.displayName is string && data.displayName.size() >= 2 && data.displayName.size() <= 100
+        && data.gender in ['female', 'male', 'other']
+        && data.city in ['Gurugram', 'Delhi']
+        && data.hub is string && data.hub.size() >= 2 && data.hub.size() <= 120
+        && data.activityCategory in ['running', 'rackets', 'hike', 'games_cafe', 'photowalk']
+        && data.experienceTitle is string && data.experienceTitle.size() >= 4 && data.experienceTitle.size() <= 140
+        && data.rating is number && data.rating >= 1 && data.rating <= 5
+        && data.totalSessions is number && data.totalSessions >= 0 && data.totalSessions <= 100000
+        && data.womenOnlyEligible is bool
+        && data.kycStatus in ['pending', 'verified', 'suspended']
+        && data.active is bool
+        && data.availableSlots is list && data.availableSlots.size() >= 1 && data.availableSlots.size() <= 5
+        && data.availableSlots[0] is string && data.availableSlots[0].size() <= 60
+        && (!('bio' in data) || (data.bio is string && data.bio.size() <= 300))
+        && (!('upiHandleMasked' in data) || (data.upiHandleMasked is string && data.upiHandleMasked.size() <= 80))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidPricingForDuration(data) {
+      return (
+        (data.durationKey == '30m' && data.durationLabel == '30 min' && data.standardPriceInr == 99 && data.isFirstFree == false && data.chargedPriceInr == 99 && data.partnerPayoutInr == 79 && data.platformFeeInr == 20) ||
+        (data.durationKey == '1h' && data.durationLabel == '1 hr' && data.standardPriceInr == 199 && data.isFirstFree == false && data.chargedPriceInr == 199 && data.partnerPayoutInr == 159 && data.platformFeeInr == 40) ||
+        (data.durationKey == '2h' && data.durationLabel == '2 hrs' && data.standardPriceInr == 449 && data.isFirstFree == false && data.chargedPriceInr == 449 && data.partnerPayoutInr == 359 && data.platformFeeInr == 90)
+      );
+    }
+
+    function isValidBooking(data) {
+      let reqKeys = [
+        'bookingId', 'seekerUid', 'seekerName', 'seekerPhone', 'seekerEmail',
+        'seekerGender', 'partnerId', 'partnerUid', 'partnerName', 'activityId',
+        'experienceTitle', 'venue', 'dayLabel', 'startHour', 'slotLabel',
+        'durationKey', 'durationLabel', 'standardPriceInr', 'chargedPriceInr',
+        'isFirstFree', 'partnerPayoutInr', 'platformFeeInr', 'womenOnly',
+        'womenOnlyConfirmed', 'advanceRuleAck', 'happyKeyPin', 'status',
+        'createdAt', 'updatedAt'
+      ];
+      let optKeys = ['cancelReason'];
+      return data.keys().hasAll(reqKeys)
+        && data.keys().hasOnly(reqKeys.concat(optKeys))
+        && isValidId(data.bookingId)
+        && isValidId(data.seekerUid)
+        && data.seekerName is string && data.seekerName.size() >= 2 && data.seekerName.size() <= 100
+        && data.seekerPhone is string && data.seekerPhone.size() >= 10 && data.seekerPhone.size() <= 20
+        && data.seekerEmail is string && data.seekerEmail.size() >= 5 && data.seekerEmail.size() <= 120
+        && data.seekerGender in ['female', 'male', 'other']
+        && isValidId(data.partnerId)
+        && isValidId(data.partnerUid)
+        && data.partnerName is string && data.partnerName.size() >= 2 && data.partnerName.size() <= 100
+        && data.activityId in ['running', 'rackets', 'hike', 'games_cafe', 'photowalk']
+        && data.experienceTitle is string && data.experienceTitle.size() >= 4 && data.experienceTitle.size() <= 140
+        && data.venue is string && data.venue.size() >= 3 && data.venue.size() <= 160
+        && data.dayLabel is string && data.dayLabel.size() >= 2 && data.dayLabel.size() <= 60
+        && data.startHour is string && data.startHour.size() >= 3 && data.startHour.size() <= 30
+        && data.slotLabel is string && data.slotLabel.size() >= 3 && data.slotLabel.size() <= 60
+        && data.isFirstFree is bool
+        && isValidPricingForDuration(data)
+        && data.womenOnly is bool
+        && data.womenOnlyConfirmed is bool
+        && (!data.womenOnly || (data.seekerGender == 'female' && data.womenOnlyConfirmed == true))
+        && data.advanceRuleAck == true
+        && data.happyKeyPin is string && data.happyKeyPin.size() >= 4 && data.happyKeyPin.size() <= 12
+        && data.status in ['pending', 'accepted', 'declined', 'checked_in', 'completed', 'cancelled', 'expired']
+        && (!('cancelReason' in data) || (data.cancelReason is string && data.cancelReason.size() <= 200))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    // --- 1. USERS COLLECTION (Strict PII Isolation) ---
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+
+      allow create: if isValidId(userId)
+        && isVerifiedEmail()
+        && isOwner(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == request.auth.uid
+        && incoming().kycVerified == false
+        && incoming().freeHangoutUsed == false
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isValidId(userId)
+        && isVerifiedEmail()
+        && isValidUserProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            isOwner(userId)
+            && incoming().email == existing().email
+            && incoming().kycVerified == existing().kycVerified
+            && incoming().freeHangoutUsed == existing().freeHangoutUsed
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'role', 'name', 'phone', 'gender', 'city', 'preferredHub', 'govtIdType',
+              'govtIdLast4', 'emergencyContact', 'interests', 'upiId', 'bio', 'updatedAt'
+            ])
+          )
+        );
+
+      allow delete: if isValidId(userId) && isAdmin();
+    }
+
+    // --- 2. ADMINS COLLECTION ---
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && (isOwner(adminId) || isAdmin());
+      allow list: if isAdmin();
+      allow create, update: if isValidId(adminId) && isAdmin() && isValidAdminMember(incoming());
+      allow delete: if isValidId(adminId) && isAdmin();
+    }
+
+    // --- 3. HANGOUT PARTNERS ROSTER ---
+    match /partners/{partnerId} {
+      allow get: if isValidId(partnerId) && isSignedIn() && (
+        isAdmin() ||
+        resource.data.ownerUid == request.auth.uid ||
+        resource.data.kycStatus == 'verified'
+      );
+      allow list: if isAdmin() || (isSignedIn() && (
+        resource.data.ownerUid == request.auth.uid ||
+        resource.data.kycStatus == 'verified'
+      ));
+
+      allow create: if isValidId(partnerId)
+        && isVerifiedEmail()
+        && isValidHangoutPartner(incoming())
+        && incoming().partnerId == partnerId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            incoming().ownerUid == request.auth.uid
+            && incoming().kycStatus == 'pending'
+            && incoming().active == false
+            && incoming().totalSessions == 0
+            && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+          )
+        );
+
+      allow update: if isValidId(partnerId)
+        && isVerifiedEmail()
+        && isValidHangoutPartner(incoming())
+        && incoming().partnerId == existing().partnerId
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            existing().ownerUid == request.auth.uid
+            && incoming().kycStatus == existing().kycStatus
+            && incoming().rating == existing().rating
+            && incoming().totalSessions == existing().totalSessions
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'hub', 'experienceTitle', 'bio', 'availableSlots', 'active', 'upiHandleMasked', 'updatedAt'
+            ])
+          )
+        );
+
+      allow delete: if isValidId(partnerId) && isAdmin();
+    }
+
+    // --- 4. BOOKINGS COLLECTION ---
+    match /bookings/{bookingId} {
+      allow get: if isValidId(bookingId) && isSignedIn() && (
+        isAdmin() ||
+        resource.data.seekerUid == request.auth.uid ||
+        resource.data.partnerUid == request.auth.uid
+      );
+      allow list: if isSignedIn() && (
+        isAdmin() ||
+        resource.data.seekerUid == request.auth.uid ||
+        resource.data.partnerUid == request.auth.uid
+      );
+
+      allow create: if isValidId(bookingId)
+        && isVerifiedEmail()
+        && isValidBooking(incoming())
+        && incoming().bookingId == bookingId
+        && incoming().seekerUid == request.auth.uid
+        && incoming().status == 'pending'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+
+      allow update: if isValidId(bookingId)
+        && isVerifiedEmail()
+        && isValidBooking(incoming())
+        && incoming().bookingId == existing().bookingId
+        && incoming().seekerUid == existing().seekerUid
+        && incoming().partnerId == existing().partnerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            incoming().partnerUid == existing().partnerUid &&
+            existing().status in ['pending', 'accepted', 'checked_in'] &&
+            (
+              (
+                existing().partnerUid == request.auth.uid
+                && existing().status == 'pending'
+                && incoming().status in ['accepted', 'declined', 'expired']
+                && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+              ) ||
+              (
+                existing().partnerUid == request.auth.uid
+                && existing().status in ['accepted', 'checked_in']
+                && incoming().status in ['checked_in', 'completed']
+                && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+              ) ||
+              (
+                existing().seekerUid == request.auth.uid
+                && existing().status in ['pending', 'accepted']
+                && incoming().status == 'cancelled'
+                && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'cancelReason', 'updatedAt'])
+              )
+            )
+          )
+        );
+
+      allow delete: if isValidId(bookingId) && isAdmin();
+    }
+  }
+}

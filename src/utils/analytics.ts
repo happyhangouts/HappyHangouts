@@ -118,10 +118,10 @@ export const analytics = {
     });
   },
 
-  // 1st hangout free perk view
+  // First 30-min trial free perk view
   trackFreeHangoutsPerkView: () => {
-    trackEvent("view_promotion", "promotions", "1st Hangout Free Offer", 0, {
-      promotion_name: "launch_1st_hangout_free",
+    trackEvent("view_promotion", "promotions", "First 30-Min Trial Free Offer", 0, {
+      promotion_name: "launch_30min_trial_free",
       discount: 100
     });
   },

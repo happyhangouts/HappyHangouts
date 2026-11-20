@@ -2,15 +2,9 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ChevronDown,
-  ShieldCheck,
-  Lock,
-  CreditCard,
-  RotateCcw,
-  CheckCircle2,
   Search,
   HelpCircle,
-  Sparkles,
-  Users
+  Check
 } from "lucide-react";
 import { audio } from "../utils/audio";
 
@@ -20,142 +14,101 @@ export interface FaqItem {
   id: string;
   category: FaqCategory;
   categoryLabel: string;
-  icon: React.ElementType;
   question: string;
   answer: string;
   highlights: string[];
 }
 
 const FAQ_DATA: FaqItem[] = [
-  // 1. SECURITY & PRIVACY
   {
     id: "sec-id-verification",
     category: "security",
     categoryLabel: "Security & Privacy",
-    icon: ShieldCheck,
-    question: "How are Hangout Partners and attendees verified?",
+    question: "How are Hangout Seekers and Hangout Partners verified before going live?",
     answer:
-      "Every Hangout Partner and community member passes Government ID verification (Aadhaar/PAN) along with a live selfie match before hosting or joining any session. Experiences only run at screened public daylight or floodlit venues across Gurugram and Delhi.",
+      "When you apply via the Hangout Pass or Sign Up—whether as a Hangout Seeker or Hangout Partner—our team manually checks your profile and Government ID details (Aadhaar/PAN) first. Only after manual verification do we make your profile live. All meetups happen in screened public places across Gurugram and Delhi.",
     highlights: [
-      "Govt ID (Aadhaar/PAN) verified",
-      "Public parks, courts & cafés only",
-      "1-tap Emergency SOS support"
+      "Manual profile review before going live",
+      "Govt-ID checked for Seekers & Partners",
+      "Public cafés, courts & parks only"
     ]
   },
   {
     id: "sec-women-only",
     category: "security",
     categoryLabel: "Security & Privacy",
-    icon: Users,
-    question: "Who can book the Women-Only option and how does it work?",
+    question: "Can women book any Hangout Partner, or is Women-Only mandatory?",
     answer:
-      "Women-Only booking is strictly reserved for women only. When a woman selects the 'Women-Only Booking' option inside the lineup or booking modal, her request routes exclusively to a verified Female Hangout Partner and an all-women cohort at safe public hubs like Lodhi Garden, Khan Market, 32nd Avenue, or Sunder Nursery.",
+      "Women can freely book any verified Hangout Partner across all experiences—booking Women-Only is completely optional. Whenever preferred, female members can toggle on Women-Only Preference to match exclusively with a Female Hangout Partner.",
     highlights: [
-      "Strictly for women guests only",
-      "Verified Female Hangout Partner",
-      "Available across all 5 experiences"
+      "Women can book any Hangout Partner",
+      "Women-Only preference is optional",
+      "Female Hangout Partners available"
     ]
   },
   {
     id: "sec-data-privacy",
     category: "security",
     categoryLabel: "Security & Privacy",
-    icon: Lock,
     question: "Are my personal photos, phone number, and details kept private?",
     answer:
-      "Yes. Your phone number and email are never publicly visible on any card or directory. We lead with experiences, schedules, and venues—not personal profiles. Hangout Partner details and WhatsApp check-in coordination are shared privately only after your spot is confirmed.",
+      "Yes. Phone numbers, emails, and partner photos never appear in public browsing. Happy Hangouts leads with the experience and venue; check-in coordination unlocks privately once your Hangout Partner accepts.",
     highlights: [
-      "No public profile or number exposure",
-      "Experience-first matching",
-      "Partner details unlock post-confirm"
+      "Zero public profile browsing",
+      "No exposed phone numbers",
+      "4-digit Happy Key check-in PIN"
     ]
   },
-
-  // 2. PAYMENT & PRICING
   {
     id: "pay-free-launch",
     category: "payment",
     categoryLabel: "Payment",
-    icon: Sparkles,
-    question: "Is only my 1st hangout really 100% free?",
+    question: "What are the hangout prices for 30 min, 1 hr, and 2 hrs?",
     answer:
-      "Yes! Under our Launch Offer, your 1st curated hangout carries a ₹0 booking and platform fee so you can build genuine trust first-hand before paying a rupee. Personal café orders (coffee/snacks) or shared court rentals at public venues remain pay-as-you-go.",
+      "Pricing is fixed and transparent across every Hangout Partner: ₹99 for 30 minutes, ₹199 for 1 hour, and ₹449 for 2 hours. No subscriptions or hidden platform fees. Personal café or shared court bills stay separate.",
     highlights: [
-      "1st hangout at ₹0 booking fee",
-      "No hidden subscription lock-in",
-      "Pay personal café bills directly"
-    ]
-  },
-  {
-    id: "pay-escrow-flow",
-    category: "payment",
-    categoryLabel: "Payment",
-    icon: CreditCard,
-    question: "How do payments work from my 2nd hangout onwards?",
-    answer:
-      "After your 1st free hangout, fixed session prices apply from your 2nd experience onwards: ₹199 for 30 minutes, ₹299 for 1 hour, or ₹499 for 2 hours (paid via UPI or cards). Funds are held safely in digital escrow and released after both sides check in at the public venue.",
-    highlights: [
-      "UPI & card digital escrow protection",
-      "Fixed ₹199 (30m) · ₹299 (1h) · ₹499 (2h)",
-      "No awkward cash handoffs"
+      "30 min: ₹99 · Affordable starter",
+      "1 hr: ₹199 · 2 hrs: ₹449",
+      "No subscriptions or hidden fees"
     ]
   },
   {
     id: "pay-advance-window",
     category: "payment",
     categoryLabel: "Payment",
-    icon: Lock,
-    question: "How early do I need to send a hangout request, and when am I charged?",
+    question: "How does the manual booking & confirmation process work?",
     answer:
-      "You must send your request a minimum of 2 hours before the hangout start time—for example, if you want to attend a hangout at 5:00 PM, send your request by 3:00 PM at the latest. During confirmation, ₹0 is settled until your Hangout Partner accepts; unresponded requests auto-expire with ₹0 charge.",
+      "Submit your hire request at least 2 hours before your hangout start time (e.g. by 3:00 PM for 5:00 PM). Once our team receives the request from the Hangout Seeker, we check availability directly with the Hangout Partner and then manually give confirmation back to the Hangout Seeker.",
     highlights: [
-      "Send request 2+ hours prior (5 PM → by 3 PM)",
-      "Zero charge until partner confirms",
-      "Auto-expires with ₹0 fee if unfilled"
+      "Request sent 2+ hours prior",
+      "Team checks partner availability first",
+      "Manual confirmation sent to Seeker"
     ]
   },
-
-  // 3. CANCELLATION & REFUND
   {
     id: "cancel-user-policy",
     category: "cancellation",
     categoryLabel: "Cancellation & Refund",
-    icon: RotateCcw,
-    question: "What is your Cancellation & Refund policy? Can I cancel in the last hour?",
+    question: "Can I cancel in the last hour before my hangout?",
     answer:
-      "No—you cannot cancel in the last hour before your hangout start time. Last-hour cancellations (within 1 hour of start time) are strictly non-refundable to respect your Hangout Partner's committed schedule. Cancel more than 1 hour before start time (at least 2 hours prior) to receive a 100% refund or free reschedule.",
+      "No—cancellations are locked within 1 hour of the hangout start time to respect your Hangout Partner's schedule. Cancel more than 1 hour ahead for a full refund or free reschedule.",
     highlights: [
-      "No cancellations in the last 1 hour",
-      "100% refund if cancelled >1 hr prior",
-      "Protects Hangout Partner's time"
-    ]
-  },
-  {
-    id: "cancel-host-noshow",
-    category: "cancellation",
-    categoryLabel: "Cancellation & Refund",
-    icon: ShieldCheck,
-    question: "What happens if a Hangout Partner cancels or the experience doesn't run?",
-    answer:
-      "We enforce a strict zero-ghosting policy. If a Hangout Partner cancels, weather disrupts an outdoor run/hike, or a venue closes unexpectedly, you receive an immediate 100% full refund plus a complimentary priority spot for your next session.",
-    highlights: [
-      "100% instant refund on partner cancel",
-      "Weather & venue disruption coverage",
-      "Complimentary priority rebooking"
+      "You can't cancel in the last hour",
+      "Full refund if cancelled >1 hr prior",
+      "100% refund if partner cancels"
     ]
   },
   {
     id: "cancel-refund-timeline",
     category: "cancellation",
     categoryLabel: "Cancellation & Refund",
-    icon: CreditCard,
-    question: "How fast do eligible refunds reflect in my bank account or UPI app?",
+    question: "How quickly are eligible refunds processed?",
     answer:
-      "Eligible UPI refunds (cancelled outside the 1-hour no-cancel window) are triggered immediately and typically settle within 15–30 minutes (maximum 24 hours). Card refunds process within 3–5 business days with real-time confirmation via WhatsApp and email.",
+      "Eligible UPI refunds settle within 15–30 minutes (up to 24 hours max). Card refunds reflect in 3–5 business days with confirmation.",
     highlights: [
-      "UPI refunds settle in mins (max 24h)",
-      "Cards settle in 3–5 business days",
-      "Instant WhatsApp refund receipt"
+      "UPI refunds in minutes (max 24h)",
+      "Cards in 3–5 business days",
+      "Full partner no-show protection"
     ]
   }
 ];
@@ -186,130 +139,102 @@ export default function FaqSection({ onJoinWaitlist }: FaqSectionProps) {
   });
 
   return (
-    <section id="faq" className="py-16 sm:py-24 bg-white border-t border-b border-[#0A2EB8]/15 relative overflow-hidden text-left">
-      <div className="wrap max-w-5xl relative z-10 space-y-8 sm:space-y-10">
-        {/* Section Header */}
-        <div className="text-left sm:text-center space-y-2.5 max-w-2xl sm:mx-auto">
-          <span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] font-bold text-[#0A2EB8] bg-[#F3F7FF] border border-[#0A2EB8]/15 px-3 py-1 rounded-full">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#19C37D]" />
-            FAQ · Trust &amp; Transparency
-          </span>
-          <h2 className="font-serif text-3xl sm:text-5xl font-normal text-[#0B1230] tracking-tight">
-            Security, Payment &amp; Refund FAQs
-          </h2>
-          <p className="text-[#0B1230]/75 text-sm sm:text-base font-normal leading-relaxed">
-            Clear answers on ID verification, Women-Only eligibility, 2-hour advance booking, 1st free hangout, and no last-hour cancellations.
-          </p>
-        </div>
-
-        {/* Category Filter Tabs + Search */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-[#F3F7FF] p-3 rounded-2xl border border-[#0A2EB8]/15">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-            {[
-              { id: "all", label: `All (${FAQ_DATA.length})` },
-              { id: "security", label: "🔒 Security & Privacy" },
-              { id: "payment", label: "💳 Payment" },
-              { id: "cancellation", label: "↩️ Cancellation & Refund" }
-            ].map((tab) => {
-              const isActive = activeCategory === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => {
-                    audio.playClick();
-                    setActiveCategory(tab.id as "all" | FaqCategory);
-                  }}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer min-h-[38px] ${
-                    isActive
-                      ? "bg-[#0A2EB8] text-white shadow-sm"
-                      : "bg-white text-[#0B1230] border border-[#0A2EB8]/15 hover:border-[#0A2EB8]"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+    <section id="faq" className="py-16 sm:py-24 bg-[#F8FAFC] border-t border-[#0B1230]/8 text-left">
+      <div className="wrap max-w-4xl space-y-8">
+        {/* Clean Editorial Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="space-y-2 max-w-xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0A2EB8]">
+              Frequently Asked Questions
+            </p>
+            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#0B1230] tracking-tight">
+              Security, payment &amp; refunds
+            </h2>
           </div>
 
           <div className="relative w-full md:w-64 shrink-0">
             <input
               type="text"
-              placeholder="Search security, refund, 2-hr rule..."
+              placeholder="Search questions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#0A2EB8]/20 rounded-xl focus:outline-none focus:border-[#0A2EB8] text-[#0B1230] placeholder:text-[#0B1230]/45 font-medium"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#0B1230]/15 rounded-xl focus:outline-none focus:border-[#0A2EB8] text-[#0B1230] placeholder:text-[#475569]/70"
             />
-            <Search className="w-3.5 h-3.5 text-[#0A2EB8]/60 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-[#475569] absolute left-3 top-1/2 -translate-y-1/2" />
           </div>
         </div>
 
-        {/* Accordion Questions */}
-        <div className="space-y-3">
+        {/* Category Filter Segmented Control */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {[
+            { id: "all", label: "All Topics" },
+            { id: "security", label: "Security & Privacy" },
+            { id: "payment", label: "Payment & Pricing" },
+            { id: "cancellation", label: "Cancellation & Refund" }
+          ].map((tab) => {
+            const isActive = activeCategory === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  audio.playClick();
+                  setActiveCategory(tab.id as "all" | FaqCategory);
+                }}
+                className={`px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer min-h-[36px] border ${
+                  isActive
+                    ? "bg-[#0B1230] text-white border-[#0B1230]"
+                    : "bg-white text-[#475569] border-[#0B1230]/12 hover:border-[#0A2EB8] hover:text-[#0A2EB8]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Clean Accordion List */}
+        <div className="divide-y divide-[#0B1230]/8 bg-white border border-[#0B1230]/10 rounded-2xl overflow-hidden">
           {filteredFaqs.length === 0 ? (
-            <div className="text-center py-12 bg-[#F3F7FF] rounded-3xl border border-[#0A2EB8]/15 space-y-3">
-              <HelpCircle className="w-8 h-8 text-[#0A2EB8]/40 mx-auto" />
-              <p className="text-sm font-semibold text-[#0B1230]">No matching questions found</p>
+            <div className="text-center py-12 space-y-2.5">
+              <HelpCircle className="w-6 h-6 text-[#475569]/60 mx-auto" />
+              <p className="text-sm font-medium text-[#0B1230]">No matching questions</p>
               <button
                 type="button"
                 onClick={() => {
                   setSearchQuery("");
                   setActiveCategory("all");
                 }}
-                className="text-xs font-bold text-[#0A2EB8] hover:underline cursor-pointer"
+                className="text-xs font-semibold text-[#0A2EB8] hover:underline cursor-pointer"
               >
-                Show all FAQs
+                Show all questions
               </button>
             </div>
           ) : (
             filteredFaqs.map((faq) => {
               const isOpen = openId === faq.id;
-              const IconComp = faq.icon;
-
               return (
-                <div
-                  key={faq.id}
-                  className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden ${
-                    isOpen
-                      ? "border-[#0A2EB8] shadow-md ring-1 ring-[#0A2EB8]/15"
-                      : "border-[#0A2EB8]/15 hover:border-[#3DAAFC]"
-                  }`}
-                >
+                <div key={faq.id} className="transition-colors">
                   <button
                     type="button"
                     onClick={() => toggleAccordion(faq.id)}
                     aria-expanded={isOpen}
-                    className="w-full p-4 sm:p-5 text-left flex items-start justify-between gap-3 cursor-pointer focus:outline-none select-none"
+                    className="w-full px-5 py-4 sm:px-6 sm:py-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-[#F8FAFC] transition-colors"
                   >
-                    <div className="flex items-start gap-3 min-w-0">
-                      <div
-                        className={`p-2 rounded-xl border shrink-0 transition-colors ${
-                          isOpen
-                            ? "bg-[#0A2EB8] text-white border-[#0A2EB8]"
-                            : "bg-[#F3F7FF] text-[#0A2EB8] border-[#0A2EB8]/15"
-                        }`}
-                      >
-                        <IconComp className="w-4 h-4" />
-                      </div>
-                      <div className="space-y-1 min-w-0">
-                        <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-[#F3F7FF] text-[#0A2EB8] border border-[#0A2EB8]/15">
-                          {faq.categoryLabel}
-                        </span>
-                        <h3 className="text-sm sm:text-base font-bold text-[#0B1230] leading-snug">
-                          {faq.question}
-                        </h3>
-                      </div>
+                    <div className="min-w-0 space-y-0.5">
+                      <span className="text-[11px] font-semibold text-[#0A2EB8] block">
+                        {faq.categoryLabel}
+                      </span>
+                      <h3 className="text-sm sm:text-base font-semibold text-[#0B1230] leading-snug">
+                        {faq.question}
+                      </h3>
                     </div>
 
-                    <div
-                      className={`p-2 rounded-full border transition-transform duration-200 shrink-0 mt-0.5 ${
-                        isOpen
-                          ? "bg-[#FFC83D] text-[#0B1230] border-[#FFC83D] rotate-180"
-                          : "bg-[#F3F7FF] text-[#0A2EB8] border-[#0A2EB8]/15"
+                    <ChevronDown
+                      className={`w-4 h-4 text-[#475569] shrink-0 transition-transform duration-200 ${
+                        isOpen ? "rotate-180 text-[#0A2EB8]" : ""
                       }`}
-                    >
-                      <ChevronDown className="w-4 h-4" />
-                    </div>
+                    />
                   </button>
 
                   <AnimatePresence initial={false}>
@@ -318,23 +243,18 @@ export default function FaqSection({ onJoinWaitlist }: FaqSectionProps) {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.22, ease: "easeInOut" }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="overflow-hidden"
                       >
-                        <div className="px-4 sm:px-5 pb-5 pt-0 border-t border-[#F3F7FF] text-xs sm:text-sm text-[#0B1230]/80 leading-relaxed space-y-3.5">
-                          <p className="pt-3.5">{faq.answer}</p>
-
-                          <div className="bg-[#F3F7FF] p-3 sm:p-3.5 rounded-xl border border-[#0A2EB8]/10">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#0A2EB8] block mb-2">
-                              Guarantee Highlights
-                            </span>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                              {faq.highlights.map((item, idx) => (
-                                <div key={idx} className="flex items-center gap-1.5 text-[#0B1230] font-semibold text-xs">
-                                  <CheckCircle2 className="w-3.5 h-3.5 text-[#19C37D] shrink-0" />
-                                  <span>{item}</span>
-                                </div>
-                              ))}
-                            </div>
+                        <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-1 text-sm text-[#475569] leading-relaxed space-y-3">
+                          <p>{faq.answer}</p>
+                          <div className="flex flex-wrap gap-x-5 gap-y-1.5 pt-1">
+                            {faq.highlights.map((item, idx) => (
+                              <span key={idx} className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0B1230]">
+                                <Check className="w-3.5 h-3.5 text-[#19C37D] shrink-0" />
+                                <span>{item}</span>
+                              </span>
+                            ))}
                           </div>
                         </div>
                       </motion.div>
@@ -346,41 +266,30 @@ export default function FaqSection({ onJoinWaitlist }: FaqSectionProps) {
           )}
         </div>
 
-        {/* Bottom Help Banner */}
-        <div className="p-5 sm:p-7 bg-[#011C92] text-white rounded-3xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#3DAAFC]">
-              Still have a question?
+        {onJoinWaitlist && (
+          <div className="flex items-center justify-between flex-wrap gap-3 pt-2 text-xs text-[#475569]">
+            <span>
+              Need more help? WhatsApp{" "}
+              <a href="https://wa.me/917217813236" target="_blank" rel="noopener noreferrer" className="text-[#0A2EB8] font-semibold hover:underline">
+                +91 72178 13236
+              </a>{" "}
+              or email{" "}
+              <a href="mailto:happyhangouts.life@gmail.com" className="text-[#0A2EB8] font-semibold hover:underline">
+                happyhangouts.life@gmail.com
+              </a>.
             </span>
-            <h4 className="font-serif text-xl sm:text-2xl font-bold text-white">
-              Try your 1st NCR experience with ₹0 risk.
-            </h4>
-            <p className="text-white/75 text-xs sm:text-sm max-w-lg">
-              Choose Open or Women-Only booking (women only) across Gurugram &amp; Delhi with verified Hangout Partners—send requests at least 2 hours prior.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full sm:w-auto">
-            <a
-              href="#match"
-              onClick={() => audio.playClick()}
-              className="flex-1 sm:flex-none text-center bg-[#FFC83D] hover:bg-[#ffbe26] text-[#0B1230] font-extrabold text-xs sm:text-sm py-3 px-5 rounded-full shadow-sm transition-transform hover:-translate-y-0.5"
+            <button
+              type="button"
+              onClick={() => {
+                audio.playClick();
+                onJoinWaitlist();
+              }}
+              className="font-semibold text-[#0A2EB8] hover:underline cursor-pointer"
             >
-              Explore Experiences →
-            </a>
-            {onJoinWaitlist && (
-              <button
-                type="button"
-                onClick={() => {
-                  audio.playClick();
-                  onJoinWaitlist();
-                }}
-                className="flex-1 sm:flex-none text-center bg-white/10 hover:bg-white hover:text-[#011C92] text-white border border-white/30 font-bold text-xs sm:text-sm py-3 px-5 rounded-full transition-all cursor-pointer"
-              >
-                Get Hangout Pass
-              </button>
-            )}
+              Get your Hangout Pass →
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
